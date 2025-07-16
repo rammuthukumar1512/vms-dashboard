@@ -2,23 +2,33 @@
 <div class="dashboard-container">
 
   <!-- First Row -->
-  <div #firstRow class="dashboard-row">
+  <div #firstRow class="dashboard-row bg-light">
 
     <!-- Computer Section -->
     <mat-card class="section-card">
 
-      <div class="section-row"><!----first-row---->
-        <div class="section-item"> <h5>Total Computers </h5>
-              <p class="text-center fs-5">{{totalComputers}}</p>
-        </div>
-        <div class="section-item"><h5 class="text-nowrap">Vulnerable Computers</h5>
-        <p class="fs-5">{{vulnerableComputers}}</p></div>
+      <div class="section-row bg-dark"><!----first-row---->
         
         <div class="section-item">  <!----chart-section------->
             <div class="chart">
               <canvas #computerChart></canvas>
             </div>
         </div> <!----chart-section-end------>
+
+         <div class="section-item d-flex align-items-center">
+          <table class="gen-info-table table table-borderless table-dark">
+            <tbody>
+              <tr>
+                <th>Total Computers :</th>
+                <td>{{totalComputers}}</td>
+              </tr>
+              <tr>
+                <th>Vulnerable Computers :</th>
+                <td>{{vulnerableComputers}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div><!----first-row-end--->
 
       <div style="overflow: auto;"> <!------------computer-data-table------------>
@@ -29,7 +39,7 @@
                     <mat-slide-toggle [(ngModel)]="showVulnerableComputer" (click)="toggleVulnerableComputers()">Vulnerable</mat-slide-toggle>
                   </div>
                   </div>
-                  <table class="w-100 table table-borderless table-hover table-white table-striped">
+                  <table class="comp-table">
                     <thead>
                       <tr>
                         <th>Ip Address</th>

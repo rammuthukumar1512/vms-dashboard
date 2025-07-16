@@ -14,7 +14,7 @@
 
 .section-card {
   flex: 1 1 45%;
-  padding: 16px;
+  padding: 8px;
 }
 
 .section-card-appdata {
@@ -24,7 +24,7 @@
 .section-row {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
+  gap: 6px;
 }
 
 .section-item {
@@ -32,22 +32,27 @@
   text-align: center;
   color: black;
 }
-
-.bg-info {
-  background-color: #17a2b8; /* Bootstrap info color */
-}
-
-.bg-primary {
-  background-color: #007bff; /* Bootstrap primary color */
-}
 .chart {
-  height: 200px;
+  height: 250px;
   margin: auto;
   padding: 8px;
   border-radius: 12px;
   color: #47a2fc; 
 }
-
+.comp-table {
+  width: 100%;
+  table-layout: fixed;
+}
+.comp-table th,td {
+  padding: 4px 0;
+}
+.comp-table thead tr > th{
+   text-wrap: nowrap;
+   background-color: #007bff !important;
+}
+.gen-info-table tbody tr > th{
+   text-align: right;
+}
 @media (max-width: 768px) {
   .section-card {
     flex: 1 1 100%;
