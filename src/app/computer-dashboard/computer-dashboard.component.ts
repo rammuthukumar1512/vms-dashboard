@@ -11,12 +11,13 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
+import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-    MatTooltipModule
+    MatTooltipModule,ApplicationDashboardComponent
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'

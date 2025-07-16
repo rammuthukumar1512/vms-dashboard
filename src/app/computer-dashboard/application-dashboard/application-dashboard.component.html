@@ -1,1 +1,90 @@
-<p>application-dashboard works!</p>
+<mat-card class="section-card">
+  <mat-card-header>
+    <mat-card-title>Applications</mat-card-title>
+    <mat-card-subtitle>
+      {{ appData()?.vulnerableSoftwareCount || 0 }} Vulnerable Applications
+    </mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content>
+    <!-- Application Table -->
+    <table mat-table [dataSource]="appData()?.appData || []" class="comp-table">
+      <!-- Software Name Column -->
+      <ng-container matColumnDef="softwareName">
+        <th mat-header-cell *matHeaderCellDef>Software Name</th>
+        <td mat-cell *matCellDef="let app">{{ app.softwareName }}</td>
+      </ng-container>
+
+      <!-- Software Version Column -->
+      <ng-container matColumnDef="softwareVersion">
+        <th mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
+      </ng-container>
+
+      <!-- Vendor Column -->
+      <ng-container matColumnDef="vendor">
+        <th mat-header-cell *matHeaderCellDef>Vendor</th>
+        <td mat-cell *matCellDef="let app">{{ app.vendor }}</td>
+      </ng-container>
+
+      <!-- Vulnerability Count Column -->
+      <ng-container matColumnDef="vulnerabilityCount">
+        <th mat-header-cell *matHeaderCellDef>Vulnerabilities</th>
+        <td mat-cell *matCellDef="let app">
+          {{ app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount }}
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let app">
+          <mat-icon
+            class="material-symbols-outlined cursor-pointer"
+            matTooltip="View Vulnerabilities"
+            (click)="showVulnerabilities(app)"
+          >
+            visibility
+          </mat-icon>
+        </td>
+      </ng-container>
+
+      <!-- Table Header and Rows -->
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <!-- Vulnerability Table (shown when vulnerabilities are selected) -->
+    <ng-container *ngIf="selectedVulnerabilities()?.length">
+      <h3>Vulnerabilities</h3>
+      <table mat-table [dataSource]="selectedVulnerabilities() || []" class="comp-table">
+        <!-- CVE ID Column -->
+        <ng-container matColumnDef="cveId">
+          <th mat-header-cell *matHeaderCellDef>CVE ID</th>
+          <td mat-cell *matCellDef="let vuln">{{ vuln.cveId }}</td>
+        </ng-container>
+
+        <!-- Description Column -->
+        <ng-container matColumnDef="description">
+          <th mat-header-cell *matHeaderCellDef>Description</th>
+          <td mat-cell *matCellDef="let vuln">{{ vuln.description }}</td>
+        </ng-container>
+
+        <!-- Severity Column -->
+        <ng-container matColumnDef="severity">
+          <th mat-header-cell *matHeaderCellDef>Severity</th>
+          <td mat-cell *matCellDef="let vuln">{{ vuln.severity }}</td>
+        </ng-container>
+
+        <!-- CVSS Score Column -->
+        <ng-container matColumnDef="cvssScore">
+          <th mat-header-cell *matHeaderCellDef>CVSS Score</th>
+          <td mat-cell *matCellDef="let vuln">{{ vuln.cvssScore }}</td>
+        </ng-container>
+
+        <!-- Table Header and Rows -->
+        <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr>
+      </table>
+    </ng-container>
+  </mat-card-content>
+</mat-card>
