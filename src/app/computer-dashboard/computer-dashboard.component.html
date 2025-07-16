@@ -1,0 +1,62 @@
+<!-- Parent Container -->
+<div class="dashboard-container">
+
+  <!-- First Row -->
+  <div class="dashboard-row">
+
+    <!-- Computer Section -->
+    <mat-card class="section-card">
+
+      <div class="section-row"><!----first-row---->
+        <div class="section-item"> <h5>Total Computers </h5>
+              <p class="text-center fs-5">{{totalComputers}}</p>
+        </div>
+        <div class="section-item"><h5>Total Vulnerable Computers</h5>
+        <p>{{vulnerableComputers}}</p></div>
+        
+        <div class="section-item">  <!----chart-section------->
+            <div class="chart">
+              <canvas #computerChart></canvas>
+            </div>
+        </div> <!----chart-section-end------>
+      </div><!----first-row-end--->
+
+      <div style="overflow: auto;"> <!------------computer-data-table------------>
+             <div class="p-2">
+                  <table class="w-100 table table-borderless table-hover table-white table-striped">
+                    <caption class="caption-top fnw-bold">Total Computers</caption>
+                    <thead>
+                      <tr>
+                        <th>Ip Address</th>
+                        <th>Machine Name</th>
+                        <th>Os Version</th>
+                        <th>Antivirus Status</th>
+                        <th>Firewall Status</th>
+                        <th>LoggedIn User</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let computer of computerDetails">
+                      <td>{{computer.ipAddress}}</td>
+                      <td>{{computer.machineName}}</td>
+                      <td>{{computer.osVersion}}</td>
+                      <td>{{computer.antivirusStatus}}</td>
+                      <td>{{computer.firewallStatus}}</td>
+                      <td>{{computer.loggedInUser}}</td>
+                      <td><mat-icon class="material-symbols-outlined cursor-pointer">visibility</mat-icon></td>
+                      </tr>
+                    </tbody>
+                  </table>
+             </div>
+        </div> <!------------computer-data-table-end----------->
+    </mat-card>
+
+    <!-- Application Section -->
+    <mat-card class="section-card">
+      <!-- Application Content Here -->
+    </mat-card>
+
+  </div>
+
+</div>

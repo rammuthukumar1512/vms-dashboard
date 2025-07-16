@@ -1,0 +1,332 @@
+{
+  "computers": [
+  {
+    "computerId": "comp-001",
+    "machineName": "DESKTOP-001",
+    "osVersion": "Windows 11",
+    "ipAddress": "192.168.10.1",
+    "severity": "High",
+    "installedApplications": [
+      {
+        "appName": "Adobe Reader",
+        "version": "22.0",
+        "vulnerabilities": [
+          {
+            "severity": "High",
+            "cveId": "CVE-2023-1001",
+            "description": "Use-after-free vulnerability in Adobe Reader may allow arbitrary code execution.",
+            "cvssScore": 8.1
+          },
+          {
+            "severity": "Medium",
+            "cveId": "CVE-2023-1002",
+            "description": "Information disclosure due to improper memory handling.",
+            "cvssScore": 5.6
+          }
+        ]
+      },
+      {
+        "appName": "Chrome",
+        "version": "114.0",
+        "vulnerabilities": [
+          {
+            "severity": "Low",
+            "cveId": "CVE-2023-2001",
+            "description": "Low impact memory leak in Chrome UI rendering.",
+            "cvssScore": 3.1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "computerId": "comp-002",
+    "machineName": "DESKTOP-002",
+    "osVersion": "Windows 10",
+    "ipAddress": "192.168.10.2",
+    "severity": "Low",
+    "installedApplications": [
+      {
+        "appName": "Notepad++",
+        "version": "8.4.7",
+        "vulnerabilities": [
+          {
+            "severity": "Low",
+            "cveId": "CVE-2023-2010",
+            "description": "Minor buffer overflow in syntax highlighting feature.",
+            "cvssScore": 3.4
+          }
+        ]
+      },
+      {
+        "appName": "Java Runtime",
+        "version": "8u351",
+        "vulnerabilities": [
+          {
+            "severity": "Critical",
+            "cveId": "CVE-2023-1200",
+            "description": "Remote code execution due to deserialization vulnerability in Java Runtime.",
+            "cvssScore": 9.8
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "computerId": "comp-003",
+    "machineName": "LAPTOP-003",
+    "osVersion": "Windows 11",
+    "ipAddress": "192.168.10.3",
+    "severity": "High",
+    "installedApplications": [
+      {
+        "appName": "Firefox",
+        "version": "108.0",
+        "vulnerabilities": [
+          {
+            "severity": "Medium",
+            "cveId": "CVE-2023-2020",
+            "description": "Cross-site scripting vulnerability in Firefox rendering engine.",
+            "cvssScore": 6.2
+          }
+        ]
+      },
+      {
+        "appName": "WinRAR",
+        "version": "6.1",
+        "vulnerabilities": [
+          {
+            "severity": "High",
+            "cveId": "CVE-2023-3001",
+            "description": "Buffer overflow in archive extraction could lead to remote code execution.",
+            "cvssScore": 8.3
+          },
+          {
+            "severity": "Critical",
+            "cveId": "CVE-2023-3002",
+            "description": "Remote code execution vulnerability due to improper file path validation.",
+            "cvssScore": 9.1
+          }
+        ]
+      },
+      {
+        "appName": "Zoom",
+        "version": "5.12",
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "computerId": "comp-004",
+    "machineName": "DESKTOP-004",
+    "osVersion": "Windows 10",
+    "ipAddress": "192.168.10.4",
+    "severity": "Medium",
+    "installedApplications": [
+      {
+        "appName": "Chrome",
+        "version": "114.0",
+        "vulnerabilities": []
+      },
+      {
+        "appName": "7-Zip",
+        "version": "19.0",
+        "vulnerabilities": [
+          {
+            "severity": "Medium",
+            "cveId": "CVE-2023-4001",
+            "description": "Incorrect permission handling when extracting archives.",
+            "cvssScore": 5.9
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "computerId": "comp-005",
+    "machineName": "LAPTOP-005",
+    "osVersion": "Windows 11",
+    "ipAddress": "192.168.10.5",
+    "severity": "Low",
+    "installedApplications": [
+      {
+        "appName": "Node.js",
+        "version": "18.14",
+        "vulnerabilities": [
+          {
+            "severity": "Critical",
+            "cveId": "CVE-2023-5001",
+            "description": "Remote command injection through crafted HTTP headers.",
+            "cvssScore": 9.9
+          },
+          {
+            "severity": "High",
+            "cveId": "CVE-2023-5002",
+            "description": "Prototype pollution leading to potential data leaks.",
+            "cvssScore": 8.5
+          },
+          {
+            "severity": "Low",
+            "cveId": "CVE-2023-5003",
+            "description": "Low-risk timing attack on internal crypto module.",
+            "cvssScore": 3.3
+          }
+        ]
+      },
+      {
+        "appName": "VS Code",
+        "version": "1.76",
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "computerId": "comp-006",
+    "machineName": "DESKTOP-006",
+    "osVersion": "Windows 11",
+    "ipAddress": "192.168.10.6",
+    "severity": "Critical",
+    "installedApplications": [
+      {
+        "appName": "Slack",
+        "version": "4.29",
+        "vulnerabilities": [{
+            "severity": "Critical",
+            "cveId": "CVE-2023-5001",
+            "description": "Remote command injection through crafted HTTP headers.",
+            "cvssScore": 9.9
+          }]
+      },
+      {
+        "appName": "Spotify",
+        "version": "1.1.86",
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "computerId": "comp-007",
+    "machineName": "LAPTOP-007",
+    "osVersion": "Windows 10",
+    "ipAddress": "192.168.10.7",
+    "severity": "None",
+    "installedApplications": [
+      {
+        "appName": "Microsoft Teams",
+        "version": "1.5.00",
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "computerId": "comp-008",
+    "machineName": "DESKTOP-008",
+    "osVersion": "Windows 11",
+    "ipAddress": "192.168.10.8",
+    "severity": "None",
+    "installedApplications": [
+      {
+        "appName": "VLC Media Player",
+        "version": "3.0.17",
+        "vulnerabilities": []
+      },
+      {
+        "appName": "GIMP",
+        "version": "2.10.32",
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "computerId": "comp-009",
+    "machineName": "LAPTOP-009",
+    "osVersion": "Windows 10",
+    "ipAddress": "192.168.10.9",
+    "severity": "None",
+    "installedApplications": [
+      {
+        "appName": "Edge",
+        "version": "110.0",
+        "vulnerabilities": []
+      },
+      {
+        "appName": "Skype",
+        "version": "8.95",
+        "vulnerabilities": []
+      }
+    ]
+  },
+  {
+    "computerId": "comp-010",
+    "machineName": "DESKTOP-010",
+    "osVersion": "Windows 11",
+    "ipAddress": "192.168.10.10",
+    "severity": "None",
+    "installedApplications": [
+      {
+        "appName": "Paint.NET",
+        "version": "5.0",
+        "vulnerabilities": []
+      },
+      {
+        "appName": "LibreOffice",
+        "version": "7.5",
+        "vulnerabilities": []
+      }
+    ]
+  }
+]
+,
+"applications":
+  {
+  "High": [
+    { "appName": "App A", "version": "1.0.0" },
+    { "appName": "App E", "version": "2.1.3" },
+    { "appName": "App I", "version": "3.0.0" },
+    { "appName": "App M", "version": "4.5.1" },
+    { "appName": "App Q", "version": "1.2.9" },
+    { "appName": "App U", "version": "7.0.4" },
+    { "appName": "App Y", "version": "8.1.0" },
+    { "appName": "App AC", "version": "3.9.3" },
+    { "appName": "App AG", "version": "6.6.6" },
+    { "appName": "App AK", "version": "5.3.2" }
+  ],
+  "Medium": [
+    { "appName": "App B", "version": "2.0.0" },
+    { "appName": "App F", "version": "5.6.7" },
+    { "appName": "App J", "version": "3.2.1" },
+    { "appName": "App N", "version": "2.5.5" },
+    { "appName": "App R", "version": "9.0.0" },
+    { "appName": "App V", "version": "4.4.4" },
+    { "appName": "App Z", "version": "6.1.2" },
+    { "appName": "App AD", "version": "1.0.5" },
+    { "appName": "App AH", "version": "7.3.9" },
+    { "appName": "App AL", "version": "2.2.2" }
+  ],
+  "Low": [
+    { "appName": "App C", "version": "3.0.1" },
+    { "appName": "App G", "version": "1.3.3" },
+    { "appName": "App K", "version": "2.8.8" },
+    { "appName": "App O", "version": "4.4.4" },
+    { "appName": "App S", "version": "5.5.5" },
+    { "appName": "App W", "version": "6.6.6" },
+    { "appName": "App AA", "version": "7.7.7" },
+    { "appName": "App AE", "version": "8.8.8" },
+    { "appName": "App AI", "version": "9.9.9" },
+    { "appName": "App AM", "version": "1.1.1" }
+  ],
+  "Critical": [
+    { "appName": "App D", "version": "4.0.0" },
+    { "appName": "App H", "version": "5.0.0" },
+    { "appName": "App L", "version": "6.0.0" },
+    { "appName": "App P", "version": "7.0.0" },
+    { "appName": "App T", "version": "8.0.0" },
+    { "appName": "App X", "version": "9.0.0" },
+    { "appName": "App AB", "version": "1.0.1" },
+    { "appName": "App AF", "version": "2.2.1" },
+    { "appName": "App AJ", "version": "3.3.3" },
+    { "appName": "App AN", "version": "4.4.4" }
+  ]
+}
+
+}
