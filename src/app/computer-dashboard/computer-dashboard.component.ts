@@ -7,16 +7,21 @@ import { environments } from '../../environments/environments';
 import { SecurityReport, ComputerDetails } from '../models/computer.model';
 import { Chart } from 'chart.js';
 import { MatIconModule } from '@angular/material/icon';
-
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { FormsModule } from '@angular/forms';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { SharedDataService } from '../core/services/shared-data.service';
 
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
-  imports: [CommonModule, FlexLayoutModule, MatCardModule, MatIconModule],
+  imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
+    MatTooltipModule
+  ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
 })
-export class ComputerDashboardComponent implements OnInit{
+export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   computerChartInstance!: Chart<'pie'>;
   securityData: SecurityReport = {
@@ -27,8 +32,11 @@ export class ComputerDashboardComponent implements OnInit{
   totalComputers: number = 0;
   vulnerableComputers: number = 0;
   computerDetails: ComputerDetails[] = [];
+  finalComputerDetails: ComputerDetails[] = [];
+  showVulnerableComputer: boolean = false;
+  @ViewChild('firstRow', {static: false}) firstRow: ElementRef<HTMLElement> | undefined;
 
-  constructor(private http: HttpClient) {};
+  constructor(private http: HttpClient, private sharedDataService: SharedDataService) {};
 
   ngOnInit(): void {
     this.http.get<any>(environments.unique_url).subscribe({
@@ -38,12 +46,33 @@ export class ComputerDashboardComponent implements OnInit{
         this.totalComputers = this.securityData.totalComputers || 0;
         this.vulnerableComputers = this.securityData.vulnerableComputers || 0;
         this.computerDetails = this.securityData.computerDetails || [];
+        this.finalComputerDetails = this.computerDetails;
+        this.sendAppData(this.computerDetails[0] || null);
         this.drawVulnBasedComputerChart();
       },
       error: (error) => {
         console.log(error);
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    console.log(this.firstRow?.nativeElement)
+    if(this.firstRow?.nativeElement) {
+      this.firstRow.nativeElement.style.height = `${window.innerHeight}px`
+      console.log(this.firstRow.nativeElement.style.height)
+    }
+  }
+
+  toggleVulnerableComputers() {
+    console.log(this.showVulnerableComputer)
+     if(this.showVulnerableComputer) {
+          this.finalComputerDetails = this.computerDetails.filter(computer => {
+                  return computer.vulnerableSoftwareCount > 0;
+          });
+     } else {
+          this.finalComputerDetails = this.computerDetails;
+     }
   }
 
   drawVulnBasedComputerChart(): void {
@@ -90,6 +119,12 @@ export class ComputerDashboardComponent implements OnInit{
         }
       }
     });
+  }
+
+  sendAppData(data: ComputerDetails | null): void {
+     const appData = {vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
+     console.log(appData)
+     this.sharedDataService.sendAppData(appData);
   }
 
 }

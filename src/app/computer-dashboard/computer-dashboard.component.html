@@ -2,7 +2,7 @@
 <div class="dashboard-container">
 
   <!-- First Row -->
-  <div class="dashboard-row">
+  <div #firstRow class="dashboard-row">
 
     <!-- Computer Section -->
     <mat-card class="section-card">
@@ -11,8 +11,8 @@
         <div class="section-item"> <h5>Total Computers </h5>
               <p class="text-center fs-5">{{totalComputers}}</p>
         </div>
-        <div class="section-item"><h5>Total Vulnerable Computers</h5>
-        <p>{{vulnerableComputers}}</p></div>
+        <div class="section-item"><h5 class="text-nowrap">Vulnerable Computers</h5>
+        <p class="fs-5">{{vulnerableComputers}}</p></div>
         
         <div class="section-item">  <!----chart-section------->
             <div class="chart">
@@ -23,8 +23,13 @@
 
       <div style="overflow: auto;"> <!------------computer-data-table------------>
              <div class="p-2">
+                  <div class="d-flex justify-content-between">
+                    <span class="text-black fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Total Computers'}}</span> 
+                  <div>
+                    <mat-slide-toggle [(ngModel)]="showVulnerableComputer" (click)="toggleVulnerableComputers()">Vulnerable</mat-slide-toggle>
+                  </div>
+                  </div>
                   <table class="w-100 table table-borderless table-hover table-white table-striped">
-                    <caption class="caption-top fnw-bold">Total Computers</caption>
                     <thead>
                       <tr>
                         <th>Ip Address</th>
@@ -37,14 +42,14 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let computer of computerDetails">
+                      <tr *ngFor="let computer of finalComputerDetails">
                       <td>{{computer.ipAddress}}</td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.osVersion}}</td>
                       <td>{{computer.antivirusStatus}}</td>
                       <td>{{computer.firewallStatus}}</td>
                       <td>{{computer.loggedInUser}}</td>
-                      <td><mat-icon class="material-symbols-outlined cursor-pointer">visibility</mat-icon></td>
+                      <td><mat-icon class="material-symbols-outlined cursor-pointer" (click)="sendAppData(computer)" matTooltip="View Applications">visibility</mat-icon></td>
                       </tr>
                     </tbody>
                   </table>
