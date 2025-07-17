@@ -11,12 +11,15 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
+import { MatSelectChange } from '@angular/material/select';
+import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
 
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-    MatTooltipModule
+    MatTooltipModule, MatLabel, MatOption, MatSelectModule
+
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
@@ -34,7 +37,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   computerDetails: ComputerDetails[] = [];
   finalComputerDetails: ComputerDetails[] = [];
   showVulnerableComputer: boolean = false;
-  @ViewChild('firstRow', {static: false}) firstRow: ElementRef<HTMLElement> | undefined;
+  pagedComputerData: ComputerDetails[] = [];
+  initialIndex:number = 0;
+  pageIndex:number = 0;
+  pageSize:number = 5;
+  currentPageSize:number = this.pageSize;
+  totalPages:number = 0;
+  pageSizes:Array<number> = [];
+  start:number = 0;
+  end:number = 0;
+  @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
+  @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
 
   constructor(private http: HttpClient, private sharedDataService: SharedDataService) {};
 
@@ -49,6 +62,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
         this.finalComputerDetails = this.computerDetails;
         this.sendAppData(this.computerDetails[0] || null);
         this.drawVulnBasedComputerChart();
+        this.updatePagedData(this.initialIndex);
       },
       error: (error) => {
         console.log(error);
@@ -57,21 +71,22 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   }
 
   ngAfterViewInit(): void {
-    console.log(this.firstRow?.nativeElement)
-    if(this.firstRow?.nativeElement) {
-      this.firstRow.nativeElement.style.height = `${window.innerHeight}px`
-      console.log(this.firstRow.nativeElement.style.height)
-    }
+    console.log(this.computerInfo?.nativeElement)
+    if(this.computerInfo?.nativeElement && this.compTableParent?.nativeElement) {
+      this.compTableParent.nativeElement.style.height = `${ window.innerHeight - this.computerInfo?.nativeElement.offsetHeight}px`
+      console.log(this.compTableParent.nativeElement.offsetHeight);
+    }  
   }
 
   toggleVulnerableComputers() {
-    console.log(this.showVulnerableComputer)
      if(this.showVulnerableComputer) {
           this.finalComputerDetails = this.computerDetails.filter(computer => {
                   return computer.vulnerableSoftwareCount > 0;
           });
+          this.updatePagedData(this.initialIndex);
      } else {
           this.finalComputerDetails = this.computerDetails;
+          this.updatePagedData(this.initialIndex);
      }
   }
 
@@ -126,5 +141,39 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
      console.log(appData)
      this.sharedDataService.sendAppData(appData);
   }
+
+  nextPage(): void {
+    if(this.pageIndex >= 0 && this.pageIndex < this.totalPages && this.pageIndex !== this.totalPages - 1) {
+    this.pageIndex++;
+    this.start = this.pageIndex * this.pageSize;
+    this.end = this.start + this.pageSize;
+    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+    }
+   }
+   previousPage(): void {
+    if(this.pageIndex > 0) {
+      this.pageIndex--;
+      this.start = this.pageIndex * this.pageSize;
+      this.end = this.start + this.pageSize;
+      this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+    }
+   }
+  
+   updatePagedData(initialIndex:number): void {
+    let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
+    this.totalPages = pages;
+    this.start = initialIndex * this.pageSize;
+    this.end = this.start + this.pageSize;
+    const len = this.finalComputerDetails.length;
+    this.pageSizes = len >= 100 ? [10, 25, 50, 100] : len <= 100 && len >= 50 ? [10, 25, 50] : 
+    len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
+    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+   }
+   onPageSizeChange(event: number): void {
+    console.log(event)
+   this.pageSize = event;
+   this.pageIndex = 0;
+   this.updatePagedData(this.pageIndex);
+   }
 
 }

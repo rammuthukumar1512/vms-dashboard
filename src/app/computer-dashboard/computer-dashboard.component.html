@@ -1,22 +1,22 @@
-<!-- Parent Container -->
-<div class="dashboard-container">
+<!-- parent container -->
+<div class="container-fluid bg-light">
 
-  <!-- First Row -->
-  <div #firstRow class="dashboard-row bg-light">
+  <!-- first row -->
+  <div class="row dash-height">
 
-    <!-- Computer Section -->
-    <mat-card class="section-card">
+    <!-- computer section -->
+    <div class="col-md-7">
 
-      <div class="section-row bg-dark"><!----first-row---->
+      <div #computerInfo class="row"><!----first-row---->
         
-        <div class="section-item">  <!----chart-section------->
+        <div class="col-md-6">  <!----chart-section------->
             <div class="chart">
               <canvas #computerChart></canvas>
             </div>
         </div> <!----chart-section-end------>
 
-         <div class="section-item d-flex align-items-center">
-          <table class="gen-info-table table table-borderless table-dark">
+         <div class="col-md-6 d-flex align-items-center">
+          <table class="gen-info-table table table-borderless table-light">
             <tbody>
               <tr>
                 <th>Total Computers :</th>
@@ -31,15 +31,16 @@
         </div>
       </div><!----first-row-end--->
 
-      <div style="overflow: auto;"> <!------------computer-data-table------------>
-             <div class="p-2">
-                  <div class="d-flex justify-content-between">
+      <div> <!------------computer-data-table------------>
+             <div>
+                  <div class="d-flex justify-content-between mt-3">
                     <span class="text-black fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Total Computers'}}</span> 
                   <div>
                     <mat-slide-toggle [(ngModel)]="showVulnerableComputer" (click)="toggleVulnerableComputers()">Vulnerable</mat-slide-toggle>
                   </div>
                   </div>
-                  <table class="comp-table">
+                  <div #compTableParent class="overflow-auto">
+                  <table class="comp-table table table-responsive table-light table-hover table-borderless mt-3 table-striped overflow-auto">
                     <thead>
                       <tr>
                         <th>Ip Address</th>
@@ -48,29 +49,58 @@
                         <th>Antivirus Status</th>
                         <th>Firewall Status</th>
                         <th>LoggedIn User</th>
-                        <th>Action</th>
+                        <!-- <th class="sticky-action-column bg-light">Action</th> -->
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let computer of finalComputerDetails">
+                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
                       <td>{{computer.ipAddress}}</td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.osVersion}}</td>
                       <td>{{computer.antivirusStatus}}</td>
                       <td>{{computer.firewallStatus}}</td>
                       <td>{{computer.loggedInUser}}</td>
-                      <td><mat-icon class="material-symbols-outlined cursor-pointer" (click)="sendAppData(computer)" matTooltip="View Applications">visibility</mat-icon></td>
+                      <!-- <td class="sticky-action-column bg-light"><mat-icon class="material-symbols-outlined cursor-pointer" (click)="sendAppData(computer)" matTooltip="View Applications">visibility</mat-icon></td> -->
                       </tr>
                     </tbody>
+                    <tfoot class="sticky-bottom">
+                      <tr>
+                        <td colspan="6">
+                           <div *ngIf="pagedComputerData.length > 0;" class="">
+                            <div class="d-flex justify-content-evenly align-items-center height-fit-content">
+                            <mat-label class="text-nowrap">Page Size</mat-label>
+                            <mat-select class="border rounded page-size-width p-2" (ngModelChange)="onPageSizeChange($event)" [(ngModel)]="pageSize">
+                              <mat-option *ngFor="let size of pageSizes" [value]="size">
+                                {{ size }}
+                              </mat-option>
+                            </mat-select>
+                            <span class="">{{start}} - {{end}} out of {{ finalComputerDetails.length }} computers </span>
+
+                            <button (click)="previousPage()" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2"> 
+                            <mat-icon class="material-symbols-outlined">
+                            arrow_back_ios
+                            </mat-icon>  
+                            </button>
+                            <button (click)="nextPage()" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2">
+                            <mat-icon class="material-symbols-outlined">
+                            arrow_forward_ios
+                            </mat-icon>
+                            </button>
+                            </div>
+                      </div>
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
+                  </div>
              </div>
         </div> <!------------computer-data-table-end----------->
-    </mat-card>
+    </div>
 
-    <!-- Application Section -->
-    <mat-card class="section-card">
-      <!-- Application Content Here -->
-    </mat-card>
+    <!-- application section -->
+    <div class="col-md-5">
+        
+    </div>
 
   </div>
 
