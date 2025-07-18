@@ -4,7 +4,7 @@ import { ComputerDashboardComponent } from './computer-dashboard/computer-dashbo
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, ComputerDashboardComponent],
+  imports: [RouterOutlet, ComputerDashboardComponent, RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })

@@ -1,0 +1,36 @@
+<mat-sidenav-container class="sidenav-container" role="region" aria-label="Main application layout">
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    [opened]="true"
+    class="sidenav"
+    role="navigation"
+    aria-label="Main navigation menu"
+  >
+    <mat-toolbar role="banner" aria-label="Application header">
+      <img src="images/isteer.png" height="50px" alt="iSteer logo">
+    </mat-toolbar>
+    <mat-nav-list role="list">
+        
+
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="sidenav-content" role="main" aria-label="Main content">
+    <div class="d-flex flex-column">
+
+    <mat-toolbar role="toolbar" class="sticky-top" aria-label="Content toolbar">
+      <strong class="h2">Dashboard</strong>
+    </mat-toolbar>
+
+    <!----------------dashboard-section--------------------->
+    <div class="container-fluid content-area">
+    <router-outlet></router-outlet>
+    </div>
+    <!----------------dashboard-section-end-------------------->
+
+
+    </div>
+  
+  </mat-sidenav-content>
+</mat-sidenav-container>

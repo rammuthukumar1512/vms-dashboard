@@ -62,6 +62,11 @@
                       <!-- <td class="sticky-action-column bg-light"><mat-icon class="material-symbols-outlined cursor-pointer" (click)="sendAppData(computer)" matTooltip="View Applications">visibility</mat-icon></td> -->
                       </tr>
                     </tbody>
+                    <tbody *ngIf="!pagedComputerData.length;">
+                      <tr>
+                        <td colspan="6" class="text-center">No computer Data Found.</td>
+                      </tr>
+                    </tbody>
                     <tfoot class="sticky-bottom">
                       <tr>
                         <td colspan="6">
