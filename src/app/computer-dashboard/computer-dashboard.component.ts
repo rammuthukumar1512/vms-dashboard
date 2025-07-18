@@ -11,6 +11,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
+import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatSelectChange } from '@angular/material/select';
 import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
 import { catchError, Observable, pipe, Subject, take, takeUntil, throwError } from 'rxjs';
@@ -20,8 +21,7 @@ import { ToastService } from '../core/services/toast.service';
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-    MatTooltipModule, MatLabel, MatOption, MatSelectModule
-
+   MatTooltipModule,ApplicationDashboardComponent, MatLabel, MatOption, MatSelectModule
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
