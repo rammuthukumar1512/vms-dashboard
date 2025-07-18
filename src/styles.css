@@ -1,7 +1,21 @@
 /* You can add global styles to this file, and also import other style files */
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+body {
+  font-family: 'Inter', sans-serif;
+}
+body, button, input, textarea, mat-card, mat-toolbar {
+  font-family: 'Inter', 'Roboto', 'Arial', sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 400 !important;
+}
+
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+/* body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 .cursor-pointer {
     cursor: pointer;
 }
@@ -13,4 +27,7 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 .text-black {
     color: black;
+}
+.bg-theme {
+    background-color: rgb(235, 242, 243);
 }

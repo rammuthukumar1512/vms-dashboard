@@ -13,7 +13,7 @@
 }
 
 .section-card {
-  flex: 1 1 45%;
+  flex: 30%;
   padding: 8px;
 }
 
@@ -39,19 +39,32 @@
   border-radius: 12px;
   color: #47a2fc; 
 }
-.comp-table {
-  width: 100%;
+/* .comp-table {
+  width: 100% !important;
+  overflow-x: auto;
   table-layout: fixed;
 }
 .comp-table th,td {
-  padding: 4px 0;
-}
+  padding: 8px;
+} */
 .comp-table thead tr > th{
    text-wrap: nowrap;
-   background-color: #007bff !important;
 }
 .gen-info-table tbody tr > th{
    text-align: right;
+}
+.sticky-action-column {
+  position: sticky !important;
+  right: 0;
+  /* background-color: white; */
+  z-index: 1;
+}
+.dash-height{
+  min-height: 100vh;
+  max-height: fit-content;
+}
+.page-size-width {
+  width: 150px;
 }
 @media (max-width: 768px) {
   .section-card {

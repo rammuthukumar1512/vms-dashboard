@@ -1,22 +1,15 @@
-<!-- Parent Container -->
-<div class="dashboard-container">
+<!-- parent container -->
+<div class="container-fluid bg-white">
 
-  <!-- First Row -->
-  <div #firstRow class="dashboard-row bg-light">
+  <!-- first row -->
+  <div class="row dash-height">
 
-    <!-- Computer Section -->
-    <mat-card class="section-card">
-
-      <div class="section-row bg-dark"><!----first-row---->
-        
-        <div class="section-item">  <!----chart-section------->
-            <div class="chart">
-              <canvas #computerChart></canvas>
-            </div>
-        </div> <!----chart-section-end------>
-
-         <div class="section-item d-flex align-items-center">
-          <table class="gen-info-table table table-borderless table-dark">
+    <!-- computer section -->
+    <div class="col-md-6 p-4">
+      <div class="container-fluid">
+      <div #computerInfo class="row border border-1 bg-light rounded-3"><!----first-row---->
+         <div class="col-md-6 d-flex align-items-center">
+          <table class="gen-info-table w-75 table table-borderless table-white">
             <tbody>
               <tr>
                 <th>Total Computers :</th>
@@ -29,18 +22,25 @@
             </tbody>
           </table>
         </div>
-      </div><!----first-row-end--->
 
-      <div style="overflow: auto;"> <!------------computer-data-table------------>
-             <div class="p-2">
-                  <div class="d-flex justify-content-between">
+        <div class="col-md-6">  <!----chart-section------->
+            <div class="chart">
+              <canvas #computerChart></canvas>
+            </div>
+        </div> <!----chart-section-end------>
+      </div><!----first-row-end--->
+      </div>
+      <div> <!------------computer-data-table------------>
+             <div>
+                  <div class="d-flex justify-content-between mt-3">
                     <span class="text-black fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Total Computers'}}</span> 
-                  <div>
-                    <mat-slide-toggle [(ngModel)]="showVulnerableComputer" (click)="toggleVulnerableComputers()">Vulnerable</mat-slide-toggle>
+                  <div class="me-2">
+                    <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;&nbsp;</mat-slide-toggle>
                   </div>
                   </div>
-                  <table class="comp-table">
-                    <thead>
+                  <div #compTableParent class="overflow-auto mt-3">
+                  <table class="comp-table table table-responsive table-light table-hover table-bordered table-striped">
+                    <thead class="sticky-top">
                       <tr>
                         <th>Ip Address</th>
                         <th>Machine Name</th>
@@ -48,30 +48,61 @@
                         <th>Antivirus Status</th>
                         <th>Firewall Status</th>
                         <th>LoggedIn User</th>
-                        <th>Action</th>
+                        <!-- <th class="sticky-action-column bg-light">Action</th> -->
                       </tr>
                     </thead>
                     <tbody>
-                      <tr *ngFor="let computer of finalComputerDetails">
+                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
                       <td>{{computer.ipAddress}}</td>
                       <td>{{computer.machineName}}</td>
-                      <td>{{computer.osVersion}}</td>
+                      <td class="text-nowrap">{{computer.osVersion}}</td>
                       <td>{{computer.antivirusStatus}}</td>
                       <td>{{computer.firewallStatus}}</td>
                       <td>{{computer.loggedInUser}}</td>
-                      <td><mat-icon class="material-symbols-outlined cursor-pointer" (click)="sendAppData(computer)" matTooltip="View Applications">visibility</mat-icon></td>
+                      <!-- <td class="sticky-action-column bg-light"><mat-icon class="material-symbols-outlined cursor-pointer" (click)="sendAppData(computer)" matTooltip="View Applications">visibility</mat-icon></td> -->
                       </tr>
                     </tbody>
+                    <tfoot class="sticky-bottom">
+                      <tr>
+                        <td colspan="6">
+                           <div *ngIf="pagedComputerData.length > 0;" class="">
+                            <div class="d-flex justify-content-evenly align-items-center height-fit-content">
+                            <mat-label class="text-nowrap">Page Size</mat-label>
+                            <mat-select class="border rounded page-size-width p-2" (ngModelChange)="onPageSizeChange($event)" [(ngModel)]="pageSize">
+                              <mat-option *ngFor="let size of pageSizes" [value]="size">
+                                {{ size }}
+                              </mat-option>
+                            </mat-select>
+                            <span>{{start}} - {{end}} out of {{ finalComputerDetails.length }} computers </span>
+
+                            <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2 bg-secondary"> 
+                            <mat-icon class="material-symbols-outlined">
+                            arrow_back_ios
+                            </mat-icon>  
+                            </button>
+                            <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2 bg-secondary">
+                            <mat-icon class="material-symbols-outlined">
+                            arrow_forward_ios
+                            </mat-icon>
+                            </button>
+                            </div>
+                      </div>
+                        </td>
+                      </tr>
+                    </tfoot>
                   </table>
+                  </div>
              </div>
         </div> <!------------computer-data-table-end----------->
-    </mat-card>
+    </div>
+
 
     <!-- Application Section -->
     <mat-card class="section-card">
       <app-application-dashboard></app-application-dashboard>
       <!-- Application Content Here -->
     </mat-card>
+
 
   </div>
 
