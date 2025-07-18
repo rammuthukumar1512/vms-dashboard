@@ -10,9 +10,9 @@
     <mat-toolbar role="banner" aria-label="Application header">
       <img src="images/isteer.png" height="50px" alt="iSteer logo">
     </mat-toolbar>
-    <mat-nav-list role="list">
-        
-
+    <mat-nav-list role="list" class="d-flex flex-column align-items-center">
+        <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" class="text-dark" matTooltip="{{item.title}}">
+            <span class="material-symbols-outlined">{{item.icon}}</span></a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -24,7 +24,7 @@
     </mat-toolbar>
 
     <!----------------dashboard-section--------------------->
-    <div class="container-fluid content-area">
+    <div>
     <router-outlet></router-outlet>
     </div>
     <!----------------dashboard-section-end-------------------->

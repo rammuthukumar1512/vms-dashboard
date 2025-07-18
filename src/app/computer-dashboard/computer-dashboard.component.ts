@@ -28,7 +28,9 @@ import { ToastService } from '../core/services/toast.service';
 })
 export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
+  @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   computerChartInstance!: Chart<'doughnut'>;
+  severityChartInstance!: Chart<'bar'>;
   securityData: SecurityReport = {
     totalComputers: 0,
     vulnerableComputers: 0,
@@ -38,13 +40,16 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   vulnerableComputers: number = 0;
   computerDetails: ComputerDetails[] = [];
   finalComputerDetails: ComputerDetails[] = [];
+  vulnerableComputersDetails: ComputerDetails[] = [];
   showVulnerableComputer: boolean = false;
   pagedComputerData: ComputerDetails[] = [];
-  initialIndex:number = 0;
-  pageIndex:number = 0;
+  initialIndex: number = 0;
+  pageIndex: number = 0;
+  recordIndex: number = 1;
   pageSize:number = 5;
   currentPageSize:number = this.pageSize;
-  totalPages:number = 0;
+  totalPages: number = 0;
+  totalRecords: number[] = [];
   pageSizes:Array<number> = [];
   start:number = 0;
   end:number = 0;
@@ -80,10 +85,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
     this.computerDetails = this.securityData.computerDetails ?? [];
     this.finalComputerDetails = this.computerDetails;
-    this.toastService.showSuccess('Data fetched successfully');
+    this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     this.sendAppData(this.computerDetails[0] ?? null);
     this.drawVulnBasedComputerChart();
+    this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
+    this.toastService.showSuccess('Data fetched successfully');
   }
 
   private handleErrorResponse(error: any): void {
@@ -119,6 +126,87 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
      }
   }
 
+  public drawSeverityBasedComputerChart() {
+     const criticalVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.criticalVulnerabilityCount ,0);
+     const highVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.highVulnerabilityCount ,0);
+     const mediumVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.mediumVulnerabilityCount ,0);
+     const lowVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.lowVulnerabilityCount ,0);
+
+     if (!this.severityChart?.nativeElement) return;
+      const ctx = this.severityChart.nativeElement.getContext('2d');
+      if (!ctx) return;
+      if (this.severityChartInstance) {
+        this.severityChartInstance.destroy();
+      }
+
+  this.severityChartInstance = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Critical', 'High', 'Medium', 'Low'],
+      datasets: [{
+        label: 'Computer Count',
+        data: [criticalVulnerableComputers, highVulnerableComputers, mediumVulnerableComputers, lowVulnerableComputers],
+        backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],   
+        borderColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],    
+        borderWidth: 0,
+        borderRadius: 3,
+        barPercentage: 0.9,
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: {
+          display: false
+          },
+          title: {
+            display: true,
+            text: 'Count'
+          }
+        },
+        x: {
+          grid: {           
+           display: false
+          },
+          title: {
+            display: true,
+            text: 'Severity Type'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function (context) {
+              return `${context.label}: ${context.parsed.y} computers`;
+            }
+          }
+        },
+         datalabels: {
+         color: 'white',      
+         anchor: 'center',       
+         align: 'center',
+         font: {
+            weight: 'bold',
+            size: 12
+          },
+          formatter: function (value) {
+            return value;        
+          }
+        }
+      },
+      
+    }
+  });
+
+  }
+
   public drawVulnBasedComputerChart(): void {
     if (!this.computerChart?.nativeElement) return;
 
@@ -146,7 +234,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        cutout: '70%',
+        cutout: '50%',
         plugins: {
           legend: {
             display: true,
@@ -185,6 +273,14 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
      this.sharedDataService.sendAppData(appData);
   }
 
+  public getPage(page: number): void {
+    console.log(page)
+    this.recordIndex = page - 1;
+    this.start = this.recordIndex * this.pageSize;
+    this.end = this.start + this.pageSize;
+    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+  }
+
   public nextPage(): void {
     if(this.pageIndex >= 0 && this.pageIndex < this.totalPages && this.pageIndex !== this.totalPages - 1) {
     this.pageIndex++;
@@ -205,6 +301,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   public updatePagedData(initialIndex:number): void {
     let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
     this.totalPages = pages;
+    this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
     this.start = initialIndex * this.pageSize;
     this.end = this.start + this.pageSize;
     const len = this.finalComputerDetails.length;
@@ -212,7 +309,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
    }
-   
+
   public onPageSizeChange(event: number): void {
     console.log(event)
    this.pageSize = event;

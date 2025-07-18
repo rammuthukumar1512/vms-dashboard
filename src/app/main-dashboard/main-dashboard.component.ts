@@ -5,14 +5,16 @@ import { RouterOutlet } from '@angular/router';
 import { MatNavList } from '@angular/material/list';
 import { MatSidenavModule} from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
+import { RouterLink } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
   selector: 'app-main-dashboard',
   imports: [CommonModule, MatIconModule, MatSidenavModule, MatToolbar, MatNavList,
-          RouterOutlet],
+          RouterOutlet, RouterLink, MatTooltipModule],
   templateUrl: './main-dashboard.component.html',
   styleUrl: './main-dashboard.component.css'
 })
 export class MainDashboardComponent {
-         
+     sideMenuItems = [ {title: 'Computer Overview', icon: 'dashboard', link: '/computer-overview'}]
 }
