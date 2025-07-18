@@ -59,11 +59,9 @@
   /* background-color: white; */
   z-index: 1;
 }
-.bg-theme {
-  background-color: rgb(39, 39, 252);
-}
 .dash-height{
-  height: 100vh;
+  min-height: 100vh;
+  max-height: fit-content;
 }
 .page-size-width {
   width: 150px;

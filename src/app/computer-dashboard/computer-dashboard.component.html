@@ -1,22 +1,15 @@
 <!-- parent container -->
-<div class="container-fluid bg-light">
+<div class="container-fluid bg-white">
 
   <!-- first row -->
   <div class="row dash-height">
 
     <!-- computer section -->
-    <div class="col-md-7">
-
-      <div #computerInfo class="row"><!----first-row---->
-        
-        <div class="col-md-6">  <!----chart-section------->
-            <div class="chart">
-              <canvas #computerChart></canvas>
-            </div>
-        </div> <!----chart-section-end------>
-
+    <div class="col-md-6 p-4">
+      <div class="container-fluid">
+      <div #computerInfo class="row border border-1 bg-light rounded-3"><!----first-row---->
          <div class="col-md-6 d-flex align-items-center">
-          <table class="gen-info-table table table-borderless table-light">
+          <table class="gen-info-table w-75 table table-borderless table-white">
             <tbody>
               <tr>
                 <th>Total Computers :</th>
@@ -29,19 +22,25 @@
             </tbody>
           </table>
         </div>
-      </div><!----first-row-end--->
 
+        <div class="col-md-6">  <!----chart-section------->
+            <div class="chart">
+              <canvas #computerChart></canvas>
+            </div>
+        </div> <!----chart-section-end------>
+      </div><!----first-row-end--->
+      </div>
       <div> <!------------computer-data-table------------>
              <div>
                   <div class="d-flex justify-content-between mt-3">
                     <span class="text-black fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Total Computers'}}</span> 
-                  <div>
-                    <mat-slide-toggle [(ngModel)]="showVulnerableComputer" (click)="toggleVulnerableComputers()">Vulnerable</mat-slide-toggle>
+                  <div class="me-2">
+                    <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;&nbsp;</mat-slide-toggle>
                   </div>
                   </div>
-                  <div #compTableParent class="overflow-auto">
-                  <table class="comp-table table table-responsive table-light table-hover table-borderless mt-3 table-striped overflow-auto">
-                    <thead>
+                  <div #compTableParent class="overflow-auto mt-3">
+                  <table class="comp-table table table-responsive table-light table-hover table-bordered table-striped">
+                    <thead class="sticky-top">
                       <tr>
                         <th>Ip Address</th>
                         <th>Machine Name</th>
@@ -56,7 +55,7 @@
                       <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
                       <td>{{computer.ipAddress}}</td>
                       <td>{{computer.machineName}}</td>
-                      <td>{{computer.osVersion}}</td>
+                      <td class="text-nowrap">{{computer.osVersion}}</td>
                       <td>{{computer.antivirusStatus}}</td>
                       <td>{{computer.firewallStatus}}</td>
                       <td>{{computer.loggedInUser}}</td>
@@ -74,14 +73,14 @@
                                 {{ size }}
                               </mat-option>
                             </mat-select>
-                            <span class="">{{start}} - {{end}} out of {{ finalComputerDetails.length }} computers </span>
+                            <span>{{start}} - {{end}} out of {{ finalComputerDetails.length }} computers </span>
 
-                            <button (click)="previousPage()" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2"> 
+                            <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2 bg-secondary"> 
                             <mat-icon class="material-symbols-outlined">
                             arrow_back_ios
                             </mat-icon>  
                             </button>
-                            <button (click)="nextPage()" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2">
+                            <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 rounded-circle shadow-sm p-2 bg-secondary">
                             <mat-icon class="material-symbols-outlined">
                             arrow_forward_ios
                             </mat-icon>
