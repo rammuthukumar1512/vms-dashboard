@@ -10,13 +10,17 @@
       <div #computerInfo class="row border border-1 bg-light rounded-3"><!----first-row---->
         <div class="container-fluid">
          <div class="row align-items-center pt-3">
-              <div class="col-6">
+              <div class="col-6 d-flex justify-content-center">
+                <div class="col-8 rounded border border-1 py-2">
                 <p class="text-center" style="opacity: 0.9;">Total Computers</p>
                 <p class="text-center h1">{{totalComputers}}</p>
+                </div>
               </div>
-              <div class="col-6">
+              <div class="col-6 d-flex justify-content-center">
+                <div class="col-8 rounded border border-1 py-2">
                 <p class="text-center" style="opacity: 0.9;">Vulnerable Computers</p>
                 <p class="text-center h1">{{vulnerableComputers}}</p>
+                </div>
               </div>
         </div>
         </div>
@@ -42,13 +46,18 @@
       <div> <!------------computer-data-table------------>
               <div>
                   <div class="d-flex justify-content-between mt-3">
-                    <span class="text-black fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Total Computers'}}</span> 
+                    <span class="text-black fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Computers'}}</span> 
                   <div class="me-2">
                     <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;&nbsp;</mat-slide-toggle>
                   </div>
                   </div>
                   <div #compTableParent class="overflow-auto mt-3 p-2 rounded-3 border border-1 bg-light">
-                  <table class="comp-table table table-responsive table-light table-hover table-borderless table-striped">
+                  <table class="comp-table">
+                    <caption class="caption-top">
+                      <span class="float-end">
+                      <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
+                      </span>
+                    </caption>
                     <thead class="sticky-top">
                       <tr>
                         <th class="col-4 text-secondary">Ip Address</th>
@@ -57,7 +66,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
+                      <tr class="cursor-pointer alert" [ngClass]="{'alert-danger': computer.vulnerableSoftwareCount}" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
                       <td class="text-secondary">{{computer.ipAddress}}</td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>
@@ -76,11 +85,11 @@
                       </tr>
                     </tfoot> -->
                   </table>
-                  <div *ngIf="pagedComputerData.length > 0;" class="">
-                            <div class="d-flex justify-content-evenly align-items-center height-fit-content">
+                  <div *ngIf="pagedComputerData.length > 0;" class="d-flex justify-content-end mt-2">
+                            <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content">
                             <mat-select class="border rounded page-size-width p-2" (ngModelChange)="getPage($event)" [(ngModel)]="recordIndex">
                              <mat-option *ngFor="let record of totalRecords" [value]="record">
-                                {{ record}}
+                                {{ record }}
                              </mat-option>
                             </mat-select>
                             <mat-select class="border rounded page-size-width p-2" (ngModelChange)="onPageSizeChange($event)" [(ngModel)]="pageSize">

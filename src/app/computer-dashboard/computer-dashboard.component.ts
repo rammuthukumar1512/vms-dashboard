@@ -16,7 +16,7 @@ import { MatSelectChange } from '@angular/material/select';
 import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
 import { catchError, Observable, pipe, Subject, take, takeUntil, throwError } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
-
+import { LoaderService } from '../core/services/loader.service';
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
@@ -57,7 +57,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
 
-  constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService) {};
+  constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService,
+    private loaderService: LoaderService
+  ) {};
 
   ngOnInit(): void {
     this.fetchSecurityData();
@@ -68,6 +70,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
     'Content-Type': 'application/json',
     'Accept': 'application/json'
     });
+    this.loaderService.show();
     this.http.get<any>(environments.unique_url, { headers })
       .pipe(
         takeUntil(this.destroy$)
@@ -91,10 +94,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
     this.toastService.showSuccess('Data fetched successfully');
+    this.loaderService.hide();
   }
 
   private handleErrorResponse(error: any): void {
     console.error('Error fetching security data:', error);
+    this.loaderService.hide();
     if (error.status === 0) {
       this.toastService.showError(
         'Unable to connect to the server. Please check your network or try again later.'
@@ -226,7 +231,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
         labels: ['Vulnerable', 'Non-Vulnerable'],
         datasets: [{
           data: [vulnerableCount, nonVulnerableCount],
-          backgroundColor: ['#66b3ff', '#3366ff'],
+          backgroundColor: ['#66b3ffea', '#3366ffe7'],
           borderColor: ['#ffffff', '#ffffff'],
           borderWidth: 1
         }]
@@ -276,6 +281,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   public getPage(page: number): void {
     console.log(page)
     this.recordIndex = page - 1;
+    this.pageIndex = this.recordIndex;
     this.start = this.recordIndex * this.pageSize;
     this.end = this.start + this.pageSize;
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
@@ -284,6 +290,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   public nextPage(): void {
     if(this.pageIndex >= 0 && this.pageIndex < this.totalPages && this.pageIndex !== this.totalPages - 1) {
     this.pageIndex++;
+    this.recordIndex = this.pageIndex + 1;
     this.start = this.pageIndex * this.pageSize;
     this.end = this.start + this.pageSize;
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
@@ -292,6 +299,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   public previousPage(): void {
     if(this.pageIndex > 0) {
       this.pageIndex--;
+      console.log(this.pageIndex)
+      this.recordIndex = this.pageIndex + 1;
       this.start = this.pageIndex * this.pageSize;
       this.end = this.start + this.pageSize;
       this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
@@ -316,5 +325,21 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
    this.pageIndex = 0;
    this.updatePagedData(this.pageIndex);
    }
+
+  public searchComputer(event: Event) {
+     let searchValue = (event.target as HTMLInputElement).value.toLocaleLowerCase();
+     if(searchValue === "") {
+         this.pageIndex = 0;
+         this.finalComputerDetails = this.computerDetails;
+         this.updatePagedData(this.initialIndex);
+     } else {
+      this.finalComputerDetails = this.computerDetails.filter(computer => {
+        return computer.ipAddress.includes(searchValue) || computer.machineName.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUser.toLocaleLowerCase().includes(searchValue)
+      });
+     }
+     console.log(this.pagedComputerData)
+     this.updatePagedData(this.initialIndex);
+  } 
 
 }

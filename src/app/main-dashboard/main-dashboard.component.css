@@ -4,3 +4,17 @@
 .sidenav{
     width: 5%;
 }
+.menu-item:hover{
+   background-color: #ddd !important;
+}
+.active-link {
+  background-color: #eee !important;
+  font-weight: bold;
+  border-right: 4px solid rgb(20, 136, 245);
+}
+.dash-heading-text {
+    color: #2899db;
+}
+.z-index-high {
+   z-index: 9999;
+}

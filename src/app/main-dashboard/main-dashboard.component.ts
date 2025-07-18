@@ -7,11 +7,12 @@ import { MatSidenavModule} from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
 import { RouterLink } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-main-dashboard',
   imports: [CommonModule, MatIconModule, MatSidenavModule, MatToolbar, MatNavList,
-          RouterOutlet, RouterLink, MatTooltipModule],
+          RouterOutlet, RouterLink, MatTooltipModule, RouterModule],
   templateUrl: './main-dashboard.component.html',
   styleUrl: './main-dashboard.component.css'
 })

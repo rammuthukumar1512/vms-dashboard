@@ -10,17 +10,18 @@
     <mat-toolbar role="banner" aria-label="Application header">
       <img src="images/isteer.png" height="50px" alt="iSteer logo">
     </mat-toolbar>
-    <mat-nav-list role="list" class="d-flex flex-column align-items-center">
-        <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" class="text-dark" matTooltip="{{item.title}}">
-            <span class="material-symbols-outlined">{{item.icon}}</span></a>
+    <mat-nav-list role="list" class="d-flex flex-column align-items-center p-0">
+        <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" routerLinkActive="active-link"
+        [routerLinkActiveOptions]="{ exact: true }" class="container-fluid menu-item bg-white d-flex justify-content-center text-dark rounded-0 py-2 text-decoration-none" matTooltip="{{item.title}}">
+        <span class="material-symbols-outlined">{{item.icon}}</span></a>
     </mat-nav-list>
   </mat-sidenav>
 
   <mat-sidenav-content class="sidenav-content" role="main" aria-label="Main content">
     <div class="d-flex flex-column">
 
-    <mat-toolbar role="toolbar" class="sticky-top" aria-label="Content toolbar">
-      <strong class="h2">Dashboard</strong>
+    <mat-toolbar role="toolbar" class="sticky-top z-index-high" aria-label="Content toolbar">
+      <strong class="h4 text-center dash-heading-text">Vulnerability Monitoring System</strong>
     </mat-toolbar>
 
     <!----------------dashboard-section--------------------->

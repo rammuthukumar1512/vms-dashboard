@@ -39,16 +39,22 @@
   border-radius: 12px;
   color: #47a2fc; 
 }
-/* .comp-table {
+.comp-table {
   width: 100% !important;
   overflow-x: auto;
   table-layout: fixed;
 }
 .comp-table th,td {
   padding: 8px;
-} */
+}
 .comp-table thead tr > th{
    text-wrap: nowrap;
+}
+.comp-table tbody tr:nth-child(odd) {
+  background-color: #eee;
+}
+.alert-danger {
+  background-color: #fdd3e7 !important;
 }
 .gen-info-table tbody tr > th{
    text-align: right;
@@ -65,6 +71,9 @@
 }
 .page-size-width {
   width: 100px;
+}
+.comp-search-field {
+  outline: none;
 }
 @media (max-width: 768px) {
   .section-card {
