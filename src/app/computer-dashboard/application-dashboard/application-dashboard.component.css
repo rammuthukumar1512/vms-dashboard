@@ -1,0 +1,29 @@
+.comp-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.comp-table th,
+td {
+  padding: 4px 8px;
+}
+
+.comp-table thead tr > th {
+  text-wrap: nowrap;
+  background-color: #007bff !important;
+  color: white;
+}
+
+.comp-table td {
+  text-align: left;
+  word-break: break-word;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+h3 {
+  margin: 16px 0 8px;
+  color: #333;
+}
