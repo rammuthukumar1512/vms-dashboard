@@ -31,3 +31,10 @@ html, body { height: 100%; }
 .bg-theme {
     background-color: rgb(235, 242, 243);
 }
+
+::ng-deep .vuln-dialog-panel {
+  max-width: 90vw !important;
+  width: 90vw !important;
+  max-height: 90vh !important;
+  height: auto !important;
+}

@@ -1,29 +1,112 @@
+.chart {
+  height: 200px;
+  margin: auto;
+  padding: 8px;
+  border-radius: 12px;
+  color: #47a2fc;
+}
+
 .comp-table {
-  width: 100%;
+  width: 100% !important;
+  overflow-x: auto;
   table-layout: fixed;
 }
 
 .comp-table th,
 td {
-  padding: 4px 8px;
+  padding: 8px;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
 .comp-table thead tr > th {
   text-wrap: nowrap;
   background-color: #007bff !important;
   color: white;
+  font-weight: bold;
+  position: sticky;
+  top: 0;
+  z-index: 10;
 }
 
-.comp-table td {
-  text-align: left;
-  word-break: break-word;
+.comp-table tbody tr:nth-child(odd) {
+  background-color: #eee;
+}
+
+.comp-table tr {
+  background-color: #f5f5f5;
 }
 
 .cursor-pointer {
   cursor: pointer;
 }
 
-h3 {
-  margin: 16px 0 8px;
-  color: #333;
+.alert-danger {
+  background-color: #fdd3e7 !important;
 }
+
+.page-size-width {
+  width: 100px;
+}
+
+.comp-search-field {
+  outline: none;
+}
+
+.page-custom-btn {
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.page-custom-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.fw-bold {
+  font-weight: bold;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.fs-5 {
+  font-size: 1.25rem;
+}
+
+.text-black {
+  color: black;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+/* Common styling for all rows */
+.comp-table tr.mat-row {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  background-color: #c0c0c0;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Vulnerable rows: red border and background */
+.comp-table tr.vulnerable-row {
+  /* border: 1px solid #dc3545; Red border */
+  background-color: #fdd3e7; /* Light red bg */
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.3); /* Soft red shadow */
+  border: 1px 0px solid #f86db3;
+}
+
+.comp-table tr.vulnerable-row:hover {
+  background-color: #feb2d8; /* Darker red on hover */
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.5); /* Stronger shadow on hover */
+
+}
+
+.comp-table tr.normal-row:hover {
+  background-color: #dad7d7; /* Pale grey on hover */
+  cursor: pointer;
+}
+
+
