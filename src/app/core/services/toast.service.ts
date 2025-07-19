@@ -12,15 +12,8 @@ export class ToastService {
   };
 
   constructor(private snackBar: MatSnackBar) {};
-  showSuccess(message: string, config: MatSnackBarConfig = {}): void {
+  showToast(message: string, config: MatSnackBarConfig = {}): void {
     this.snackBar.open(message, 'OK', {
-      ...this.defaultConfig,
-      ...config
-    });
-  }
-  
-  showError(message: string, config: MatSnackBarConfig = {}): void {
-    this.snackBar.open(message, 'Close', {
       ...this.defaultConfig,
       ...config
     });

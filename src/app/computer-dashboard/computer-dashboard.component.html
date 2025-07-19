@@ -55,7 +55,7 @@
                   <table class="comp-table">
                     <caption class="caption-top">
                       <span class="float-end">
-                      <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
+                      <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
                       </span>
                     </caption>
                     <thead class="sticky-top">
@@ -66,8 +66,8 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="cursor-pointer alert" [ngClass]="{'alert-danger': computer.vulnerableSoftwareCount}" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
-                      <td class="text-secondary">{{computer.ipAddress}}</td>
+                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
+                      <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount">🐞</span></td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>
                       </tr>

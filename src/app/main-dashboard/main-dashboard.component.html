@@ -3,7 +3,10 @@
     #sidenav
     mode="side"
     [opened]="true"
+    mode="side"
+    [position]="sidenavPosition"
     class="sidenav"
+    [ngClass]="{ 'mini-sidenav': isMobile, }"
     role="navigation"
     aria-label="Main navigation menu"
   >
@@ -13,7 +16,7 @@
     <mat-nav-list role="list" class="d-flex flex-column align-items-center p-0">
         <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" routerLinkActive="active-link"
         [routerLinkActiveOptions]="{ exact: true }" class="container-fluid menu-item bg-white d-flex justify-content-center text-dark rounded-0 py-2 text-decoration-none" matTooltip="{{item.title}}">
-        <span class="material-symbols-outlined">{{item.icon}}</span></a>
+        <span class="material-symbols-outlined">{{item.icon}}</span> <span *ngIf="isMobile">{{item.title}}</span></a>
     </mat-nav-list>
   </mat-sidenav>
 
@@ -21,6 +24,7 @@
     <div class="d-flex flex-column">
 
     <mat-toolbar role="toolbar" class="sticky-top z-index-high" aria-label="Content toolbar">
+      <mat-icon *ngIf="isMobile" class="material-symbols-outlined me-2" (click)="toggleSidenavMode()">menu</mat-icon>
       <strong class="h4 text-center dash-heading-text">Vulnerability Monitoring System</strong>
     </mat-toolbar>
 

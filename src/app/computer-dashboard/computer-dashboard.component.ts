@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -12,11 +12,11 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
-import { MatSelectChange } from '@angular/material/select';
 import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
-import { catchError, Observable, pipe, Subject, take, takeUntil, throwError } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { LoaderService } from '../core/services/loader.service';
+import { MatSidenav } from '@angular/material/sidenav';
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
@@ -26,7 +26,7 @@ import { LoaderService } from '../core/services/loader.service';
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
 })
-export class ComputerDashboardComponent implements OnInit, AfterViewInit{
+export class ComputerDashboardComponent implements OnInit, OnDestroy{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   computerChartInstance!: Chart<'doughnut'>;
@@ -54,11 +54,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   start:number = 0;
   end:number = 0;
   private destroy$ = new Subject<void>();
+
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
 
-  constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService,
-    private loaderService: LoaderService
+  constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService
   ) {};
 
   ngOnInit(): void {
@@ -70,7 +70,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
     'Content-Type': 'application/json',
     'Accept': 'application/json'
     });
-    this.loaderService.show();
+
     this.http.get<any>(environments.unique_url, { headers })
       .pipe(
         takeUntil(this.destroy$)
@@ -93,29 +93,32 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
-    this.toastService.showSuccess('Data fetched successfully');
-    this.loaderService.hide();
+    this.toastService.showToast('Data fetched successfully');
   }
 
   private handleErrorResponse(error: any): void {
     console.error('Error fetching security data:', error);
-    this.loaderService.hide();
     if (error.status === 0) {
-      this.toastService.showError(
+      this.toastService.showToast(
         'Unable to connect to the server. Please check your network or try again later.'
       );
     } else {
-      this.toastService.showError(
+      this.toastService.showToast(
         'Error : Failed to fetch security data'
       );
     }
   }
 
-  ngAfterViewInit(): void {
-    // if(this.computerInfo?.nativeElement && this.compTableParent?.nativeElement) {
-    //   this.compTableParent.nativeElement.style.height = `${ window.innerHeight - this.computerInfo?.nativeElement.offsetHeight }px`
-    //   console.log(this.compTableParent.nativeElement.style.height);
-    // }  
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+
+    if (this.computerChartInstance) {
+       this.computerChartInstance.destroy();
+    }
+    if (this.severityChartInstance) {
+       this.severityChartInstance.destroy();
+    }
   }
 
   public toggleVulnerableComputers() {
@@ -322,7 +325,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit{
   public onPageSizeChange(event: number): void {
     console.log(event)
    this.pageSize = event;
+   let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
+   this.totalPages = pages;
+   this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
    this.pageIndex = 0;
+   this.recordIndex = this.pageIndex + 1;
    this.updatePagedData(this.pageIndex);
    }
 
