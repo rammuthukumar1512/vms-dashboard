@@ -161,6 +161,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
       },
       options: {
         responsive: true,
+        cutout: '50%',
         maintainAspectRatio: false,
         plugins: {
           legend: {
@@ -189,7 +190,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
             color: '#ffffff',
             font: {
               weight: 'bold',
-              size: 14
+              size: 10
             }
           }
         }
@@ -247,7 +248,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
             color: 'white',
             anchor: 'center',
             align: 'center',
-            font: { weight: 'bold', size: 12 },
+            font: { weight: 'bold', size: 10 },
             formatter: function (value) { return value; }
           }
         }
@@ -337,9 +338,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
   showVulnerabilities(app: ApplicationDetails): void {
     console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
     this.dialog.open(VulnerabilityDialogComponent, {
-      // width: '600px',
-      // maxHeight: '80vh',
-      panelClass: 'vuln-dialog-panel', // Custom class for styling (optional)
+      panelClass: 'vuln-dialog-panel', // Custom class for styling 
 
       data: {
         softwareName: app.softwareName,
@@ -422,261 +421,6 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
   `,
   styles: [
     `
-      // .comp-table {
-      //   width: 100%;
-      //   table-layout: fixed;
-      //   border-collapse: collapse;
-      // }
-      // .comp-table th,
-      // td {
-      //   padding: 8px;
-      //   font-family: Roboto, "Helvetica Neue", sans-serif;
-      // }
-      // .comp-table thead tr > th {
-      //   text-wrap: nowrap;
-      //   background-color: #007bff !important;
-      //   color: white;
-      //   font-weight: bold;
-      //   position: sticky;
-      //   top: 0;
-      //   z-index: 10;
-      // }
-      // .comp-table td {
-      //   text-align: left;
-      //   word-break: break-word;
-      // }
-      // .comp-table tbody tr:nth-child(odd) {
-      //   background-color: #eee;
-      // }
-      // .comp-table tr:hover {
-      //   background-color: #f5f5f5;
-      // }
-      // .mb-2 {
-      //   margin-bottom: 8px;
-      // }
-      // .gap-2 {
-      //   gap: 8px;
-      // }
-      // p {
-      //   text-align: center;
-      //   color: #666;
-      //   font-family: Roboto, "Helvetica Neue", sans-serif;
-      // }
-      // .severity-btn {
-      //   min-width: 80px;
-      //   line-height: 20px;
-      //   padding: 6px 8px;
-      //   font-size: 12px;
-      //   font-family: Roboto, "Helvetica Neue", sans-serif;
-      // }
-
-//       .severity-header {
-//   position: sticky;
-//   top: 0;
-//   z-index: 100;
-//   border-bottom: 1px solid #ccc;
-// }
-// .dialog-scroll {
-//   max-height: 400px;
-//   min-width: 800px;
-//   overflow-y: auto;
-// }
-
-// .severity-header {
-//   position: sticky;
-//   top: 0;
-//   z-index: 10;
-//   background-color: white;
-//   padding: 8px;
-//   border-bottom: 1px solid #ccc;
-// }
-// .dialog-scroll {
-//   max-height: 400px;
-//   min-width: 800px;
-//   overflow-y: auto;
-//   display: flex;
-//   flex-direction: column;
-// }
-
-// .severity-header {
-//   position: sticky;
-//   top: 0;
-//   z-index: 10;
-//   background-color: white;
-//   padding: 8px;
-//   border-bottom: 1px solid #ccc;
-// }
-
-// .comp-table {
-//   width: 100%;
-//   table-layout: fixed;
-//   border-collapse: collapse;
-// }
-// .comp-table th,
-// td {
-//   padding: 8px;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-// }
-// .comp-table thead tr > th {
-//   text-wrap: nowrap;
-//   background-color: #007bff !important;
-//   color: white;
-//   font-weight: bold;
-//   position: sticky;
-//   top: 56px; /* height of severity header (adjust if needed) */
-//   z-index: 9;
-// }
-
-// .dialog-scroll {
-//   max-height: 400px;
-//   min-width: 800px;
-//   overflow-y: auto;
-//   display: flex;
-//   flex-direction: column;
-//   position: relative;
-// }
-
-// /* Sticky severity header (buttons) */
-// .severity-header {
-//   position: sticky;
-//   top: 0;
-//   z-index: 20;
-//   background-color: white;
-//   padding-bottom: 8px;
-//   border-bottom: 1px solid #ccc;
-// }
-
-// /* Sticky table headers just below buttons */
-// .comp-table thead tr > th {
-//   background-color: #007bff !important;
-//   color: white;
-//   font-weight: bold;
-//   position: sticky;
-//   top: 56px; /* height of the severity buttons container */
-//   z-index: 10;
-// }
-
-// /* General table styling */
-// .comp-table {
-//   width: 100%;
-//   table-layout: fixed;
-//   border-collapse: collapse;
-// }
-// .comp-table th, .comp-table td {
-//   padding: 8px;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-// }
-// .comp-table tbody tr:nth-child(odd) {
-//   background-color: #eee;
-// }
-// .comp-table tr:hover {
-//   background-color: #f5f5f5;
-// }
-
-// .severity-btn {
-//   min-width: 80px;
-//   line-height: 20px;
-//   padding: 6px 8px;
-//   font-size: 12px;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-// }
-
-// p {
-//   text-align: center;
-//   color: #666;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-// }
-
-// .gap-2 {
-//   gap: 8px;
-// }
-// .dialog-scroll {
-//   max-height: 400px;
-//   overflow-y: auto;
-//   min-width: 800px;
-//   display: block;
-//   position: relative;
-// }
-
-// /* Sticky Buttons Container */
-// .severity-header {
-//   position: sticky;
-//   top: 0;
-//   z-index: 20;
-//   background-color: #fff;
-//   border-bottom: 1px solid #ccc;
-// }
-
-// /* Button Flex Layout */
-// .severity-buttons {
-//   display: flex;
-//   gap: 8px;
-//   padding: 8px;
-// }
-
-// /* Button Styling */
-// .severity-btn {
-//   flex: 1;
-//   font-size: 12px;
-//   padding: 6px 8px;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-// }
-
-// .severity-btn.critical {
-//   background-color: #F26419;
-//   color: white;
-// }
-// .severity-btn.high {
-//   background-color: #F6AE2D;
-//   color: black;
-// }
-// .severity-btn.medium {
-//   background-color: #86BBD8;
-//   color: black;
-// }
-// .severity-btn.low {
-//   background-color: #33658A;
-//   color: white;
-// }
-
-// /* Table Styling */
-// .comp-table {
-//   width: 100%;
-//   table-layout: fixed;
-//   border-collapse: collapse;
-// }
-// .comp-table th,
-// .comp-table td {
-//   padding: 8px;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-//   word-break: break-word;
-// }
-// .comp-table tbody tr:nth-child(odd) {
-//   background-color: #f9f9f9;
-// }
-// .comp-table tr:hover {
-//   background-color: #f1f1f1;
-// }
-
-// /* Sticky Table Headers */
-// .comp-table th {
-//   background-color: #007bff;
-//   color: white;
-//   font-weight: bold;
-//   position: sticky;
-//   top: 56px; /* height of sticky button section */
-//   z-index: 10;
-//   text-align: left;
-// }
-
-// /* Fallback message */
-// p {
-//   text-align: center;
-//   color: #888;
-//   padding: 16px;
-//   font-family: Roboto, "Helvetica Neue", sans-serif;
-// }
-
 .dialog-scroll {
   max-height: 400px;
   overflow-y: auto;
