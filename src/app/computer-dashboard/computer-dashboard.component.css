@@ -35,6 +35,7 @@
 .chart {
   height: 200px;
   margin: auto;
+  padding: 8px 0;
   border-radius: 12px;
   color: #47a2fc; 
 }
@@ -51,6 +52,9 @@
 }
 .comp-table tbody tr:nth-child(odd) {
   background-color: #eee;
+}
+.comp-table-active {
+  background-color: #aaa9a9 !important;
 }
 .alert-danger {
   background-color: #fdd3e7 !important;

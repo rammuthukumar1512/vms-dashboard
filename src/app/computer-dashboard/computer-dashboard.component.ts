@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil, timeout } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 
 @Component({
@@ -25,7 +25,7 @@ import { ToastService } from '../core/services/toast.service';
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
 })
-export class ComputerDashboardComponent implements OnInit, OnDestroy{
+export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDestroy{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   computerChartInstance!: Chart<'doughnut'>;
@@ -56,12 +56,19 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
 
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
+  @ViewChild('compTableContent') compTableContent: ElementRef<HTMLElement> | undefined;
 
   constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService
   ) {};
 
   ngOnInit(): void {
     this.fetchSecurityData();
+  }
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      this.compTableContent?.nativeElement.children[0].classList.add('comp-table-active');
+    }, 500);
+    
   }
 
   private fetchSecurityData(): void {
@@ -88,7 +95,7 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
     this.computerDetails = this.securityData.computerDetails ?? [];
     this.finalComputerDetails = this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
-    this.sendAppData(this.computerDetails[0] ?? null);
+    this.sendAppData(this.computerDetails[0] ?? null, 0);
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
@@ -97,6 +104,8 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
 
   private handleErrorResponse(error: any): void {
     console.error('Error fetching security data:', error);
+    this.drawVulnBasedComputerChart();
+    this.drawSeverityBasedComputerChart();
     if (error.status === 0) {
       this.toastService.showToast(
         'Unable to connect to the server. Please check your network or try again later.'
@@ -122,6 +131,7 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
 
   public toggleVulnerableComputers() {
      this.pageSize = 5;
+     this.pageIndex = 0;
      if(this.showVulnerableComputer) {
           this.finalComputerDetails = this.computerDetails.filter(computer => {
                   return computer.vulnerableSoftwareCount > 0;
@@ -230,17 +240,17 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
     if (this.computerChartInstance) {
       this.computerChartInstance.destroy();
     }
-
+    const isDataFetched = this.computerDetails.length;
     const vulnerableCount = this.vulnerableComputers;
     const nonVulnerableCount = this.totalComputers - vulnerableCount;
 
     this.computerChartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: ['Vulnerable', 'Non-Vulnerable'],
+        labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : ['No Data'],
         datasets: [{
-          data: [vulnerableCount, nonVulnerableCount],
-          backgroundColor: ['#66b3ffea', '#3366ffe7'],
+          data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1],
+          backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
           borderColor: ['#ffffff', '#ffffff'],
           borderWidth: 1
         }]
@@ -251,7 +261,7 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
         cutout: '50%',
         plugins: {
           legend: {
-            display: true,
+            display:isDataFetched ?  true : false,
             position: 'bottom'
           },
           tooltip: {
@@ -268,12 +278,13 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
           const data = context.chart.data.datasets[0].data as number[];
           const total = data.reduce((sum, val) => sum + val, 0);
           const percentage = total ? ((value / total) * 100).toFixed(0) : '0';
-          return percentage + '%';
+          if(isDataFetched) {return percentage + '%';}
+          else {return ''}
           },
           color: '#ffffff',
           font: {
             weight: 'bold',
-            size: 14
+            size: 12
           }
         }
         }
@@ -281,10 +292,25 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
     });
   }
 
-  public sendAppData(data: ComputerDetails | null): void {
-     const appData = {vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
+  public sendAppData(data: ComputerDetails | null, index: number): void {
+     const appData = { vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || [] };
      console.log(appData)
      this.sharedDataService.sendAppData(appData);
+     let comp_rows = this.compTableContent?.nativeElement.children;
+     const rows = comp_rows?.length;
+     console.log(comp_rows)
+     if (rows !== undefined) {
+       for(let i = 0; i < rows; i++){
+          if(comp_rows && i === index) {
+            comp_rows[index]?.classList.add('comp-table-active');
+          } else if (comp_rows) {
+            comp_rows[i].classList.remove('comp-table-active')
+          }
+          else {
+          }
+       }
+     }
+     
   }
 
   public getPage(page: number): void {

@@ -1,5 +1,5 @@
 <!-- parent container -->
-<div class="container-fluid bg-white">
+<div class="container-fluid bg-white ">
 
   <!-- first row -->
   <div class="row dash-height">
@@ -26,7 +26,7 @@
         </div>
 
         <div class="container-fluid mt-3">  <!----chart-section------->
-          <div class="row p-0">
+          <div class="row">
             <div class="col-md-6 p-0">
               <p class="fw-bold text-center">Vulnerable Overview</p>
             <div class="chart">
@@ -66,8 +66,8 @@
                         <th class="col-4 text-secondary">LoggedIn User</th>
                       </tr>
                     </thead>
-                    <tbody>
-                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
+                    <tbody #compTableContent>
+                      <tr class="cursor-pointer comp-row" [class]="'row'+i" *ngFor="let computer of pagedComputerData; let i = index" (click)="sendAppData(computer, i)">
                       <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount">🔴</span></td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>
