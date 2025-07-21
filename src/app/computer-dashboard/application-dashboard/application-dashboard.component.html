@@ -56,27 +56,23 @@
 <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
   <!-- Severity Filter Buttons start-->
   <div class="d-flex gap-4 flex-wrap">
-    <button class="btn btn-sm text-white"
-            [ngClass]="{ 'bg-danger': severityFilter === 'Critical', 'bg-opacity-75': severityFilter !== 'Critical' }"
-            style="background-color: #F26419;"
+    <button class="btn btn-outline-secondary btn-sm custom-critical"
+            [ngClass]="{'bg-opacity-75': severityFilter !== 'Critical' }"
             (click)="filterBySeverity('Critical')">
       Critical
     </button>
-    <button class="btn btn-sm text-black"
-            [ngClass]="{ 'bg-warning': severityFilter === 'High', 'bg-opacity-75': severityFilter !== 'High' }"
-            style="background-color: #F6AE2D;"
+    <button class="btn btn-outline-secondary btn-sm custom-high"
+            [ngClass]="{'bg-opacity-75': severityFilter !== 'High' }"
             (click)="filterBySeverity('High')">
       High
     </button>
-    <button class="btn btn-sm text-black"
-            [ngClass]="{ 'bg-info': severityFilter === 'Medium', 'bg-opacity-75': severityFilter !== 'Medium' }"
-            style="background-color: #86BBD8;"
+    <button class="btn btn-outline-secondary btn-sm custom-medium"
+            [ngClass]="{'bg-opacity-75': severityFilter !== 'Medium' }"
             (click)="filterBySeverity('Medium')">
       Medium
     </button>
-    <button class="btn btn-sm text-white"
-            [ngClass]="{ 'bg-primary': severityFilter === 'Low', 'bg-opacity-75': severityFilter !== 'Low' }"
-            style="background-color: #33658A;"
+    <button class="btn btn-outline-secondary btn-sm custom-low"
+            [ngClass]="{'bg-opacity-75': severityFilter !== 'Low' }"  
             (click)="filterBySeverity('Low')">
       Low
     </button>

@@ -15,7 +15,7 @@
 .comp-table th,
 td {
   padding: 8px;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  /* font-family: Roboto, "Helvetica Neue", sans-serif; */
 }
 
 .comp-table thead tr > th {
@@ -34,6 +34,34 @@ td {
 
 .comp-table tr {
   background-color: #f5f5f5;
+}
+
+/* Common styling for all rows */
+.comp-table tr.mat-row {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 8px;
+  background-color: #c0c0c0;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Vulnerable rows: red border and background */
+.comp-table tr.vulnerable-row {
+  /* border: 1px solid #dc3545; Red border */
+  background-color: #fdd3e7; /* Light red bg */
+  box-shadow: 0 0 5px rgba(220, 53, 69, 0.3); /* Soft red shadow */
+  border: 1px 0px solid #f86db3;
+}
+
+.comp-table tr.vulnerable-row:hover {
+  background-color: #feb2d8; /* Darker red on hover */
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.5); /* Stronger shadow on hover */
+
+}
+
+.comp-table tr.normal-row:hover {
+  background-color: #dad7d7; /* Pale grey on hover */
+  cursor: pointer;
 }
 
 .cursor-pointer {
@@ -67,46 +95,32 @@ td {
   text-align: center;
 }
 
-.fw-bold {
+/* .fw-bold {
   font-weight: bold;
   font-family: Roboto, "Helvetica Neue", sans-serif;
-}
+} */
 
 .fs-5 {
   font-size: 1.25rem;
 }
 
-.text-black {
-  color: black;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+/* Buttons for severity*/
+.custom-low:hover, .custom-low:focus {
+  background-color: #33658A !important;
+  color: white !important;
 }
 
-/* Common styling for all rows */
-.comp-table tr.mat-row {
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 8px;
-  background-color: #c0c0c0;
-  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+.custom-medium:hover, .custom-medium:focus {
+  background-color: #86BBD8 !important;
+  color: white !important;
 }
 
-/* Vulnerable rows: red border and background */
-.comp-table tr.vulnerable-row {
-  /* border: 1px solid #dc3545; Red border */
-  background-color: #fdd3e7; /* Light red bg */
-  box-shadow: 0 0 5px rgba(220, 53, 69, 0.3); /* Soft red shadow */
-  border: 1px 0px solid #f86db3;
+.custom-high:hover, .custom-high:focus {
+  background-color: #F6AE2D !important;
+  color: white !important;
 }
 
-.comp-table tr.vulnerable-row:hover {
-  background-color: #feb2d8; /* Darker red on hover */
-  box-shadow: 0 0 8px rgba(220, 53, 69, 0.5); /* Stronger shadow on hover */
-
+.custom-critical:hover, .custom-critical:focus {
+  background-color: #F26419 !important;
+  color: white !important;
 }
-
-.comp-table tr.normal-row:hover {
-  background-color: #dad7d7; /* Pale grey on hover */
-  cursor: pointer;
-}
-
-
