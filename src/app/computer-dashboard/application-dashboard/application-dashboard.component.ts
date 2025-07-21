@@ -39,7 +39,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 [x: string]: any;
   @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
-  appChartInstance: Chart<'pie'> | undefined;
+  appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
   appData: ApplicationDetails[] = [];
   vulnerableSoftwareCount: number = 0;
@@ -116,7 +116,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
 
     if (this.appData.length === 0) {
       this.appChartInstance = new Chart(ctx, {
-        type: 'pie',
+        type: 'doughnut',
         data: {
           labels: ['No Data'],
           datasets: [{
@@ -135,7 +135,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
             title: {
               display: true,
               text: 'No data found',
-              font: { size: 14, family: 'Roboto, "Helvetica Neue", sans-serif' },
+              // font: { size: 14, family: 'Roboto, "Helvetica Neue", sans-serif' },
               color: '#666'
             },
             datalabels: { display: false }
@@ -149,7 +149,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
     const nonVulnerableCount = this.appData.length - vulnerableCount;
 
     this.appChartInstance = new Chart(ctx, {
-      type: 'pie',
+      type: 'doughnut',
       data: {
         labels: ['Vulnerable', 'Non-Vulnerable'],
         datasets: [{
@@ -168,7 +168,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
             display: true,
             position: 'bottom',
             labels: {
-              font: { size: 14, family: 'Roboto, "Helvetica Neue", sans-serif' }
+              // font: { size: 14, family: 'Roboto, "Helvetica Neue", sans-serif' }
             }
           },
           tooltip: {
@@ -228,7 +228,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
           y: {
             beginAtZero: true,
             grid: { display: false },
-            title: { display: true, text: 'Count' }
+            title: { display: true, text: 'Vulnerability Count' }
           },
           x: {
             grid: { display: false },
@@ -502,3 +502,4 @@ export class VulnerabilityDialogComponent {
     @Inject(MAT_DIALOG_DATA) public data: { softwareName: string; vulnerabilities: Vulnerability[]; severityCounts: { critical: number; high: number; medium: number; low: number } }
   ) {}
 }
+
