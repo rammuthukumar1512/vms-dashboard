@@ -12,7 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
-import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
+import { MatOption, MatSelectModule } from '@angular/material/select';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 
@@ -20,7 +20,7 @@ import { ToastService } from '../core/services/toast.service';
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-   MatTooltipModule,ApplicationDashboardComponent, MatLabel, MatOption, MatSelectModule
+   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
@@ -178,7 +178,7 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
           },
           title: {
             display: true,
-            text: 'Count'
+            text: 'Application Count'
           }
         },
         x: {
