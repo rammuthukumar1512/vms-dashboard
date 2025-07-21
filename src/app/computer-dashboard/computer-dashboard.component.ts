@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -7,7 +7,7 @@ import { environments } from '../../environments/environments';
 import { SecurityReport, ComputerDetails } from '../models/computer.model';
 import { Chart } from 'chart.js';
 import { MatIconModule } from '@angular/material/icon';
-import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
@@ -15,8 +15,7 @@ import { ApplicationDashboardComponent } from './application-dashboard/applicati
 import { MatLabel, MatOption, MatSelectModule } from '@angular/material/select';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
-import { LoaderService } from '../core/services/loader.service';
-import { MatSidenav } from '@angular/material/sidenav';
+
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
@@ -135,10 +134,17 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
   }
 
   public drawSeverityBasedComputerChart() {
-     const criticalVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.criticalVulnerabilityCount ,0);
-     const highVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.highVulnerabilityCount ,0);
-     const mediumVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.mediumVulnerabilityCount ,0);
-     const lowVulnerableComputers = this.vulnerableComputersDetails.reduce((count, computer) => count + computer.lowVulnerabilityCount ,0);
+     let criticalVulnerableComputers = 0;
+     let highVulnerableComputers = 0;
+     let mediumVulnerableComputers = 0;
+     let lowVulnerableComputers = 0;
+
+     this.vulnerableComputersDetails.forEach(computer=> {
+       criticalVulnerableComputers += computer.criticalVulnerabilityCount;
+       highVulnerableComputers += computer.highVulnerabilityCount;
+       mediumVulnerableComputers += computer.mediumVulnerabilityCount;
+       lowVulnerableComputers += computer.lowVulnerabilityCount;
+     })
 
      if (!this.severityChart?.nativeElement) return;
       const ctx = this.severityChart.nativeElement.getContext('2d');

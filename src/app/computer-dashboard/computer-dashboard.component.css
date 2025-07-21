@@ -35,7 +35,6 @@
 .chart {
   height: 200px;
   margin: auto;
-  padding: 8px;
   border-radius: 12px;
   color: #47a2fc; 
 }
@@ -84,6 +83,9 @@
 .page-custom-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
+}
+.comp-table-parent {
+  max-height: 50vh;
 }
 @media (max-width: 768px) {
   .section-card {
