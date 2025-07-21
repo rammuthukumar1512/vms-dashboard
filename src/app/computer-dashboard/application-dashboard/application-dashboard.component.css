@@ -1,7 +1,7 @@
 .chart {
   height: 200px;
   margin: auto;
-  padding: 8px;
+  /* padding: 8px; */
   border-radius: 12px;
   color: #47a2fc;
 }
