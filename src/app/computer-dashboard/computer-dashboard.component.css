@@ -75,6 +75,16 @@
 .comp-search-field {
   outline: none;
 }
+.page-custom-btn {
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+}
+
+.page-custom-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
 @media (max-width: 768px) {
   .section-card {
     flex: 1 1 100%;

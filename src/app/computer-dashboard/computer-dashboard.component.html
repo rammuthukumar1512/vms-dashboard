@@ -27,18 +27,19 @@
 
         <div class="container-fluid mt-3">  <!----chart-section------->
           <div class="row">
-            <div class="col-md-6">
-              <p class="fw-bold text-center">Severity</p>
-              <div class="chart">
-                <canvas #severityChart></canvas>
-              </div>
-            </div>
             <div class="col-md-6 p-0">
               <p class="fw-bold text-center">Vulnerable Overview</p>
             <div class="chart">
               <canvas #computerChart></canvas>
             </div>
             </div>
+            <div class="col-md-6">
+              <p class="fw-bold text-center">Severity</p>
+              <div class="chart">
+                <canvas #severityChart></canvas>
+              </div>
+            </div>
+      
           </div>
         </div> <!----chart-section-end------>
       </div><!----first-row-end--->
@@ -67,7 +68,7 @@
                     </thead>
                     <tbody>
                       <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData" (click)="sendAppData(computer)">
-                      <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount">🐞</span></td>
+                      <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount">🔴</span></td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>
                       </tr>
@@ -99,12 +100,12 @@
                             </mat-select>
 
                             <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2"> 
-                            <mat-icon class="material-symbols-outlined fs-5">
+                            <mat-icon class="material-symbols-outlined fs-5 text-white">
                             arrow_back_ios
                             </mat-icon>  
                             </button>
                             <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
-                            <mat-icon class="material-symbols-outlined fs-5">
+                            <mat-icon class="material-symbols-outlined fs-5 text-white">
                             arrow_forward_ios
                             </mat-icon>
                             </button>
