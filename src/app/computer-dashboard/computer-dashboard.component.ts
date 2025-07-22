@@ -292,8 +292,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
     });
   }
 
-  public sendAppData(data: ComputerDetails | null, index: number): void {
-     const appData = { vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || [] };
+
+  public sendAppData(data: ComputerDetails | null): void {
+     const appData = { machineName: data?.machineName || 'Unknown', // Include machineName
+vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
      this.sharedDataService.sendAppData(appData);
      let comp_rows = this.compTableContent?.nativeElement.children;

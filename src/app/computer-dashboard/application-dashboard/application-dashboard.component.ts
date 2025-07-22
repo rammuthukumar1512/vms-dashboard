@@ -5,7 +5,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 // import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { SharedDataService } from '../../core/services/shared-data.service';
-import { ApplicationDetails, Vulnerability } from '../../models/computer.model';
+import { ApplicationDetails, ComputerDetails, Vulnerability } from '../../models/computer.model';
 import { Chart, PieController, ArcElement, Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { Inject } from '@angular/core';
@@ -43,6 +43,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   severityChartInstance: Chart<'bar'> | undefined;
   appData: ApplicationDetails[] = [];
   vulnerableSoftwareCount: number = 0;
+  machineName: string = 'Unknown';
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor', 'vulnerabilityCount'];
   severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
   severityCounts = {
@@ -73,10 +74,12 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
           return bVulns - aVulns; // Sort descending
         });
         this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
+        this.machineName = data.machineName || 'Unknown'; // Update machineName
         this.calculateSeverityCounts();
       } else {
         this.appData = [];
         this.vulnerableSoftwareCount = 0;
+        this.machineName = data?.machineName || 'Unknown'; // Update machineName
         this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
       }
       this.updatePagedData(this.initialIndex);
@@ -104,6 +107,17 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
       this.severityCounts.low += app.lowVulnerabilityCount;
     });
   }
+
+ // In computer-dashboard.component.ts
+public sendAppData(data: ComputerDetails | null): void {
+  const appData = {
+    machineName: data?.machineName || 'Unknown', // Include machineName
+    vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
+    appData: data?.applicationDetails || []
+  };
+  console.log('Sending appData:', appData);
+  this.sharedDataService.sendAppData(appData);
+}
 
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) return;
@@ -359,32 +373,39 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
   standalone: true,
   imports: [CommonModule, MatDialogModule, MatButtonModule, MatTableModule, MatCardModule],
   template: `
-<h2 mat-dialog-title>Vulnerabilities for {{ data.softwareName }}</h2>
-
 <mat-dialog-content class="dialog-scroll">
-  <!-- Sticky Buttons -->
+
+  <!-- Sticky Header + Buttons -->
   <div class="severity-header">
+    <div class="d-flex justify-content-between align-items-center px-2 pt-2">
+      <h2 class="m-0">Vulnerabilities for <span class = "vuln-software"> " {{ data.softwareName }} "</span></h2>
+      <button mat-button mat-dialog-close>Close</button>
+    </div>
+
     <div class="severity-buttons">
-      <button mat-raised-button class="severity-btn critical">
-        Critical: {{ data.severityCounts.critical }}
-      </button>
-      <button mat-raised-button class="severity-btn high">
-        High: {{ data.severityCounts.high }}
-      </button>
-      <button mat-raised-button class="severity-btn medium">
-        Medium: {{ data.severityCounts.medium }}
-      </button>
-      <button mat-raised-button class="severity-btn low">
-        Low: {{ data.severityCounts.low }}
-      </button>
+       <button mat-raised-button class="severity-btn critical" (click)="filterVulnerabilities('Critical')">
+            Critical: {{ data.severityCounts.critical }}
+          </button>
+          <button mat-raised-button class="severity-btn high" (click)="filterVulnerabilities('High')">
+            High: {{ data.severityCounts.high }}
+          </button>
+          <button mat-raised-button class="severity-btn medium" (click)="filterVulnerabilities('Medium')">
+            Medium: {{ data.severityCounts.medium }}
+          </button>
+          <button mat-raised-button class="severity-btn low" (click)="filterVulnerabilities('Low')">
+            Low: {{ data.severityCounts.low }}
+          </button>
+          <button mat-raised-button class="severity-btn all" (click)="filterVulnerabilities(null)">
+            All
+          </button>
     </div>
   </div>
 
-  <!-- Table -->
-  <ng-container *ngIf="data.vulnerabilities.length; else noVulnerabilities">
-    <table mat-table [dataSource]="data.vulnerabilities" class="comp-table">
+  <!-- Vulnerabilities Table -->
+   <ng-container *ngIf="filteredVulnerabilities.length; else noVulnerabilities">
+        <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table">
       <ng-container matColumnDef="cveId">
-        <th  mat-header-cell *matHeaderCellDef>CVE ID</th>
+        <th mat-header-cell *matHeaderCellDef>CVE ID</th>
         <td mat-cell *matCellDef="let vuln">{{ vuln.cveId }}</td>
       </ng-container>
 
@@ -393,43 +414,50 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
         <td mat-cell *matCellDef="let vuln">{{ vuln.description }}</td>
       </ng-container>
 
-      <ng-container matColumnDef="severity">
-        <th class = "text-center" mat-header-cell *matHeaderCellDef>Severity</th>
-        <td class = "text-center" mat-cell *matCellDef="let vuln">{{ vuln.severity }}</td>
-      </ng-container>
+      <!-- <ng-container matColumnDef="severity">
+        <th class="text-center" mat-header-cell *matHeaderCellDef>Severity</th>
+        <td class="text-center" mat-cell *matCellDef="let vuln">{{ vuln.severity }}</td>
+      </ng-container> -->
+
+   <ng-container matColumnDef="severity">
+  <th class="text-center" mat-header-cell *matHeaderCellDef>Severity</th>
+  <td class="text-center" mat-cell *matCellDef="let vuln">
+    <span [ngClass]="{
+      'severity-critical': vuln.severity.toLowerCase() === 'critical',
+      'severity-high': vuln.severity.toLowerCase() === 'high',
+      'severity-medium': vuln.severity.toLowerCase() === 'medium',
+      'severity-low': vuln.severity.toLowerCase() === 'low'
+    }">{{ vuln.severity }}</span>
+  </td>
+</ng-container>
 
       <ng-container matColumnDef="cvssScore">
-        <th class = "text-center" mat-header-cell *matHeaderCellDef>CVSS Score</th>
-        <td class = "text-center" mat-cell *matCellDef="let vuln">{{ vuln.cvssScore }}</td>
+        <th class="text-center" mat-header-cell *matHeaderCellDef>CVSS Score</th>
+        <td class="text-center" mat-cell *matCellDef="let vuln">{{ vuln.cvssScore }}</td>
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns"></tr>
+      <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns" class=""></tr>
       <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr>
     </table>
+    
   </ng-container>
 
   <ng-template #noVulnerabilities>
     <p>No vulnerabilities found</p>
   </ng-template>
 </mat-dialog-content>
-
-<mat-dialog-actions>
-  <button mat-button mat-dialog-close>Close</button>
-</mat-dialog-actions>
-
-
   `,
-  styles: [
-    `
+  styles: [`
 .dialog-scroll {
-  max-height: 400px;
+  max-height: 500px;
   overflow-y: auto;
   min-width: 800px;
   display: block;
   position: relative;
+  padding: 0;
 }
 
-/* Sticky Buttons at top */
+/* Sticky Header + Buttons */
 .severity-header {
   position: sticky;
   top: 0;
@@ -438,23 +466,37 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
   border-bottom: 1px solid #ccc;
 }
 
+/* Top header layout */
+.severity-header > .d-flex {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* Severity Buttons */
 .severity-buttons {
   display: flex;
   gap: 8px;
-  padding: 8px;
+  padding: 8px 12px;
 }
 
-/* Buttons */
 .severity-btn {
   flex: 1;
   font-size: 12px;
   padding: 6px 8px;
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
-.severity-btn.critical { background-color: #F26419; color: white; }
-.severity-btn.high { background-color: #F6AE2D; color: black; }
-.severity-btn.medium { background-color: #86BBD8; color: black; }
-.severity-btn.low { background-color: #33658A; color: white; }
+.severity-btn.critical  { background-color: #F26419; color: white; }
+.severity-btn.high    { background-color: #F6AE2D; color: black; }
+.severity-btn.medium  { background-color: #86BBD8; color: black; }
+.severity-btn.low     { background-color: #33658A; color: white; }
+
+// .severity-btn.critical :hover, .severity-btn.critical:focus { background-color: #F26419; color: white; }
+// .severity-btn.high    :hover, .severity-btn.high:focus { background-color: #F6AE2D; color: black; }
+// .severity-btn.medium  :hover, .severity-btn.medium:focus { background-color: #86BBD8; color: black; }
+// .severity-btn.low     :hover, .severity-btn.low:focus { background-color: #33658A; color: white; }
+.vuln-software{
+  color: #F26419;
+}
 
 /* Table styling */
 .comp-table {
@@ -480,7 +522,7 @@ this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) 
   color: black;
   font-weight: bold;
   position: sticky;
-  top: 53px; /* Height of sticky buttons section */
+  top: 109.5px; /* height of header (40px) + buttons (52px) */
   z-index: 5;
   text-align: left;
 }
@@ -491,15 +533,55 @@ p {
   color: #888;
   padding: 16px;
 }
-
-    `
-  ]
+.severity-critical {
+  background-color: #F26419;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.severity-high {
+  background-color: #F6AE2D;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.severity-medium {
+  background-color: #86BBD8;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+.severity-low {
+  background-color: #33658A;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+  `]
 })
 export class VulnerabilityDialogComponent {
   vulnDisplayedColumns: string[] = ['cveId', 'description', 'severity', 'cvssScore'];
+    filteredVulnerabilities: Vulnerability[] = [];
+      selectedSeverity: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<VulnerabilityDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { softwareName: string; vulnerabilities: Vulnerability[]; severityCounts: { critical: number; high: number; medium: number; low: number } }
-  ) {}
+  ) {
+    this.filteredVulnerabilities = this.data.vulnerabilities; // Initialize with all vulnerabilities
+  }
+
+  
+  filterVulnerabilities(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
+    this.selectedSeverity = severity;
+    if (!severity) {
+      this.filteredVulnerabilities = this.data.vulnerabilities;
+    } else {
+      this.filteredVulnerabilities = this.data.vulnerabilities.filter(vuln =>
+        vuln.severity.toLowerCase() === severity.toLowerCase()
+      );
+    }
+    console.log('Filtered vulnerabilities:', this.filteredVulnerabilities); // Debug log
+  }
 }
 
