@@ -350,7 +350,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
     this.start = initialIndex * this.pageSize;
     this.end = this.start + this.pageSize;
     const len = this.finalComputerDetails.length;
-    this.pageSizes = len >= 100 ? [10, 25, 50, 100] : len <= 100 && len >= 50 ? [10, 25, 50] : 
+    this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
    }
