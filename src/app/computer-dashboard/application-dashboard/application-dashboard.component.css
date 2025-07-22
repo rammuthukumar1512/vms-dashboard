@@ -1,7 +1,7 @@
 .chart {
   height: 200px;
   margin: auto;
-  padding: 8px;
+  /* padding: 8px; */
   border-radius: 12px;
   color: #47a2fc;
 }
@@ -103,6 +103,18 @@ td {
 .fs-5 {
   font-size: 1.25rem;
 }
+
+.machine{
+  color: rgb(245, 114, 104);
+}
+
+/* .machine-name{ */
+   /* max-width: 60%; Limit width to prevent overlap with "Applications" */
+  /* white-space: nowrap; Prevent text wrapping */
+  /* overflow: hidden; Hide overflow text */
+  /* text-overflow: ellipsis; Add ellipsis (...) for long names */
+  /* padding-left: 1rem; Additional spacing from the left */
+/* } */
 
 /* Buttons for severity*/
 .custom-low:hover, .custom-low:focus {

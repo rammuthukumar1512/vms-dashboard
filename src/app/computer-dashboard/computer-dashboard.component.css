@@ -42,7 +42,7 @@
 .comp-table {
   width: 100% !important;
   overflow-x: auto;
-  table-layout: fixed;
+  /* table-layout: fixed; */
 }
 .comp-table th,td {
   padding: 8px;
