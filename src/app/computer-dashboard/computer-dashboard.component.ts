@@ -282,7 +282,8 @@ export class ComputerDashboardComponent implements OnInit, OnDestroy{
   }
 
   public sendAppData(data: ComputerDetails | null): void {
-     const appData = {vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
+     const appData = { machineName: data?.machineName || 'Unknown', // Include machineName
+vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
      this.sharedDataService.sendAppData(appData);
   }
