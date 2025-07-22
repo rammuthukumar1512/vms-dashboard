@@ -54,7 +54,8 @@
   background-color: #eee;
 }
 .comp-table-active {
-  background-color: #aaa9a9 !important;
+  /* background-color: #aaa9a9 !important; */
+  border: 1px solid #aaa9a9 !important;
 }
 .alert-danger {
   background-color: #fdd3e7 !important;
