@@ -65,6 +65,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
     this.fetchSecurityData();
   }
   ngAfterViewInit(): void {
+    this.drawVulnBasedComputerChart();
+    this.drawSeverityBasedComputerChart();
     setTimeout(() => {
       this.compTableContent?.nativeElement.children[0].classList.add('comp-table-active');
     }, 500);
@@ -104,8 +106,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
 
   private handleErrorResponse(error: any): void {
     console.error('Error fetching security data:', error);
-    this.drawVulnBasedComputerChart();
-    this.drawSeverityBasedComputerChart();
     if (error.status === 0) {
       this.toastService.showToast(
         'Unable to connect to the server. Please check your network or try again later.'
@@ -154,7 +154,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
        highVulnerableComputers += computer.highVulnerabilityCount;
        mediumVulnerableComputers += computer.mediumVulnerabilityCount;
        lowVulnerableComputers += computer.lowVulnerabilityCount;
-     })
+     });
 
      if (!this.severityChart?.nativeElement) return;
       const ctx = this.severityChart.nativeElement.getContext('2d');
@@ -377,7 +377,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
         || computer.loggedInUser.toLocaleLowerCase().includes(searchValue)
       });
      }
-     console.log(this.pagedComputerData)
      this.updatePagedData(this.initialIndex);
   } 
 
