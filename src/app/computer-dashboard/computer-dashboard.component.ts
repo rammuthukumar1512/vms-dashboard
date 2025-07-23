@@ -25,7 +25,7 @@ import { ToastService } from '../core/services/toast.service';
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
 })
-export class ComputerDashboardComponent implements OnInit, AfterViewInit, AfterViewChecked,OnDestroy{
+export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDestroy{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   computerChartInstance!: Chart<'doughnut'>;
@@ -67,11 +67,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, AfterV
   ngAfterViewInit(): void {
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
-  }
-  ngAfterViewChecked(): void {
     setTimeout(() => {
       this.compTableContent?.nativeElement.children[0].classList.add('comp-table-active');
-    }, 500);
+    }, 700);
   }
 
   private fetchSecurityData(): void {

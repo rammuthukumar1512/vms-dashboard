@@ -89,6 +89,12 @@
   background-color: #ccc;
   cursor: not-allowed;
 }
+/* :host ::ng-deep .mdc-switch__track::after {
+  background-color: #007bff !important;
+}
+:host ::ng-deep .mdc-switch__icon {
+  background-color: blue;
+} */
 .comp-table-parent {
   max-height: 50vh;
 }
