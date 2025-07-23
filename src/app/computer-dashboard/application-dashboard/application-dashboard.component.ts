@@ -14,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialog, MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 
 
 // Register Chart.js components
@@ -368,220 +369,220 @@ public sendAppData(data: ComputerDetails | null): void {
   }
 }
 
-@Component({
-  selector: 'app-vulnerability-dialog',
-  standalone: true,
-  imports: [CommonModule, MatDialogModule, MatButtonModule, MatTableModule, MatCardModule],
-  template: `
-<mat-dialog-content class="dialog-scroll">
+// @Component({
+//   selector: 'app-vulnerability-dialog',
+//   standalone: true,
+//   imports: [CommonModule, MatDialogModule, MatButtonModule, MatTableModule, MatCardModule],
+//   template: `
+// <mat-dialog-content class="dialog-scroll">
 
-  <!-- Sticky Header + Buttons -->
-  <div class="severity-header">
-    <div class="d-flex justify-content-between align-items-center px-2 pt-2">
-      <h2 class="m-0">Vulnerabilities for <span class = "vuln-software"> " {{ data.softwareName }} "</span></h2>
-      <button mat-button mat-dialog-close>Close</button>
-    </div>
+//   <!-- Sticky Header + Buttons -->
+//   <div class="severity-header">
+//     <div class="d-flex justify-content-between align-items-center px-2 pt-2">
+//       <h2 class="m-0">Vulnerabilities for <span class = "vuln-software"> " {{ data.softwareName }} "</span></h2>
+//       <button mat-button mat-dialog-close>Close</button>
+//     </div>
 
-    <div class="severity-buttons">
-       <button mat-raised-button class="severity-btn critical" (click)="filterVulnerabilities('Critical')">
-            Critical: {{ data.severityCounts.critical }}
-          </button>
-          <button mat-raised-button class="severity-btn high" (click)="filterVulnerabilities('High')">
-            High: {{ data.severityCounts.high }}
-          </button>
-          <button mat-raised-button class="severity-btn medium" (click)="filterVulnerabilities('Medium')">
-            Medium: {{ data.severityCounts.medium }}
-          </button>
-          <button mat-raised-button class="severity-btn low" (click)="filterVulnerabilities('Low')">
-            Low: {{ data.severityCounts.low }}
-          </button>
-          <button mat-raised-button class="severity-btn all" (click)="filterVulnerabilities(null)">
-            All
-          </button>
-    </div>
-  </div>
+//     <div class="severity-buttons">
+//        <button mat-raised-button class="severity-btn critical" (click)="filterVulnerabilities('Critical')">
+//             Critical: {{ data.severityCounts.critical }}
+//           </button>
+//           <button mat-raised-button class="severity-btn high" (click)="filterVulnerabilities('High')">
+//             High: {{ data.severityCounts.high }}
+//           </button>
+//           <button mat-raised-button class="severity-btn medium" (click)="filterVulnerabilities('Medium')">
+//             Medium: {{ data.severityCounts.medium }}
+//           </button>
+//           <button mat-raised-button class="severity-btn low" (click)="filterVulnerabilities('Low')">
+//             Low: {{ data.severityCounts.low }}
+//           </button>
+//           <button mat-raised-button class="severity-btn all" (click)="filterVulnerabilities(null)">
+//             All
+//           </button>
+//     </div>
+//   </div>
 
-  <!-- Vulnerabilities Table -->
-   <ng-container *ngIf="filteredVulnerabilities.length; else noVulnerabilities">
-        <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table">
-      <ng-container matColumnDef="cveId">
-        <th mat-header-cell *matHeaderCellDef>CVE ID</th>
-        <td mat-cell *matCellDef="let vuln">{{ vuln.cveId }}</td>
-      </ng-container>
+//   <!-- Vulnerabilities Table -->
+//    <ng-container *ngIf="filteredVulnerabilities.length; else noVulnerabilities">
+//         <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table">
+//       <ng-container matColumnDef="cveId">
+//         <th mat-header-cell *matHeaderCellDef>CVE ID</th>
+//         <td mat-cell *matCellDef="let vuln">{{ vuln.cveId }}</td>
+//       </ng-container>
 
-      <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let vuln">{{ vuln.description }}</td>
-      </ng-container>
+//       <ng-container matColumnDef="description">
+//         <th mat-header-cell *matHeaderCellDef>Description</th>
+//         <td mat-cell *matCellDef="let vuln">{{ vuln.description }}</td>
+//       </ng-container>
 
-      <!-- <ng-container matColumnDef="severity">
-        <th class="text-center" mat-header-cell *matHeaderCellDef>Severity</th>
-        <td class="text-center" mat-cell *matCellDef="let vuln">{{ vuln.severity }}</td>
-      </ng-container> -->
+//       <!-- <ng-container matColumnDef="severity">
+//         <th class="text-center" mat-header-cell *matHeaderCellDef>Severity</th>
+//         <td class="text-center" mat-cell *matCellDef="let vuln">{{ vuln.severity }}</td>
+//       </ng-container> -->
 
-   <ng-container matColumnDef="severity">
-  <th class="text-center" mat-header-cell *matHeaderCellDef>Severity</th>
-  <td class="text-center" mat-cell *matCellDef="let vuln">
-    <span [ngClass]="{
-      'severity-critical': vuln.severity.toLowerCase() === 'critical',
-      'severity-high': vuln.severity.toLowerCase() === 'high',
-      'severity-medium': vuln.severity.toLowerCase() === 'medium',
-      'severity-low': vuln.severity.toLowerCase() === 'low'
-    }">{{ vuln.severity }}</span>
-  </td>
-</ng-container>
+//    <ng-container matColumnDef="severity">
+//   <th class="text-center" mat-header-cell *matHeaderCellDef>Severity</th>
+//   <td class="text-center" mat-cell *matCellDef="let vuln">
+//     <span [ngClass]="{
+//       'severity-critical': vuln.severity.toLowerCase() === 'critical',
+//       'severity-high': vuln.severity.toLowerCase() === 'high',
+//       'severity-medium': vuln.severity.toLowerCase() === 'medium',
+//       'severity-low': vuln.severity.toLowerCase() === 'low'
+//     }">{{ vuln.severity }}</span>
+//   </td>
+// </ng-container>
 
-      <ng-container matColumnDef="cvssScore">
-        <th class="text-center" mat-header-cell *matHeaderCellDef>CVSS Score</th>
-        <td class="text-center" mat-cell *matCellDef="let vuln">{{ vuln.cvssScore }}</td>
-      </ng-container>
+//       <ng-container matColumnDef="cvssScore">
+//         <th class="text-center" mat-header-cell *matHeaderCellDef>CVSS Score</th>
+//         <td class="text-center" mat-cell *matCellDef="let vuln">{{ vuln.cvssScore }}</td>
+//       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns" class=""></tr>
-      <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr>
-    </table>
+//       <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns" class=""></tr>
+//       <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr>
+//     </table>
     
-  </ng-container>
+//   </ng-container>
 
-  <ng-template #noVulnerabilities>
-    <p>No vulnerabilities found</p>
-  </ng-template>
-</mat-dialog-content>
-  `,
-  styles: [`
-.dialog-scroll {
-  max-height: 500px;
-  overflow-y: auto;
-  min-width: 800px;
-  display: block;
-  position: relative;
-  padding: 0;
-}
+//   <ng-template #noVulnerabilities>
+//     <p>No vulnerabilities found</p>
+//   </ng-template>
+// </mat-dialog-content>
+//   `,
+//   styles: [`
+// .dialog-scroll {
+//   max-height: 500px;
+//   overflow-y: auto;
+//   min-width: 800px;
+//   display: block;
+//   position: relative;
+//   padding: 0;
+// }
 
-/* Sticky Header + Buttons */
-.severity-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background-color: white;
-  border-bottom: 1px solid #ccc;
-}
+// /* Sticky Header + Buttons */
+// .severity-header {
+//   position: sticky;
+//   top: 0;
+//   z-index: 10;
+//   background-color: white;
+//   border-bottom: 1px solid #ccc;
+// }
 
-/* Top header layout */
-.severity-header > .d-flex {
-  padding: 12px;
-  border-bottom: 1px solid #e0e0e0;
-}
+// /* Top header layout */
+// .severity-header > .d-flex {
+//   padding: 12px;
+//   border-bottom: 1px solid #e0e0e0;
+// }
 
-/* Severity Buttons */
-.severity-buttons {
-  display: flex;
-  gap: 8px;
-  padding: 8px 12px;
-}
+// /* Severity Buttons */
+// .severity-buttons {
+//   display: flex;
+//   gap: 8px;
+//   padding: 8px 12px;
+// }
 
-.severity-btn {
-  flex: 1;
-  font-size: 12px;
-  padding: 6px 8px;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-}
-.severity-btn.critical  { background-color: #F26419; color: white; }
-.severity-btn.high    { background-color: #F6AE2D; color: black; }
-.severity-btn.medium  { background-color: #86BBD8; color: black; }
-.severity-btn.low     { background-color: #33658A; color: white; }
+// .severity-btn {
+//   flex: 1;
+//   font-size: 12px;
+//   padding: 6px 8px;
+//   font-family: Roboto, "Helvetica Neue", sans-serif;
+// }
+// .severity-btn.critical  { background-color: #F26419; color: white; }
+// .severity-btn.high    { background-color: #F6AE2D; color: black; }
+// .severity-btn.medium  { background-color: #86BBD8; color: black; }
+// .severity-btn.low     { background-color: #33658A; color: white; }
 
-// .severity-btn.critical :hover, .severity-btn.critical:focus { background-color: #F26419; color: white; }
-// .severity-btn.high    :hover, .severity-btn.high:focus { background-color: #F6AE2D; color: black; }
-// .severity-btn.medium  :hover, .severity-btn.medium:focus { background-color: #86BBD8; color: black; }
-// .severity-btn.low     :hover, .severity-btn.low:focus { background-color: #33658A; color: white; }
-.vuln-software{
-  color: #F26419;
-}
+// // .severity-btn.critical :hover, .severity-btn.critical:focus { background-color: #F26419; color: white; }
+// // .severity-btn.high    :hover, .severity-btn.high:focus { background-color: #F6AE2D; color: black; }
+// // .severity-btn.medium  :hover, .severity-btn.medium:focus { background-color: #86BBD8; color: black; }
+// // .severity-btn.low     :hover, .severity-btn.low:focus { background-color: #33658A; color: white; }
+// .vuln-software{
+//   color: #F26419;
+// }
 
-/* Table styling */
-.comp-table {
-  width: 100%;
-  table-layout: fixed;
-  border-collapse: collapse;
-}
-.comp-table th, .comp-table td {
-  padding: 8px;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-  word-break: break-word;
-}
-.comp-table tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
-}
-.comp-table tr:hover {
-  background-color: #f1f1f1;
-}
+// /* Table styling */
+// .comp-table {
+//   width: 100%;
+//   table-layout: fixed;
+//   border-collapse: collapse;
+// }
+// .comp-table th, .comp-table td {
+//   padding: 8px;
+//   font-family: Roboto, "Helvetica Neue", sans-serif;
+//   word-break: break-word;
+// }
+// .comp-table tbody tr:nth-child(odd) {
+//   background-color: #f9f9f9;
+// }
+// .comp-table tr:hover {
+//   background-color: #f1f1f1;
+// }
 
-/* Sticky Table Headers */
-.comp-table th {
-  background-color: #d7d7d7ff;
-  color: black;
-  font-weight: bold;
-  position: sticky;
-  top: 109.5px; /* height of header (40px) + buttons (52px) */
-  z-index: 5;
-  text-align: left;
-}
+// /* Sticky Table Headers */
+// .comp-table th {
+//   background-color: #d7d7d7ff;
+//   color: black;
+//   font-weight: bold;
+//   position: sticky;
+//   top: 109.5px; /* height of header (40px) + buttons (52px) */
+//   z-index: 5;
+//   text-align: left;
+// }
 
-/* Empty message */
-p {
-  text-align: center;
-  color: #888;
-  padding: 16px;
-}
-.severity-critical {
-  background-color: #F26419;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 3px;
-}
-.severity-high {
-  background-color: #F6AE2D;
-  color: black;
-  padding: 6px 12px;
-  border-radius: 3px;
-}
-.severity-medium {
-  background-color: #86BBD8;
-  color: black;
-  padding: 6px 12px;
-  border-radius: 3px;
-}
-.severity-low {
-  background-color: #33658A;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 3px;
-}
-  `]
-})
-export class VulnerabilityDialogComponent {
-  vulnDisplayedColumns: string[] = ['cveId', 'description', 'severity', 'cvssScore'];
-    filteredVulnerabilities: Vulnerability[] = [];
-      selectedSeverity: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
+// /* Empty message */
+// p {
+//   text-align: center;
+//   color: #888;
+//   padding: 16px;
+// }
+// .severity-critical {
+//   background-color: #F26419;
+//   color: white;
+//   padding: 6px 12px;
+//   border-radius: 3px;
+// }
+// .severity-high {
+//   background-color: #F6AE2D;
+//   color: black;
+//   padding: 6px 12px;
+//   border-radius: 3px;
+// }
+// .severity-medium {
+//   background-color: #86BBD8;
+//   color: black;
+//   padding: 6px 12px;
+//   border-radius: 3px;
+// }
+// .severity-low {
+//   background-color: #33658A;
+//   color: white;
+//   padding: 6px 12px;
+//   border-radius: 3px;
+// }
+//   `]
+// })
+// export class VulnerabilityDialogComponent {
+//   vulnDisplayedColumns: string[] = ['cveId', 'description', 'severity', 'cvssScore'];
+//     filteredVulnerabilities: Vulnerability[] = [];
+//       selectedSeverity: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
 
-  constructor(
-    public dialogRef: MatDialogRef<VulnerabilityDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { softwareName: string; vulnerabilities: Vulnerability[]; severityCounts: { critical: number; high: number; medium: number; low: number } }
-  ) {
-    this.filteredVulnerabilities = this.data.vulnerabilities; // Initialize with all vulnerabilities
-  }
+//   constructor(
+//     public dialogRef: MatDialogRef<VulnerabilityDialogComponent>,
+//     @Inject(MAT_DIALOG_DATA) public data: { softwareName: string; vulnerabilities: Vulnerability[]; severityCounts: { critical: number; high: number; medium: number; low: number } }
+//   ) {
+//     this.filteredVulnerabilities = this.data.vulnerabilities; // Initialize with all vulnerabilities
+//   }
 
   
-  filterVulnerabilities(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
-    this.selectedSeverity = severity;
-    if (!severity) {
-      this.filteredVulnerabilities = this.data.vulnerabilities;
-    } else {
-      this.filteredVulnerabilities = this.data.vulnerabilities.filter(vuln =>
-        vuln.severity.toLowerCase() === severity.toLowerCase()
-      );
-    }
-    console.log('Filtered vulnerabilities:', this.filteredVulnerabilities); // Debug log
-  }
-}
+//   filterVulnerabilities(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
+//     this.selectedSeverity = severity;
+//     if (!severity) {
+//       this.filteredVulnerabilities = this.data.vulnerabilities;
+//     } else {
+//       this.filteredVulnerabilities = this.data.vulnerabilities.filter(vuln =>
+//         vuln.severity.toLowerCase() === severity.toLowerCase()
+//       );
+//     }
+//     console.log('Filtered vulnerabilities:', this.filteredVulnerabilities); // Debug log
+//   }
+// }
 
