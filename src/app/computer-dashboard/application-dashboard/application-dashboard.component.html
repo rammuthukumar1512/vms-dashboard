@@ -1,6 +1,5 @@
 
 <!-- Application Dashboard section start -->
- <div class="col-md-12 p-3">
    <!-- First column container start -->
 <div class="container-fluid"> 
   <div class="row border border-1 bg-light rounded-3">
@@ -98,8 +97,8 @@
 
           <!-- Software Name -->
           <ng-container  matColumnDef="softwareName">
-            <th  class="col-4 text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
-<td mat-cell *matCellDef="let app">
+            <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
+<td mat-cell *matCellDef="let app" class="">
   {{ app.softwareName }}
   <i
     *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
@@ -110,19 +109,19 @@
 
           <!-- Software Version -->
           <ng-container matColumnDef="softwareVersion">
-            <th  class="col-4 text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Version</th>
+            <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Version</th>
             <td mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
           </ng-container>
 
           <!-- Vendor -->
           <ng-container matColumnDef="vendor">
-            <th  class="col-4 text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Vendor</th>
+            <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Vendor</th>
             <td mat-cell *matCellDef="let app">{{ app.vendor }}</td>
           </ng-container>
 
           <!-- Vulnerability Count -->
           <ng-container matColumnDef="vulnerabilityCount">
-            <th  class="col-4 text-secondary text-center fw-bolder" mat-header-cell *matHeaderCellDef>Vulnerabilities</th>
+            <th  class="text-secondary text-center fw-bolder" mat-header-cell *matHeaderCellDef>Vulnerabilities</th>
             <td class="text-center" mat-cell *matCellDef="let app">
               {{
                 app.criticalVulnerabilityCount +
@@ -185,5 +184,5 @@
         </div>
       </div> <!-- pagination end-->
     </div> <!-- Application table date end-->
-    </div>
+
 <!-- Application Dashboard section end -->
