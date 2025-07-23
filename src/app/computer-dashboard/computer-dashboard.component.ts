@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -25,7 +25,7 @@ import { ToastService } from '../core/services/toast.service';
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
 })
-export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDestroy{
+export class ComputerDashboardComponent implements OnInit, AfterViewInit, AfterViewChecked,OnDestroy{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   computerChartInstance!: Chart<'doughnut'>;
@@ -67,10 +67,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, OnDest
   ngAfterViewInit(): void {
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
+  }
+  ngAfterViewChecked(): void {
     setTimeout(() => {
       this.compTableContent?.nativeElement.children[0].classList.add('comp-table-active');
     }, 500);
-    
   }
 
   private fetchSecurityData(): void {

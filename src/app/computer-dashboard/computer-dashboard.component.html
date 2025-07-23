@@ -67,7 +67,7 @@
                       </tr>
                     </thead>
                     <tbody #compTableContent>
-                      <tr class="cursor-pointer comp-row" [class]="'row'+i" *ngFor="let computer of pagedComputerData; let i = index" (click)="sendAppData(computer, i)">
+                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData; let i = index" (click)="sendAppData(computer, i)">
                       <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>
