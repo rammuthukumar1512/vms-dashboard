@@ -33,6 +33,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, AfterV
   securityData: SecurityReport = {
     totalComputers: 0,
     vulnerableComputers: 0,
+    totalCriticalVulnerableApplications: 0,
+    totalHighVulnerableApplications: 0,
+    totalMediumVulnerableApplications: 0,
+    totalLowVulnerableApplications: 0,
     computerDetails: []
   };
   totalComputers: number = 0;
@@ -145,17 +149,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit, AfterV
   }
 
   public drawSeverityBasedComputerChart() {
-     let criticalVulnerableComputers = 0;
-     let highVulnerableComputers = 0;
-     let mediumVulnerableComputers = 0;
-     let lowVulnerableComputers = 0;
-
-     this.vulnerableComputersDetails.forEach(computer=> {
-       criticalVulnerableComputers += computer.criticalVulnerabilityCount;
-       highVulnerableComputers += computer.highVulnerabilityCount;
-       mediumVulnerableComputers += computer.mediumVulnerabilityCount;
-       lowVulnerableComputers += computer.lowVulnerabilityCount;
-     });
+     let criticalVulnerableComputers = this.securityData.totalCriticalVulnerableApplications || 0;
+     let highVulnerableComputers = this.securityData.totalHighVulnerableApplications || 0;
+     let mediumVulnerableComputers = this.securityData.totalMediumVulnerableApplications || 0;
+     let lowVulnerableComputers = this.securityData.totalLowVulnerableApplications || 0;
 
      if (!this.severityChart?.nativeElement) return;
       const ctx = this.severityChart.nativeElement.getContext('2d');
