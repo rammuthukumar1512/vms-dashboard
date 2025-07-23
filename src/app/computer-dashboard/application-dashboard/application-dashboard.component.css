@@ -48,13 +48,14 @@ td {
 /* Vulnerable rows: red border and background */
 .comp-table tr.vulnerable-row {
   /* border: 1px solid #dc3545; Red border */
-  background-color: #fdd3e7; /* Light red bg */
+  /* background-color: #fdd3e7; Light red bg */
   box-shadow: 0 0 5px rgba(220, 53, 69, 0.3); /* Soft red shadow */
   border: 1px 0px solid #f86db3;
 }
 
 .comp-table tr.vulnerable-row:hover {
-  background-color: #feb2d8; /* Darker red on hover */
+  /* background-color: #feb2d8; Darker red on hover */
+  background-color: #fdd3e7; /* Lighter red on hover */
   box-shadow: 0 0 8px rgba(220, 53, 69, 0.5); /* Stronger shadow on hover */
 
 }
