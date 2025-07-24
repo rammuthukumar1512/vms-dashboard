@@ -1,9 +1,10 @@
 .chart {
   height: 200px;
   margin: auto;
-  /* padding: 8px; */
+  padding: 8px 0;
   border-radius: 12px;
   color: #47a2fc;
+  /* background-color: #F6AE2D; */
 }
 
 .comp-table {
