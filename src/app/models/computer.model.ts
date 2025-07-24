@@ -23,6 +23,8 @@ export interface ApplicationDetails {
   mediumVulnerabilityCount: number;
   lowVulnerabilityCount: number;
   vulnerabilities: Vulnerability[];
+  cpeName?: string;        // <-- Add this
+  resolved?: boolean;   
 }
 
 export interface ComputerDetails {
@@ -36,15 +38,19 @@ export interface ComputerDetails {
   loggedInUser: string;
   installedSoftwareCount: number;
   vulnerableSoftwareCount: number;
-  criticalVulnerabilityCount: number;
-  highVulnerabilityCount: number;
-  mediumVulnerabilityCount: number;
-  lowVulnerabilityCount: number;
+  criticalVulnerableApplicationCount: number;
+  highVulnerableApplicationCount: number;
+  mediumVulnerableApplicationCount: number;
+  lowVulnerableApplicationCount: number;
   applicationDetails: ApplicationDetails[];
 }
 
 export interface SecurityReport {
   totalComputers: number;
   vulnerableComputers: number;
+  totalCriticalVulnerableApplications: number;
+  totalHighVulnerableApplications: number;
+  totalMediumVulnerableApplications: number;
+  totalLowVulnerableApplications: number;
   computerDetails: ComputerDetails[];
 }
