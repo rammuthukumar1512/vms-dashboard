@@ -15,8 +15,8 @@
     </mat-toolbar>
     <mat-nav-list role="list" class="d-flex flex-column align-items-center p-0">
         <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }" class="container-fluid menu-item bg-white d-flex justify-content-center text-dark rounded-0 py-2 text-decoration-none" matTooltip="{{item.title}}">
-        <span class="material-symbols-outlined">{{item.icon}}</span> <span *ngIf="isMobile">{{item.title}}</span></a>
+        [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'justify-content-center': !isMobile}" class="container-fluid menu-item bg-white d-flex align-items-center text-dark rounded-0 py-2 text-decoration-none" matTooltip="{{item.title}}">
+        <span class="material-symbols-outlined">{{item.icon}}</span>&nbsp;&nbsp; <span *ngIf="isMobile">{{item.title}}</span></a>
     </mat-nav-list>
   </mat-sidenav>
 

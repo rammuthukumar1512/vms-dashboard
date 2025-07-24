@@ -20,4 +20,9 @@
 }
 .mini-sidenav {
     width: 250px;
+    padding: 0;
+    
+}
+.menu-item {
+    outline: 0;
 }

@@ -46,5 +46,9 @@ export interface ComputerDetails {
 export interface SecurityReport {
   totalComputers: number;
   vulnerableComputers: number;
+  totalCriticalVulnerableApplications: number ;
+  totalHighVulnerableApplications: number ;
+  totalMediumVulnerableApplications: number ;
+  totalLowVulnerableApplications: number ;
   computerDetails: ComputerDetails[];
 }

@@ -32,6 +32,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   severityChartInstance!: Chart<'bar'>;
   securityData: SecurityReport = {
     totalComputers: 0,
+    totalCriticalVulnerableApplications: 0,
+    totalHighVulnerableApplications: 0,
+    totalMediumVulnerableApplications: 0,
+    totalLowVulnerableApplications: 0,
     vulnerableComputers: 0,
     computerDetails: []
   };
@@ -143,17 +147,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   public drawSeverityBasedComputerChart() {
-     let criticalVulnerableComputers = 0;
-     let highVulnerableComputers = 0;
-     let mediumVulnerableComputers = 0;
-     let lowVulnerableComputers = 0;
+     let criticalVulnerableApplications = 0;
+     let highVulnerableApplications = 0;
+     let mediumVulnerableApplications = 0;
+     let lowVulnerableApplications = 0;
 
-     this.vulnerableComputersDetails.forEach(computer=> {
-       criticalVulnerableComputers += computer.criticalVulnerabilityCount;
-       highVulnerableComputers += computer.highVulnerabilityCount;
-       mediumVulnerableComputers += computer.mediumVulnerabilityCount;
-       lowVulnerableComputers += computer.lowVulnerabilityCount;
-     });
+       criticalVulnerableApplications += this.securityData.totalCriticalVulnerableApplications;
+       highVulnerableApplications += this.securityData.totalHighVulnerableApplications;
+       mediumVulnerableApplications += this.securityData.totalMediumVulnerableApplications;
+       lowVulnerableApplications += this.securityData.totalLowVulnerableApplications;
 
      if (!this.severityChart?.nativeElement) return;
       const ctx = this.severityChart.nativeElement.getContext('2d');
@@ -168,7 +170,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       labels: ['Critical', 'High', 'Medium', 'Low'],
       datasets: [{
         label: 'Computer Count',
-        data: [criticalVulnerableComputers, highVulnerableComputers, mediumVulnerableComputers, lowVulnerableComputers],
+        data: [criticalVulnerableApplications, highVulnerableApplications, mediumVulnerableApplications, lowVulnerableApplications],
         backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],   
         borderColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],    
         borderWidth: 0,
@@ -207,7 +209,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         tooltip: {
           callbacks: {
             label: function (context) {
-              return `${context.label}: ${context.parsed.y} computers`;
+              return `${context.label}: ${context.parsed.y} applications`;
             }
           }
         },
