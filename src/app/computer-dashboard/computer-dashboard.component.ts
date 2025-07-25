@@ -61,6 +61,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
+ @ViewChild(ApplicationDashboardComponent) applicationDashboardComponent!: ApplicationDashboardComponent;
 
   constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService
   ) {};
@@ -287,7 +288,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   public sendAppData(data: ComputerDetails | null, computerId: number): void {
      this.selectedComputerId = computerId;
+     this.applicationDashboardComponent.resetFilters();
      const appData = { machineName: data?.machineName || 'Unknown',
+      loggedInUser: data?.loggedInUser || 'Unknown',
      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
      this.sharedDataService.sendAppData(appData);
@@ -378,4 +381,4 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      this.updatePagedData(this.initialIndex);
   } 
 
-}
+}  

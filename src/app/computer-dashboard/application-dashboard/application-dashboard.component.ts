@@ -46,26 +46,31 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 lastResolvedApp: Partial<ApplicationDetails> | null = null;
 
   appData: ApplicationDetails[] = [];
-  pagedAppData: ApplicationDetails[] = [];
+  // pagedAppData: ApplicationDetails[] = [];
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
+  loggedInUser = 'Unknown';
  activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
-  displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor', 'vulnerabilityCount'];
+  displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
   severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
   severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
 
   pageIndex = 0;
   pageSize = 5;
-  pageSizes = [5, 10, 25, 50];
+  pageSizes: number[] = [];
   recordIndex = 1;
   totalPages = 0;
   totalRecords: number[] = [];
   start = 0;
   end = 0;
   initialIndex = 0;
-  searchValue = '';
+  pagedAppData: any[] = [];
+  filteredAppData: any[] = [];
+  allApplications: any[] = []; // or whatever type it holds
+
+  searchValue: string = ''; // make sure this is kept updated by your search input
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -74,43 +79,74 @@ constructor(
   private cdRef: ChangeDetectorRef
 
 ) {
-  this.sharedDataService.currentData$.subscribe(data => {
-    console.log('Received appData in ApplicationDashboard:', data); // Debug log
-    if (data?.appData && Array.isArray(data.appData)) { // Ensure appData is an array
-      this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
-        const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
-        const bVulns = b.criticalVulnerabilityCount + b.highVulnerabilityCount + b.mediumVulnerabilityCount + b.lowVulnerabilityCount;
-        return bVulns - aVulns;
-      });
-      this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
-      this.machineName = data.machineName || 'Unknown';
-      this.calculateSeverityCounts();
-    } else {
-      console.warn('No valid appData received:', data);
-      this.appData = [];
-      this.vulnerableSoftwareCount = 0;
-      this.machineName = 'Unknown';
-      this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-    }
-    this.updatePagedData(this.initialIndex);
-    setTimeout(() =>{
-    this.drawAppChart();
-    this.drawSeverityChart();
-    this.cdRef.detectChanges(); // 🔧 Fixes ExpressionChangedAfterItHasBeenCheckedError
-
-    },0)
-    
-  });
-}
-  // ngAfterViewInit(): void {
+  // this.sharedDataService.currentData$.subscribe(data => {
+  //   console.log('Received appData in ApplicationDashboard:', data); // Debug log
+  //   if (data?.appData && Array.isArray(data.appData)) { // Ensure appData is an array
+  //     this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
+  //       const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
+  //       const bVulns = b.criticalVulnerabilityCount + b.highVulnerabilityCount + b.mediumVulnerabilityCount + b.lowVulnerabilityCount;
+  //       return bVulns - aVulns;
+  //     });
+  //     this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
+  //     this.machineName = data.machineName || 'Unknown';
+  //     this.calculateSeverityCounts();
+  //   } else {
+  //     console.warn('No valid appData received:', data);
+  //     this.appData = [];
+  //     this.vulnerableSoftwareCount = 0;
+  //     this.machineName = 'Unknown';
+  //     this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+  //   }
+  //   this.updatePagedData(this.initialIndex);
+  //   setTimeout(() =>{
   //   this.drawAppChart();
   //   this.drawSeverityChart();
-  // }
+  //   this.cdRef.detectChanges(); //  Fixes ExpressionChangedAfterItHasBeenCheckedError
+
+  //   },0)
+    
+  // });
+
+
+  this.sharedDataService.currentData$.subscribe(data => {
+  console.log('Received appData in ApplicationDashboard:', data); // Debug log
+   if (data) {
+    this.loggedInUser = data.loggedInUser || 'Unknown';
+    this.machineName = data.machineName || 'Unknown';
+  if (data?.appData && Array.isArray(data.appData)) { // Ensure appData is an array
+    const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
+      const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
+      const bVulns = b.criticalVulnerabilityCount + b.highVulnerabilityCount + b.mediumVulnerabilityCount + b.lowVulnerabilityCount;
+      return bVulns - aVulns;
+    });
+
+    this.appData = sortedData;
+    this.allApplications = sortedData;  // ✅ This is the key fix
+    this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
+    this.machineName = data.machineName || 'Unknown';
+    this.calculateSeverityCounts();
+  } else {
+    console.warn('No valid appData received:', data);
+    this.appData = [];
+    this.allApplications = []; // clear fallback
+    this.vulnerableSoftwareCount = 0;
+    this.machineName = 'Unknown';
+    this.loggedInUser = 'Unknown'; // Ensure loggedInUser is set
+    this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+  }
+
+  this.updatePagedData(this.initialIndex);
+  setTimeout(() => {
+    this.drawAppChart();
+    this.drawSeverityChart();
+    this.cdRef.detectChanges(); // Fixes ExpressionChangedAfterItHasBeenCheckedError
+  }, 0);
+}
+});
+
+}
 
   ngAfterViewInit(): void {
-  // this.drawAppChart();
-  // this.drawSeverityChart();
-
   const lastResolvedApp = localStorage.getItem('lastResolvedApp');
   if (lastResolvedApp) {
     const appData = JSON.parse(lastResolvedApp);
@@ -145,13 +181,13 @@ constructor(
   public sendAppData(data: ComputerDetails | null): void {
     const appData = {
       machineName: data?.machineName || 'Unknown',
+      loggedInUser: data?.loggedInUser || 'Unknown',
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
       appData: data?.applicationDetails || []
     };
     console.log('Sending appData:', appData);
     this.sharedDataService.sendAppData(appData);
   }
-
 
   drawAppChart(): void {
   if (!this.appChart?.nativeElement) {
@@ -273,36 +309,84 @@ drawSeverityChart(): void {
   filterBySeverity(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
     this.severityFilter = severity;
     this.activeFilter = severity; // Set the active filter
-    this.updatePagedData(this.initialIndex);
+    this.updatePagedData(0);
+  }
+getFilteredApps(): ApplicationDetails[] {
+  let data = this.allApplications;
+
+  // Apply severity filter if selected
+  if (this.severityFilter) {
+    data = data.filter(app =>
+      this.severityFilter === 'Critical' && app.criticalVulnerabilityCount > 0 ||
+      this.severityFilter === 'High' && app.highVulnerabilityCount > 0 ||
+      this.severityFilter === 'Medium' && app.mediumVulnerabilityCount > 0 ||
+      this.severityFilter === 'Low' && app.lowVulnerabilityCount > 0
+    );
   }
 
-  getFilteredApps(): ApplicationDetails[] {
-    if (!this.severityFilter) return this.appData;
-    return this.appData.filter(app => {
-      if (this.severityFilter === 'Critical') return app.criticalVulnerabilityCount > 0;
-      if (this.severityFilter === 'High') return app.highVulnerabilityCount > 0;
-      if (this.severityFilter === 'Medium') return app.mediumVulnerabilityCount > 0;
-      if (this.severityFilter === 'Low') return app.lowVulnerabilityCount > 0;
-      return true;
-    });
+  // Apply search
+  if (this.searchValue) {
+    data = data.filter(app =>
+      app.softwareName.toLowerCase().includes(this.searchValue) ||
+      app.softwareVersion.toLowerCase().includes(this.searchValue) ||
+      (app.vendor || '').toLowerCase().includes(this.searchValue)
+    );
   }
 
+  return data;
+}
+
+resetFilters(): void {
+  this.severityFilter = null;
+  this.activeFilter = null;
+  this.searchValue = '';
+  this.updatePagedData(0);
+}
+
+
+  // getFilteredApps(): ApplicationDetails[] {
+  //   if (!this.severityFilter) return this.appData;
+  //   return this.appData.filter(app => {
+  //     if (this.severityFilter === 'Critical') return app.criticalVulnerabilityCount > 0;
+  //     if (this.severityFilter === 'High') return app.highVulnerabilityCount > 0;
+  //     if (this.severityFilter === 'Medium') return app.mediumVulnerabilityCount > 0;
+  //     if (this.severityFilter === 'Low') return app.lowVulnerabilityCount > 0;
+  //     return true;
+  //   });
+  // }
+
+  
   updatePagedData(initialIndex: number): void {
-    let filteredData = this.getFilteredApps();
-    if (this.searchValue) {
-      filteredData = filteredData.filter(app =>
-        app.softwareName.toLowerCase().includes(this.searchValue) ||
-        app.softwareVersion.toLowerCase().includes(this.searchValue) ||
-        (app.vendor || '').toLowerCase().includes(this.searchValue)
-      );
-    }
-    const pages = Math.ceil(filteredData.length / this.pageSize);
-    this.totalPages = pages;
-    this.totalRecords = Array.from({ length: pages }, (_, i) => i + 1);
-    this.start = initialIndex * this.pageSize;
-    this.end = this.start + this.pageSize;
-    this.pagedAppData = filteredData.slice(this.start, this.end);
+  this.filteredAppData = this.getFilteredApps();
+
+  if (this.searchValue) {
+    const keyword = this.searchValue.toLowerCase();
+    this.filteredAppData = this.filteredAppData.filter(app =>
+      app.softwareName?.toLowerCase().includes(keyword) ||
+      app.softwareVersion?.toLowerCase().includes(keyword) ||
+      app.vendor?.toLowerCase().includes(keyword)
+    );
   }
+
+  const totalItems = this.filteredAppData.length;
+  console.log('Filtered apps count:', totalItems);  // <--- check this
+
+  // Dynamically set page sizes
+  this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
+                   totalItems >= 50  ? [5, 10, 25, 50] :
+                   totalItems >= 25  ? [5, 10, 25] :
+                   totalItems >= 10  ? [5, 10] :
+                   totalItems > 0    ? [5] : [0];
+
+  this.totalPages = Math.ceil(totalItems / this.pageSize);
+  this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+
+  this.start = initialIndex * this.pageSize;
+  this.end = this.start + this.pageSize;
+  this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
+    console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
+
+}
 
   nextPage(): void {
     if (this.pageIndex < this.totalPages - 1) {
