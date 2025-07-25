@@ -1,6 +1,6 @@
 export const environments = {
   production: false,
-  unique_url: 'http://localhost:8082/api/getDashboardMetrics',
-  likelyCpeUrl: 'http://localhost:8082/api/hint/likelyCpeNames',
-  addHintUrl: 'http://localhost:8082/api/hint/addHint'
+  unique_url: 'http://localhost:8080/api/getDashboardMetrics',
+  likelyCpeUrl: 'http://localhost:8080/api/hint/likelyCpeNames',
+  addHintUrl: 'http://localhost:8080/api/hint/addHint'
 };

@@ -14,8 +14,7 @@
 
 .comp-table th,
 td {
-  padding: 8px;
-  /* font-family: Roboto, "Helvetica Neue", sans-serif; */
+  padding: 4px;
 }
 
 .comp-table thead tr > th {
@@ -96,11 +95,6 @@ td {
   text-align: center;
 }
 
-/* .fw-bold {
-  font-weight: bold;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
-} */
-
 .fs-5 {
   font-size: 1.25rem;
 }
@@ -108,14 +102,6 @@ td {
 .machine{
   color: rgb(245, 114, 104);
 }
-
-/* .machine-name{ */
-   /* max-width: 60%; Limit width to prevent overlap with "Applications" */
-  /* white-space: nowrap; Prevent text wrapping */
-  /* overflow: hidden; Hide overflow text */
-  /* text-overflow: ellipsis; Add ellipsis (...) for long names */
-  /* padding-left: 1rem; Additional spacing from the left */
-/* } */
 
 /* Buttons for severity*/
 .custom-low:hover, .custom-low:focus {
@@ -137,3 +123,19 @@ td {
   background-color: #F26419 !important;
   color: white !important;
 }
+
+::ng-deep .mat-mdc-header-cell,
+::ng-deep .mat-mdc-cell {
+  padding-top: 4px !important;
+  padding-bottom: 4px !important;
+  /* font-size: 13px; Optional: smaller font */
+  /* line-height: 1.2; Optional: tighter spacing */
+}
+
+::ng-deep .mat-mdc-row,
+::ng-deep .mat-mdc-header-row {
+  height: 44px !important;
+  /* min-height: 480px !important; */
+}
+
+

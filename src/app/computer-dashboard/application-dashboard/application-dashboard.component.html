@@ -3,7 +3,10 @@
    <!-- First column container start -->
 <div class="container-fluid"> 
   <div class="row border border-1 bg-light rounded-3">
-   
+      <div class="d-flex justify-content-between">
+         <span class="text-black-shade fs-10 fw-bold p-2"> Machine Name :<span class="machine"> {{ machineName }}</span></span>
+          <span class="text-black-shade fs-10 fw-bold p-2"> Logged In User :<span class="machine"> {{ loggedInUser }}</span></span>
+      </div>
     <div class="container-fluid">
       <!-- Top Metrics start -->
       <div class="row align-items-center pt-3">
@@ -49,7 +52,7 @@
    
  <div class="d-flex justify-content-between mt-3 gap-5">
  <span class="text-black-shade fs-5 fw-bold">Applications</span>
- <span class="text-black-shade fs-5 fw-bold machine-name"> Machine Name :<span class="machine"> {{ machineName }}</span></span>
+ <!-- <span class="text-black-shade fs-5 fw-bold machine-name"> Machine Name :<span class="machine"> {{ machineName }}</span></span> -->
 </div>
  <!-- Table Section -->
     <div class="container-fluid mt-3 p-2 rounded-3 border border-1 bg-light">
@@ -98,13 +101,31 @@
           <!-- Software Name -->
           <ng-container  matColumnDef="softwareName">
             <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
-<td mat-cell *matCellDef="let app" class="text-wrap">
-  {{ app.softwareName }}
+<!-- <td mat-cell *matCellDef="let app" class="text-wrap">
+ <span class="p-1"> {{ app.softwareName }}</span>
   <i
     *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
-    class="fa-solid fa-triangle-exclamation ms-2 text-danger"
+    class="fa-solid ms-0 fa-triangle-exclamation text-danger"
   ></i>
+</td> -->
+
+<td mat-cell *matCellDef="let app" class="gap-1">
+  <span class="p-1">{{ app.softwareName }}</span>
+  <i
+    *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
+    class="fa-solid fa-triangle-exclamation text-danger"
+  ></i>
+  <span *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
+        class="text-danger">
+    {{
+      app.criticalVulnerabilityCount +
+      app.highVulnerabilityCount +
+      app.mediumVulnerabilityCount +
+      app.lowVulnerabilityCount
+    }}
+  </span>
 </td>
+
           </ng-container>
 
           <!-- Software Version -->
@@ -120,7 +141,7 @@
           </ng-container>
 
           <!-- Vulnerability Count -->
-          <ng-container matColumnDef="vulnerabilityCount">
+          <!-- <ng-container matColumnDef="vulnerabilityCount">
             <th  class="text-secondary text-center fw-bolder" mat-header-cell *matHeaderCellDef>Vulnerabilities</th>
             <td class="text-center" mat-cell *matCellDef="let app">
               {{
@@ -130,7 +151,7 @@
                 app.lowVulnerabilityCount
               }}
             </td>
-          </ng-container>
+          </ng-container> -->
 
           <!-- Table Rows -->
            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
