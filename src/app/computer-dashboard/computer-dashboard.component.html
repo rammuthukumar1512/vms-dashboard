@@ -35,7 +35,7 @@
             </div>
             <div class="col-md-6 p-0">
               <p class="fw-bold text-center text-black-shade">Severity</p>
-              <div class="chart">
+              <div class="chart px-2">
                 <canvas #severityChart></canvas>
               </div>
             </div>
@@ -66,8 +66,8 @@
                         <th class="col-4 text-secondary">LoggedIn User</th>
                       </tr>
                     </thead>
-                    <tbody #compTableContent>
-                      <tr class="cursor-pointer" *ngFor="let computer of pagedComputerData; let i = index" (click)="sendAppData(computer, i)">
+                    <tbody>
+                      <tr class="cursor-pointer" [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id)">
                       <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>

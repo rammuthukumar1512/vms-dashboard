@@ -46,6 +46,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   vulnerableComputersDetails: ComputerDetails[] = [];
   showVulnerableComputer: boolean = false;
   pagedComputerData: ComputerDetails[] = [];
+  selectedComputerId: number = 1;
   initialIndex: number = 0;
   pageIndex: number = 0;
   recordIndex: number = 1;
@@ -60,7 +61,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
-  @ViewChild('compTableContent') compTableContent: ElementRef<HTMLElement> | undefined;
 
   constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService
   ) {};
@@ -71,9 +71,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   ngAfterViewInit(): void {
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
-    setTimeout(() => {
-      this.compTableContent?.nativeElement.children[0].classList.add('comp-table-active');
-    }, 700);
   }
 
   private fetchSecurityData(): void {
@@ -97,10 +94,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
-    this.computerDetails = this.securityData.computerDetails ?? [];
+    this.computerDetails = this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) ?? [];
     this.finalComputerDetails = this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
-    this.sendAppData(this.computerDetails[0] ?? null, 0);
+    this.sendAppData(this.computerDetails[0] ?? null, 1);
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
@@ -147,15 +144,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   public drawSeverityBasedComputerChart() {
-     let criticalVulnerableApplications = 0;
-     let highVulnerableApplications = 0;
-     let mediumVulnerableApplications = 0;
-     let lowVulnerableApplications = 0;
-
-       criticalVulnerableApplications += this.securityData.totalCriticalVulnerableApplications;
-       highVulnerableApplications += this.securityData.totalHighVulnerableApplications;
-       mediumVulnerableApplications += this.securityData.totalMediumVulnerableApplications;
-       lowVulnerableApplications += this.securityData.totalLowVulnerableApplications;
+      const criticalVulnerableApplications = this.securityData.totalCriticalVulnerableApplications;
+      const highVulnerableApplications = this.securityData.totalHighVulnerableApplications;
+      const mediumVulnerableApplications = this.securityData.totalMediumVulnerableApplications;
+      const lowVulnerableApplications = this.securityData.totalLowVulnerableApplications;
 
      if (!this.severityChart?.nativeElement) return;
       const ctx = this.severityChart.nativeElement.getContext('2d');
@@ -175,7 +167,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         borderColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],    
         borderWidth: 0,
         borderRadius: 3,
-        barPercentage: 0.9,
+        barPercentage: 1,
       }]
     },
     options: {
@@ -293,26 +285,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     });
   }
 
-  public sendAppData(data: ComputerDetails | null, index: number): void {
+  public sendAppData(data: ComputerDetails | null, computerId: number): void {
+     this.selectedComputerId = computerId;
      const appData = { machineName: data?.machineName || 'Unknown',
      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
      this.sharedDataService.sendAppData(appData);
-     let comp_rows = this.compTableContent?.nativeElement.children;
-     const rows = comp_rows?.length;
-     console.log(comp_rows)
-     if (rows !== undefined) {
-       for(let i = 0; i < rows; i++){
-          if(comp_rows && i === index) {
-            comp_rows[index]?.classList.add('comp-table-active');
-          } else if (comp_rows) {
-            comp_rows[i].classList.remove('comp-table-active')
-          }
-          else {
-          }
-       }
-     }
-     
+     this.pagedComputerData = this.pagedComputerData.map((computer) => {
+        if(this.selectedComputerId === computer.id) computer.selected = true
+        else computer.selected = false
+        return computer
+     });
   }
 
   public getPage(page: number): void {
@@ -330,7 +313,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.recordIndex = this.pageIndex + 1;
     this.start = this.pageIndex * this.pageSize;
     this.end = this.start + this.pageSize;
-    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
+        if(this.selectedComputerId === computer?.id) computer.selected = true
+        else computer.selected = false
+        return computer
+     });;
     }
    }
   public previousPage(): void {
@@ -340,7 +327,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.recordIndex = this.pageIndex + 1;
       this.start = this.pageIndex * this.pageSize;
       this.end = this.start + this.pageSize;
-      this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+      this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
+        if(this.selectedComputerId === computer?.id) computer.selected = true
+        else computer.selected = false
+        return computer
+     });
     }
    }
   
@@ -353,7 +344,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const len = this.finalComputerDetails.length;
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
-    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
+    console.log(this.selectedComputerId)
+    this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
+        if(this.selectedComputerId === computer.id) computer.selected = true
+        else computer.selected = false
+        return computer
+     });
    }
 
   public onPageSizeChange(event: number): void {

@@ -28,6 +28,7 @@ export interface ApplicationDetails {
 }
 
 export interface ComputerDetails {
+  id?: number;
   uuid: string;
   deviceId: string;
   machineName: string;
@@ -43,6 +44,7 @@ export interface ComputerDetails {
   mediumVulnerableApplicationCount: number;
   lowVulnerableApplicationCount: number;
   applicationDetails: ApplicationDetails[];
+  selected?: boolean;
 }
 
 export interface SecurityReport {
