@@ -288,7 +288,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   public sendAppData(data: ComputerDetails | null, computerId: number): void {
      this.selectedComputerId = computerId;
-     this.applicationDashboardComponent.resetFilters();
+     this.applicationDashboardComponent['resetFilters']();
      const appData = { machineName: data?.machineName || 'Unknown',
       loggedInUser: data?.loggedInUser || 'Unknown',
      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
@@ -320,7 +320,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         if(this.selectedComputerId === computer?.id) computer.selected = true
         else computer.selected = false
         return computer
-     });;
+     });
     }
    }
   public previousPage(): void {
