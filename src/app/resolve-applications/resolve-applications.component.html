@@ -1,0 +1,75 @@
+<div class="container-fluid bg-white p-4">
+ 
+  <div class="border border-1 bg-light rounded-3 p-3">
+    <div class="d-flex justify-content-between mb-3">
+         <h2 class="text-black-shade fs-5 fnw-bold mb-3">Unresolved Applications</h2>
+  <input class="comp-search-field rounded ps-3 py-1 border border-1"
+         type="text"
+         placeholder="Search"
+         (keyup)="searchApplications($event)">
+</div>
+    <table mat-table [dataSource]="pagedApps" class="comp-table w-100">
+      <!-- Software Name -->
+      <ng-container matColumnDef="softwareName">
+        <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
+        <td mat-cell *matCellDef="let app">{{ app.softwareName }}</td>
+      </ng-container>
+
+      <!-- Software Version -->
+      <ng-container matColumnDef="softwareVersion">
+        <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Version</th>
+        <td mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
+      </ng-container>
+
+      <!-- Vendor -->
+      <ng-container matColumnDef="vendorName">
+        <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Vendor Name</th>
+        <td mat-cell *matCellDef="let app">{{ app.vendorName }}</td>
+      </ng-container>
+
+      <!-- Action -->
+      <ng-container matColumnDef="action">
+        <th class="text-secondary fw-bolder text-center" mat-header-cell *matHeaderCellDef>Action</th>
+        <td class="text-center" mat-cell *matCellDef="let app">
+          <button mat-raised-button color="primary" (click)="resolveApplication(app)">
+            Resolve
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer"></tr>
+    </table>
+
+    <!-- No Data -->
+    <div *ngIf="!pagedApps.length" class="text-center p-2">No unresolved applications found</div>
+
+    <!-- Pagination -->
+    <div *ngIf="pagedApps.length > 0" class="d-flex justify-content-end mt-2">
+      <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content">
+        <mat-select class="border rounded page-size-width p-2"
+                    [(ngModel)]="recordIndex"
+                    (ngModelChange)="getPage($event)">
+          <mat-option *ngFor="let record of totalRecords" [value]="record">
+            {{ record }}
+          </mat-option>
+        </mat-select>
+        <mat-select class="border rounded page-size-width p-2"
+                    [(ngModel)]="pageSize"
+                    (ngModelChange)="onPageSizeChange($event)">
+          <mat-option *ngFor="let size of pageSizes" [value]="size">{{ size }}</mat-option>
+        </mat-select>
+        <button (click)="previousPage()"
+                [disabled]="pageIndex === 0"
+                class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
+          <mat-icon class="material-symbols-outlined fs-5">arrow_back_ios</mat-icon>
+        </button>
+        <button (click)="nextPage()"
+                [disabled]="pageIndex >= totalPages - 1"
+                class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
+          <mat-icon class="material-symbols-outlined fs-5">arrow_forward_ios</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

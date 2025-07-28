@@ -138,4 +138,44 @@ td {
   /* min-height: 480px !important; */
 }
 
+/* Base styles for all severity buttons */
+.severity-btn {
+  border: 1px solid #ccc;
+  color: black;
+  background-color: white;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* ACTIVE Styles */
+.active-critical {
+  background-color: #F26419 !important;
+  color: white !important;
+}
+
+.active-high {
+  background-color: #F6AE2D !important;
+  color: white !important;
+}
+
+.active-medium {
+  background-color: #86BBD8 !important;
+  color: white !important;
+}
+
+.active-low {
+  background-color: #33658A !important;
+  color: white !important;
+}
+
+.active-all {
+  background-color: #007bff !important;
+  color: white !important;
+}
+
+/* Optional: Add hover effects */
+.severity-btn:hover {
+  opacity: 0.9;
+  cursor: pointer;
+}
+
 
