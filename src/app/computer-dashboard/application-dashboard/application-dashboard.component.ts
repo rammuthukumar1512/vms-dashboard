@@ -9,12 +9,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
-import { LikelyCpeDialogComponent } from './likely-cpe-dialog.component';
 import { HttpClient } from '@angular/common/http';
-// import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ArcElement, BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, PieController, registerables, Tooltip } from 'chart.js';
- import { ApplicationDetails, ComputerDetails, Vulnerability } from '../../models/computer.model';
+import { ArcElement, BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, PieController, Tooltip } from 'chart.js';
+ import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 
 // Register Chart.js components
 Chart.register(PieController, ArcElement, Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale, ChartDataLabels);
@@ -36,7 +34,6 @@ Chart.register(PieController, ArcElement, Tooltip, Legend, BarController, BarEle
   styleUrls: ['./application-dashboard.component.css']
 })
 export class ApplicationDashboardComponent implements AfterViewInit {
-  [x: string]: any;
 
   @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
@@ -47,6 +44,12 @@ lastResolvedApp: Partial<ApplicationDetails> | null = null;
 
   appData: ApplicationDetails[] = [];
   // pagedAppData: ApplicationDetails[] = [];
+// selectedComputerId: number = 0;
+// applicationDashboardComponent: any;
+// pagedComputerData: any[] = [];
+// searchInputRef: ElementRef<HTMLInputElement> | undefined;
+// finalComputerDetails: any;
+// computerDetails: any;
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
@@ -77,42 +80,24 @@ constructor(
   private dialog: MatDialog,
   private http: HttpClient,
   private cdRef: ChangeDetectorRef
+  
 
 ) {
-  // this.sharedDataService.currentData$.subscribe(data => {
-  //   console.log('Received appData in ApplicationDashboard:', data); // Debug log
-  //   if (data?.appData && Array.isArray(data.appData)) { // Ensure appData is an array
-  //     this.appData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
-  //       const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
-  //       const bVulns = b.criticalVulnerabilityCount + b.highVulnerabilityCount + b.mediumVulnerabilityCount + b.lowVulnerabilityCount;
-  //       return bVulns - aVulns;
-  //     });
-  //     this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
-  //     this.machineName = data.machineName || 'Unknown';
-  //     this.calculateSeverityCounts();
-  //   } else {
-  //     console.warn('No valid appData received:', data);
-  //     this.appData = [];
-  //     this.vulnerableSoftwareCount = 0;
-  //     this.machineName = 'Unknown';
-  //     this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-  //   }
-  //   this.updatePagedData(this.initialIndex);
-  //   setTimeout(() =>{
-  //   this.drawAppChart();
-  //   this.drawSeverityChart();
-  //   this.cdRef.detectChanges(); //  Fixes ExpressionChangedAfterItHasBeenCheckedError
-
-  //   },0)
-    
-  // });
-
+  
 
   this.sharedDataService.currentData$.subscribe(data => {
   console.log('Received appData in ApplicationDashboard:', data); // Debug log
    if (data) {
+    // const previousMachineName = this.machineName;
     this.loggedInUser = data.loggedInUser || 'Unknown';
     this.machineName = data.machineName || 'Unknown';
+
+  //  if (this.machineName !== previousMachineName) {
+  //     this.searchValue = '';
+  //     this.pageIndex = 0;
+  //     this.updatePagedData(this.pageIndex);
+  //   }
+
   if (data?.appData && Array.isArray(data.appData)) { // Ensure appData is an array
     const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
       const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
@@ -121,17 +106,18 @@ constructor(
     });
 
     this.appData = sortedData;
-    this.allApplications = sortedData;  // ✅ This is the key fix
+    this.allApplications = sortedData; 
     this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
     this.machineName = data.machineName || 'Unknown';
     this.calculateSeverityCounts();
   } else {
     console.warn('No valid appData received:', data);
     this.appData = [];
-    this.allApplications = []; // clear fallback
+    // this.allApplications = []; 
     this.vulnerableSoftwareCount = 0;
     this.machineName = 'Unknown';
-    this.loggedInUser = 'Unknown'; // Ensure loggedInUser is set
+    // this.searchValue = ''; // Clear search box if no data
+    this.loggedInUser = 'Unknown'; 
     this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
   }
 
@@ -178,7 +164,11 @@ constructor(
     });
   }
 
-  public sendAppData(data: ComputerDetails | null): void {
+  public sendAppData(data: ComputerDetails | null , computerId: number): void {
+  //     this.selectedComputerId = computerId;
+
+  // // Reset filters in Application Dashboard
+  // this.applicationDashboardComponent['resetFilters']();
     const appData = {
       machineName: data?.machineName || 'Unknown',
       loggedInUser: data?.loggedInUser || 'Unknown',
@@ -187,6 +177,20 @@ constructor(
     };
     console.log('Sending appData:', appData);
     this.sharedDataService.sendAppData(appData);
+
+    //under the assumption and observation
+  //   this.pagedComputerData = this.pagedComputerData.map((computer) => {
+  //   computer.selected = (this.selectedComputerId === computer.id);
+  //   return computer;
+  // });
+
+  // // ✅ Reset search input and computer list
+  // if (this.searchInputRef?.nativeElement) {
+  //   this.searchInputRef.nativeElement.value = '';
+  // }
+  // this.finalComputerDetails = this.computerDetails;
+  // this.updatePagedData(this.initialIndex);
+
   }
 
   drawAppChart(): void {
@@ -342,19 +346,6 @@ resetFilters(): void {
   this.searchValue = '';
   this.updatePagedData(0);
 }
-
-
-  // getFilteredApps(): ApplicationDetails[] {
-  //   if (!this.severityFilter) return this.appData;
-  //   return this.appData.filter(app => {
-  //     if (this.severityFilter === 'Critical') return app.criticalVulnerabilityCount > 0;
-  //     if (this.severityFilter === 'High') return app.highVulnerabilityCount > 0;
-  //     if (this.severityFilter === 'Medium') return app.mediumVulnerabilityCount > 0;
-  //     if (this.severityFilter === 'Low') return app.lowVulnerabilityCount > 0;
-  //     return true;
-  //   });
-  // }
-
   
   updatePagedData(initialIndex: number): void {
   this.filteredAppData = this.getFilteredApps();

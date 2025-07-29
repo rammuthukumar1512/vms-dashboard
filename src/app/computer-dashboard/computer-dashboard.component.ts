@@ -28,6 +28,8 @@ import { ToastService } from '../core/services/toast.service';
 export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDestroy{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
+  @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
+
   computerChartInstance!: Chart<'doughnut'>;
   severityChartInstance!: Chart<'bar'>;
   securityData: SecurityReport = {

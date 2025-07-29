@@ -1,0 +1,27 @@
+::ng-deep .mat-dialog-title {
+  margin: 0 !important;
+  font-size: 1.1rem;
+  line-height: 0.1;
+}
+
+::ng-deep mat-dialog-actions {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.heading{
+    color: rgb(61, 16, 243);
+}
+
+.head{
+  background-color: #f9f5f5;
+
+}
+
+input{
+    width: 70%;
+}
+.cpe23Uri:hover{
+   background-color: #f9f5f5;
+    cursor: pointer;
+}
