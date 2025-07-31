@@ -7,7 +7,7 @@ import { LoaderComponent } from './shared/components/loader/loader.component';
   selector: 'app-root',
   imports: [RouterOutlet, LoaderComponent],
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']  // <-- note: it's `styleUrls`, not `styleUrl`
+  styleUrls: ['./app.component.css'] 
 })
 export class AppComponent {
   title = 'vms-dashboard';

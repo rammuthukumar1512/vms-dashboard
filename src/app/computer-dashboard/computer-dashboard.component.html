@@ -8,20 +8,20 @@
     <div class="col-md-6 p-4">
       <div class="container-fluid">
       <div #computerInfo class="row border border-1 bg-light rounded-3"><!----first-row---->
-        <div class="fw-bold fs-10 text-center p-2">
+        <div class="fw-bold fs-10 bg-gray-shade border border-top-0 border-start-0 border-end-0 border-bottom text-center text-secondary p-2 rounded-top-3">
           System Inventory
         </div>
         <div class="container-fluid">
          <div class="row align-items-center pt-3">
               <div class="col-6 d-flex justify-content-center">
                 <div class="col-8 rounded border border-1 py-2">
-                <p class="text-center" style="opacity: 0.9;">Total Computers</p>
+                <p class="text-center text-secondary">Total Computers</p>
                 <p class="text-center h1 text-black-shade">{{totalComputers}}</p>
                 </div>
               </div>
               <div class="col-6 d-flex justify-content-center">
                 <div class="col-8 rounded border border-1 py-2">
-                <p class="text-center" style="opacity: 0.9;">Vulnerable Computers</p>
+                <p class="text-center text-secondary">Vulnerable Computers</p>
                 <p class="text-center h1 text-black-shade">{{vulnerableComputers}}</p>
                 </div>
               </div>
@@ -31,13 +31,13 @@
         <div class="container-fluid mt-3">  <!----chart-section------->
           <div class="row">
             <div class="col-md-6 p-0">
-              <p class="fw-bold text-center text-black-shade">Computer Overview</p>
+              <p class="fw-bold text-center text-secondary">Computer Overview</p>
             <div class="chart">
               <canvas #computerChart></canvas>
             </div>
             </div>
             <div class="col-md-6 p-0">
-              <p class="fw-bold text-center text-black-shade">Severity</p>
+              <p class="fw-bold text-center text-secondary">Severity</p>
               <div class="chart px-2">
                 <canvas #severityChart></canvas>
               </div>
@@ -50,7 +50,7 @@
       <div> <!------------computer-data-table------------>
               <div>
                   <div class="d-flex justify-content-between mt-3">
-                    <span class="text-black-shade fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Computers'}}</span> 
+                    <span class="text-secondary fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Computers'}}</span> 
                   <div class="me-2">
                     <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;&nbsp;</mat-slide-toggle>
                   </div>
@@ -71,7 +71,7 @@
                     </thead>
                     <tbody>
                       <tr class="cursor-pointer" [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id)">
-                      <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
+                      <td class="text-secondary">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                       <td>{{computer.machineName}}</td>
                       <td>{{computer.loggedInUser}}</td>
                       </tr>

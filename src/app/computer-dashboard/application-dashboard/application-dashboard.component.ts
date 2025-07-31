@@ -243,7 +243,7 @@ constructor(
         data: [vulnerableCount, nonVulnerableCount],
         backgroundColor: ['#66b3ffea', '#3366ffe7'],
         borderColor: ['#ffffff', '#ffffff'],
-        borderWidth: 1
+        borderWidth: 0
       }]
     },
     options: {
@@ -257,7 +257,9 @@ constructor(
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            if(value) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            else return '';
+            
           },
           color: '#ffffff',
           font: { weight: 'bold', size: 12 }

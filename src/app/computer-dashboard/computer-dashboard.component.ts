@@ -246,7 +246,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1],
           backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
           borderColor: ['#ffffff', '#ffffff'],
-          borderWidth: 1
+          borderWidth: 0
         }]
       },
       options: {

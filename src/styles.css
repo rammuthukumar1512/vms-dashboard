@@ -32,6 +32,9 @@ html, body { height: 100%; }
 .bg-theme {
     background-color: rgb(235, 242, 243);
 }
+.bg-gray-shade {
+  background-color: #f5f5f5;
+}
 
 ::ng-deep .vuln-dialog-panel {
   max-width: 90vw !important;
