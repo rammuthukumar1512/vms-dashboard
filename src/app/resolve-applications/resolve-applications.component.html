@@ -1,14 +1,13 @@
 <div class="container-fluid bg-white p-4">
- 
   <div class="border border-1 bg-light rounded-3 p-3">
     <div class="d-flex justify-content-between mb-0">
          <h2 class="text-black-shade fs-5 fnw-bold mb-3">Unresolved Applications</h2>
-  <input class="comp-search-field rounded ps-3 py-1 border border-1 height-fit-content"
+    <input class="comp-search-field rounded ps-3 py-1 border border-1 height-fit-content"
          type="text"
          placeholder="Search"
          (keyup)="searchApplications($event)">
-</div>
-    <table mat-table [dataSource]="pagedApps" class="comp-table w-100">
+        </div>
+   <table mat-table [dataSource]="pagedApps" class="comp-table w-100">
       <!-- Software Name -->
       <ng-container matColumnDef="softwareName">
         <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>

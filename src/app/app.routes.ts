@@ -11,6 +11,9 @@ export const routes: Routes = [
             path: 'resolve-applications',
             loadComponent: () => import('./resolve-applications/resolve-applications.component').then(m => m.ResolveApplicationsComponent)
         }
+        ,
+          { path: 'cpe-cve-search', loadComponent: () => import('./cpe-cve-search/cpe-cve-search.component').then(m => m.CpeCveSearchComponent) },
+
     ]
     },
     {path: '**', redirectTo: ''}
