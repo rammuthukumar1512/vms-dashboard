@@ -18,7 +18,7 @@ import { ToastService } from '../core/services/toast.service';
       Confirm Action
     </h2>
     <mat-dialog-content class="dialog-content">
-      <p>Are you sure you want to <strong>add </strong> <span class="highlight"> {{ data.cpeName }}</span>?</p>
+      <p>Are you sure you want to <strong>add </strong> <span class="highlight"> {{ data.cpeName }}</span> for <span class="highlight1">{{data.softwareName}}</span>?</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end" class="p-3">
       <button mat-stroked-button color="warn" (click)="onNo()">No</button>
@@ -44,6 +44,10 @@ import { ToastService } from '../core/services/toast.service';
       font-weight: bold;
       color: #1976d2;
     }
+      .highlight1 {
+      font-weight: bold;
+      color: #cf4522ff;
+    }
   `],
   standalone: true,
   imports: [MatDialogModule, MatButtonModule, MatIconModule]
@@ -51,7 +55,8 @@ import { ToastService } from '../core/services/toast.service';
 export class ConfirmDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { cpeName: string },
+    @Inject(MAT_DIALOG_DATA) public data: { cpeName: string ,  softwareName: string;
+},
   ) {}
 
   onNo(): void {
@@ -81,6 +86,7 @@ export class LikelyCpeDialogComponent {
   customCpeName: string = '';
   likelyCpeNames: { cpe23Uri: string; vendor: string; product: string; version: string }[] = [];
   cpeError: boolean = false;
+  softwareName: string = '';
   private cpePattern = /^cpe:2\.3:[aho](:[^:]*){10}$/;
   app: any;
 
@@ -123,7 +129,7 @@ export class LikelyCpeDialogComponent {
     this.cpeError = false;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { cpeName }
+      data: { cpeName ,softwareName:this.data.softwareName}
     });
 
     dialogRef.afterClosed().subscribe(result => {

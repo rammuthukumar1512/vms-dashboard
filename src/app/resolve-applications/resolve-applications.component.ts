@@ -11,6 +11,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../core/services/toast.service';
+import { ApplicationResolveService } from '../core/services/application-resolve.service';
+
 
 interface UnresolvedApplication {
   uuid: string;
@@ -53,11 +55,21 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
   constructor(
     private http: HttpClient,
     private dialog: MatDialog,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private applicationResolveService: ApplicationResolveService // Added service
+
   ) {}
 
   ngOnInit(): void {
     this.fetchUnresolvedApplications();
+      this.applicationResolveService.resolveData$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(data => {
+        if (data) {
+          this.openLikelyCpeDialog(data);
+          this.applicationResolveService.clearResolveData(); // Clear data after opening dialog
+        }
+      });
   }
 
   fetchUnresolvedApplications(): void {
@@ -65,7 +77,13 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
-          this.unresolvedApps = data || [];
+          this.unresolvedApps = (data || []).map(app => ({
+            uuid: app.uuid,
+            softwareName: app.softwareName,
+            softwareVersion: app.softwareVersion,
+            vendorName: app.vendorName || app.vendorName
+
+          }));
           this.updatePagedData(this.initialIndex);
         },
         error: (error) => {
@@ -76,6 +94,18 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
   }
 
   resolveApplication(app: UnresolvedApplication): void {
+    // const dialogRef = this.dialog.open(LikelyCpeDialogComponent, {
+    //   width: '800px',
+    //   data: {
+    //     uuid: app.uuid,
+    //     softwareName: app.softwareName,
+    //     softwareVersion: app.softwareVersion,
+    //     vendor: app.vendorName
+    //   }
+        this.openLikelyCpeDialog(app);
+    }
+
+     private openLikelyCpeDialog(app: UnresolvedApplication): void {
     const dialogRef = this.dialog.open(LikelyCpeDialogComponent, {
       width: '800px',
       data: {
@@ -85,6 +115,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
         vendor: app.vendorName
       }
     });
+
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && result.cpeName) {

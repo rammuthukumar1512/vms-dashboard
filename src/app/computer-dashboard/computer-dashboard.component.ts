@@ -295,7 +295,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       loggedInUser: data?.loggedInUser || 'Unknown',
      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
-     this.sharedDataService.sendAppData(appData);
+     this.applicationDashboardComponent.sendAppData(data, computerId);
      this.pagedComputerData = this.pagedComputerData.map((computer) => {
         if(this.selectedComputerId === computer.id) computer.selected = true
         else computer.selected = false

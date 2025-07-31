@@ -191,3 +191,7 @@ td {
  .comp-table tr.unresolved-row:hover {
   background-color: #fff3cd !important; /* Light yellow background */
 }
+
+/* .page-size-width {
+  width: 75px;
+} */
