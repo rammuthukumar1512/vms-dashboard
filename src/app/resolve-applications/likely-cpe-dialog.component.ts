@@ -6,8 +6,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { environments } from '../../environments/environments';
 import { MatIconModule } from '@angular/material/icon';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { ToastService } from '../core/services/toast.service';
 
 // Confirm Dialog Component
 @Component({
@@ -18,9 +18,9 @@ import { MatDialog } from '@angular/material/dialog';
       Confirm Action
     </h2>
     <mat-dialog-content class="dialog-content">
-      <p>Are you sure you want to <strong>add </strong> <span class="highlight"> {{ data.cpeName }}</span>?</p>
+      <p>Are you sure you want to <strong>add </strong> <span class="highlight"> {{ data.cpeName }}</span> for <span class="highlight1">{{data.softwareName}}</span>?</p>
     </mat-dialog-content>
-    <mat-dialog-actions align="end">
+    <mat-dialog-actions align="end" class="p-3">
       <button mat-stroked-button color="warn" (click)="onNo()">No</button>
       <button mat-flat-button color="primary" (click)="onYes()" cdkFocusInitial>Yes</button>
     </mat-dialog-actions>
@@ -44,6 +44,10 @@ import { MatDialog } from '@angular/material/dialog';
       font-weight: bold;
       color: #1976d2;
     }
+      .highlight1 {
+      font-weight: bold;
+      color: #cf4522ff;
+    }
   `],
   standalone: true,
   imports: [MatDialogModule, MatButtonModule, MatIconModule]
@@ -51,7 +55,8 @@ import { MatDialog } from '@angular/material/dialog';
 export class ConfirmDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { cpeName: string }
+    @Inject(MAT_DIALOG_DATA) public data: { cpeName: string ,  softwareName: string;
+},
   ) {}
 
   onNo(): void {
@@ -72,8 +77,8 @@ export class ConfirmDialogComponent {
     MatDialogModule,
     MatButtonModule,
     FormsModule,
-    MatIconModule
-  ],
+    MatIconModule,
+],
   templateUrl: './likely-cpe-dialog.component.html',
   styleUrls: ['./likely-cpe-dialog.component.css']
 })
@@ -81,7 +86,9 @@ export class LikelyCpeDialogComponent {
   customCpeName: string = '';
   likelyCpeNames: { cpe23Uri: string; vendor: string; product: string; version: string }[] = [];
   cpeError: boolean = false;
+  softwareName: string = '';
   private cpePattern = /^cpe:2\.3:[aho](:[^:]*){10}$/;
+  app: any;
 
   constructor(
     public dialogRef: MatDialogRef<LikelyCpeDialogComponent>,
@@ -93,7 +100,8 @@ export class LikelyCpeDialogComponent {
     },
     private http: HttpClient,
     private dialog: MatDialog,
-    private snackBar: MatSnackBar
+    private toastService: ToastService
+
   ) {
     this.fetchLikelyCpeNames();
   }
@@ -108,11 +116,7 @@ export class LikelyCpeDialogComponent {
       },
       error: (error) => {
         console.error('Error fetching likely CPE names:', error);
-        this.snackBar.open('Failed to fetch likely CPE names', 'Close', {
-          duration: 5000,
-          verticalPosition: 'bottom',
-          horizontalPosition: 'right'
-        });
+        this.toastService.showToast('Failed to fetch likely CPE names')
       }
     });
   }
@@ -125,17 +129,13 @@ export class LikelyCpeDialogComponent {
     this.cpeError = false;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { cpeName }
+      data: { cpeName ,softwareName:this.data.softwareName}
     });
 
     dialogRef.afterClosed().subscribe(result => {
+      
       if (result) {
-        this.snackBar.open('CPE resolved successfully!', 'Close', {
-          duration: 3000,
-          verticalPosition: 'top',
-          horizontalPosition: 'center'
-        });
-
+        this.toastService.showToast('CPE resolved successfully!')
         const body = {
           uuid: this.data.uuid,
           softwareName: this.data.softwareName,
@@ -151,11 +151,7 @@ export class LikelyCpeDialogComponent {
           },
           error: (error) => {
             console.error('Error adding CPE name:', error);
-            this.snackBar.open('Failed to add CPE name', 'Close', {
-              duration: 5000,
-              verticalPosition: 'bottom',
-              horizontalPosition: 'right'
-            });
+            this.toastService.showToast('Failed to add CPE Name')
           }
         });
       }

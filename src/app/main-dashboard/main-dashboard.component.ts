@@ -23,7 +23,9 @@ export class MainDashboardComponent implements AfterViewInit{
     sidenavPosition!: 'start';
 
     @ViewChild('sidenav') sidenav!: MatSidenav;
-    sideMenuItems = [ {title: 'Computer Overview', icon: 'dashboard', link: '/computer-overview'},{title: 'Resolve Applications', icon: 'app_registration', link: '/resolve-applications'}];
+    sideMenuItems = [ {title: 'Computer Overview', icon: 'dashboard', link: '/computer-overview'},
+      {title: 'Resolve Applications', icon: 'app_registration', link: '/resolve-applications'},
+    {title: 'CPE-CVE Search', icon: 'search_insights', link: '/cpe-cve-search'}];
     
     constructor(private breakpointObserver: BreakpointObserver){}
 

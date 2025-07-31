@@ -178,4 +178,20 @@ td {
   cursor: pointer;
 }
 
+.text-warning {
+  color: #ffc107; /* Yellow color for shield_question icon */
+  font-size:large;
+  vertical-align: middle;
+}
+/* .severity-btn.active-unresolved {
+  border: 2px solid #000;
+  background-color: #ffc107;
+  color: white;
+} */
+ .comp-table tr.unresolved-row:hover {
+  background-color: #fff3cd !important; /* Light yellow background */
+}
 
+/* .page-size-width {
+  width: 75px;
+} */

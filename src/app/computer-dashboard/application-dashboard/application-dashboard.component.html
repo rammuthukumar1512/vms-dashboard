@@ -9,7 +9,7 @@
       </div>
     <div class="container-fluid">
       <!-- Top Metrics start -->
-      <div class="row align-items-center pt-3">
+      <div class="row align-items-center pt-0">
         <div class="col-6 d-flex justify-content-center">
           <div class="w-75 rounded border border-1 py-2">
             <p class="text-center text-secondary">Installed Applications</p>
@@ -32,7 +32,11 @@
     <div class="container-fluid mt-3">
       <div class="row">
         <div class="col-md-6 p-0">
+<<<<<<< HEAD
           <p class="fw-bold text-center text-secondary">Applications Overview</p>
+=======
+          <p class="fw-bold text-center text-black-shade">Applications Overview</p>
+>>>>>>> 5f2d22ace3e93aa3f20f7b5f5d6158e70e6a8aec
           <div class="chart">
             <canvas #appChart></canvas>
           </div>
@@ -40,7 +44,7 @@
         <div class="col-md-6 p-0">
           <p class="fw-bold text-center text-secondary">Severity</p>
           <div class="chart">
-            <canvas #severityChart></canvas>
+            <canvas class="p-2" #severityChart></canvas>
           </div>
         </div>
       </div>
@@ -57,34 +61,6 @@
  <!-- Table Section -->
     <div class="container-fluid mt-3 p-2 rounded-3 border border-1 bg-light">
 <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-  <!-- Severity Filter Buttons start-->
-  <!-- <div class="d-flex gap-2 flex-wrap">
-    <button class="btn btn-outline-secondary btn-sm custom-critical"
-            [ngClass]="{'bg-opacity-75': severityFilter !== 'Critical' }"
-            (click)="filterBySeverity('Critical')">
-      Critical
-    </button>
-    <button class="btn btn-outline-secondary btn-sm custom-high"
-            [ngClass]="{'bg-opacity-75': severityFilter !== 'High' }"
-            (click)="filterBySeverity('High')">
-      High
-    </button>
-    <button class="btn btn-outline-secondary btn-sm custom-medium"
-            [ngClass]="{'bg-opacity-75': severityFilter !== 'Medium' }"
-            (click)="filterBySeverity('Medium')">
-      Medium
-    </button>
-    <button class="btn btn-outline-secondary btn-sm custom-low"
-            [ngClass]="{'bg-opacity-75': severityFilter !== 'Low' }"  
-            (click)="filterBySeverity('Low')">
-      Low
-    </button>
-    <button class="btn btn-outline-secondary btn-sm"
-            [class.active]="!severityFilter"
-            (click)="filterBySeverity(null)">
-      All
-    </button>
-  </div> -->
 
   <!-- Severity Filter Buttons start-->
 <div class="d-flex gap-2 flex-wrap">
@@ -123,9 +99,10 @@
   <!-- Severity Filter Buttons end-->
 
   <!-- Search Bar -->
-  <input class="comp-search-field rounded ps-3 py-1 border border-1"
+ <input class="comp-search-field rounded ps-3 py-1 border border-1"
          type="text"
          placeholder="Search"
+         [(ngModel)]="searchValue"
          (keyup)="searchApplications($event)">
 </div>
 
@@ -136,57 +113,38 @@
           <!-- Software Name -->
           <ng-container  matColumnDef="softwareName">
             <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
-<!-- <td mat-cell *matCellDef="let app" class="text-wrap">
- <span class="p-1"> {{ app.softwareName }}</span>
-  <i
-    *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
-    class="fa-solid ms-0 fa-triangle-exclamation text-danger"
-  ></i>
-</td> -->
 
 <td mat-cell *matCellDef="let app" class="gap-1">
   <span class="p-1">{{ app.softwareName }}</span>
-  <i
-    *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
-    class="fa-solid fa-triangle-exclamation text-danger"
-  ></i>
+  <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning">shield_question</span>
   <span *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
         class="text-danger">
-    {{
+    ({{
       app.criticalVulnerabilityCount +
       app.highVulnerabilityCount +
       app.mediumVulnerabilityCount +
       app.lowVulnerabilityCount
-    }}
+    }})
   </span>
+   <i
+    *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
+    class="fa-solid fa-triangle-exclamation text-danger"
+  ></i>
 </td>
 
           </ng-container>
 
           <!-- Software Version -->
           <ng-container matColumnDef="softwareVersion">
-            <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Version</th>
-            <td mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
+            <th  class="text-secondary fw-bolder text-center " mat-header-cell *matHeaderCellDef>Version</th>
+            <td class="text-center" mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td> 
           </ng-container>
 
           <!-- Vendor -->
           <ng-container matColumnDef="vendor">
-            <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Vendor</th>
-            <td mat-cell *matCellDef="let app">{{ app.vendor }}</td>
+            <th  class="text-secondary fw-bolder text-center " mat-header-cell *matHeaderCellDef>Vendor</th>
+            <td class="text-center"mat-cell *matCellDef="let app">{{ app.vendor }}</td>
           </ng-container>
-
-          <!-- Vulnerability Count -->
-          <!-- <ng-container matColumnDef="vulnerabilityCount">
-            <th  class="text-secondary text-center fw-bolder" mat-header-cell *matHeaderCellDef>Vulnerabilities</th>
-            <td class="text-center" mat-cell *matCellDef="let app">
-              {{
-                app.criticalVulnerabilityCount +
-                app.highVulnerabilityCount +
-                app.mediumVulnerabilityCount +
-                app.lowVulnerabilityCount
-              }}
-            </td>
-          </ng-container> -->
 
           <!-- Table Rows -->
            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
@@ -198,8 +156,9 @@
       [ngClass]="{
         'vulnerable-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
                           row.mediumVulnerabilityCount + row.lowVulnerabilityCount > 0,
+                          'unresolved-row': !row.resolved,
         'normal-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
-                      row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0
+                      row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved
       }"
     ></tr>
         </table>

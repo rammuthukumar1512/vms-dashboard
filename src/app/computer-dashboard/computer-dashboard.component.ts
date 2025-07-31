@@ -28,6 +28,8 @@ import { ToastService } from '../core/services/toast.service';
 export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDestroy{
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
+  @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
+
   computerChartInstance!: Chart<'doughnut'>;
   severityChartInstance!: Chart<'bar'>;
   securityData: SecurityReport = {
@@ -293,7 +295,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       loggedInUser: data?.loggedInUser || 'Unknown',
      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
-     this.sharedDataService.sendAppData(appData);
+     this.applicationDashboardComponent.sendAppData(data, computerId);
      this.pagedComputerData = this.pagedComputerData.map((computer) => {
         if(this.selectedComputerId === computer.id) computer.selected = true
         else computer.selected = false
