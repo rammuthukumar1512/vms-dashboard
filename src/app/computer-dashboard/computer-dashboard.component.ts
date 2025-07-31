@@ -240,6 +240,48 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const vulnerableCount = this.vulnerableComputers;
     const nonVulnerableCount = this.totalComputers - vulnerableCount;
 
+    const leaderLinePlugin = {
+    id: 'leaderLinePlugin',
+    afterDatasetDraw(chart: any) {
+      if (!isDataFetched) return;
+
+      const {ctx, chartArea: {top, bottom, left, right}} = chart;
+      const meta = chart.getDatasetMeta(0);
+      console.log(top, bottom, left, right)
+      const centerX = (left + right) / 2;
+      const centerY = (top + bottom) / 2;
+
+  meta.data.forEach((arc: any, index: number) => {
+  let angle = (arc.startAngle + arc.endAngle) / 2;
+  const radius = arc.outerRadius;
+  angle += 0.3;
+  const x = centerX + Math.cos(angle) * radius;
+  const y = centerY + Math.sin(angle) * radius;
+  const lineEndX = centerX + Math.cos(angle) * (radius + 15);
+  const lineEndY = index === 0 ? 4 : centerY + Math.sin(angle) * (radius + 15);
+
+  const isTop = Math.sin(angle) < 0;
+  console.log(lineEndX)
+  const labelX = lineEndX + (Math.cos(angle) >= 0 ? 20 : -40);
+  const labelY = index === 0 ? 10 : 145;
+  console.log(centerX, lineEndY)
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(lineEndX, lineEndY);
+  ctx.lineTo(labelX, labelY);
+  ctx.strokeStyle = 'blue';
+  ctx.stroke();
+
+  const label = chart.data.labels[index];
+  const value = chart.data.datasets[0].data[index];
+
+  ctx.font = '12px sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.fillText(value, labelX, labelY);
+});
+    }
+  };
+
     this.computerChartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -284,7 +326,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           }
         }
         }
-      }
+      },
+      plugins: [leaderLinePlugin]
     });
   }
 
