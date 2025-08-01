@@ -298,8 +298,9 @@ this.updatePagedData(this.pageIndex);
 
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
-  console.log('Chart data:', { vulnerableCount, nonVulnerableCount }); // Debug log
-  const vulnerablePercentage = ( vulnerableCount / this.appData.length) * 100; 
+  console.log('Chart data:', { vulnerableCount, nonVulnerableCount });
+  const vulnerablePercentage = (vulnerableCount / this.appData.length) * 100;
+  const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
   const leaderLinePlugin = {
     id: 'leaderLinePlugin',
     afterDatasetDraw(chart: any) {
@@ -313,23 +314,63 @@ this.updatePagedData(this.pageIndex);
   meta.data.forEach((arc: any, index: number) => {
   let angle = (arc.startAngle + arc.endAngle) / 2;
   const radius = arc.outerRadius;
-  if(index === 0 && vulnerablePercentage > 10) angle += 0.3;  
-  else if(index === 1) angle += 0.6;
+  console.log(nonVulnerablePercentage, index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100))
+  if(index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <=20)) angle += 0.3;
+  else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
+  else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
+  else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
+  else if (index === 0 && (vulnerablePercentage >= 70 && vulnerablePercentage < 100)) angle -= 0.7;
+  else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
+  else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 30)) angle -= 0.5;
+  else if (index === 1 && (nonVulnerablePercentage >= 30 && nonVulnerablePercentage < 40)) angle -= 0.5;
+  else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage <=50)) angle -= 0.5;  
+  else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <=80)) angle += 0.1;
+  else if(index === 1 && (nonVulnerablePercentage > 80 && nonVulnerablePercentage < 95)) angle += 0.3;
+  else if(index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100)) angle += 0.6;
+  else {};
   const x = centerX + Math.cos(angle) * radius;
   const y = centerY + Math.sin(angle) * radius;
   const lineEndX = centerX + Math.cos(angle) * (radius + 15);
-  const lineEndY = (index === 0 && vulnerablePercentage < 10) ? 5 : centerY + Math.sin(angle) * (radius + 15);
+  let lineEndY = 0;
+  if (index === 0 && vulnerablePercentage <= 10) { lineEndY = 15 }
+  else if(index === 1 && nonVulnerablePercentage <= 10 ) {lineEndY = 15}
+  else if(index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 50 )) {lineEndY = 10}
+  else { lineEndY = centerY + Math.sin(angle) * (radius + 15);}
 
   const isTop = Math.sin(angle) < 0;
   console.log(lineEndX)
-  const labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 20 : 40 ;
-  const labelY = index === 0 ? 10 : 145;
+  let labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 120 : 40 ;
+  let labelY = 0;
+  if(index === 0 && vulnerablePercentage < 10) {labelX = 220; labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage >= 10 && vulnerablePercentage <= 20)) {labelX = 240; labelY = 30;}
+  else if (index === 0 && (vulnerablePercentage > 20 && vulnerablePercentage <= 30)) {labelX = 250;labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage > 30 && vulnerablePercentage <= 40)) {labelX = 230; labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage > 40 && vulnerablePercentage <= 50)) {labelX = 240; labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage > 50 && vulnerablePercentage <= 60)) {labelX = 260; labelY = 80}
+  // else if (index === 0 && (nonVulnerablePercentage > 60)) labelY = 145;
+  else if (index === 0 && (vulnerablePercentage > 60 && vulnerablePercentage <= 70)) {labelX = 240; labelY = 130}
+  else if (index === 0 && (vulnerablePercentage > 70)) {labelX = 260; labelY = 80}
+  else {};
+  if(index === 1 && nonVulnerablePercentage < 10) { labelY = 20;}
+  else if (index === 1 && (nonVulnerablePercentage >= 10 && nonVulnerablePercentage <= 20)) labelY = 40;
+  else if (index === 1 && (nonVulnerablePercentage > 20 && nonVulnerablePercentage <= 30)) labelY = 50;
+  else if (index === 1 && (nonVulnerablePercentage > 30 && nonVulnerablePercentage <= 40)) labelY = 60;
+  else if (index === 1 && (nonVulnerablePercentage > 40 && nonVulnerablePercentage <= 50)) labelY = 145;
+  else if (index === 1 && (nonVulnerablePercentage > 50 && nonVulnerablePercentage <= 60)) labelY = 105;
+  else if (index === 1 && (nonVulnerablePercentage > 60 && nonVulnerablePercentage <= 70)) labelY = 145;
+  else if (index === 1 && (nonVulnerablePercentage > 70 && nonVulnerablePercentage <= 100)) labelY = 115;
+  else {};
   console.log(centerX, lineEndY);
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.lineTo(lineEndX, lineEndY);
   ctx.lineTo(labelX, labelY);
-  ctx.strokeStyle = 'blue';
+  ctx.strokeStyle = index === 0 ? '#66b3ffea' : '#3366ffe7';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([7, 3]);
+  // ctx.shadowColor = 'rgba(0,0,0,0.3)';
+  // ctx.shadowBlur = 4;
+  // ctx.shadowOffsetX = 1;
   ctx.stroke();
 
   const label = chart.data.labels[index];
