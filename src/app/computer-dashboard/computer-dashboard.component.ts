@@ -239,7 +239,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const isDataFetched = this.computerDetails.length;
     const vulnerableCount = this.vulnerableComputers;
     const nonVulnerableCount = this.totalComputers - vulnerableCount;
-
+    const vulnerablePercentage = ( vulnerableCount / this.totalComputers) * 100; 
     const leaderLinePlugin = {
     id: 'leaderLinePlugin',
     afterDatasetDraw(chart: any) {
@@ -254,7 +254,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   meta.data.forEach((arc: any, index: number) => {
   let angle = (arc.startAngle + arc.endAngle) / 2;
   const radius = arc.outerRadius;
-  angle += 0.3;
+  if(index === 0 && vulnerablePercentage > 10) angle += 0.3;  
+  else if(index === 1) angle += 0.3;
   const x = centerX + Math.cos(angle) * radius;
   const y = centerY + Math.sin(angle) * radius;
   const lineEndX = centerX + Math.cos(angle) * (radius + 15);

@@ -16,6 +16,7 @@ export const routes: Routes = [
           { path: 'cpe-cve-search', loadComponent: () => import('./cpe-cve-search/cpe-cve-search.component').then(m => m.CpeCveSearchComponent) },
     ]
     },
-    {path: '**', redirectTo: ''}
+    { path: 'not-found', loadComponent: () => import('./not-found/not-found.component').then(m => m.NotFoundComponent) },
+    {path: '**', redirectTo: 'not-found'}
     
 ];

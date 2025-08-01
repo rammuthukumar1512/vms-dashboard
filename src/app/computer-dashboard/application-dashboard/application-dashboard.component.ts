@@ -299,6 +299,48 @@ this.updatePagedData(this.pageIndex);
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
   console.log('Chart data:', { vulnerableCount, nonVulnerableCount }); // Debug log
+  const vulnerablePercentage = ( vulnerableCount / this.appData.length) * 100; 
+  const leaderLinePlugin = {
+    id: 'leaderLinePlugin',
+    afterDatasetDraw(chart: any) {
+
+      const {ctx, chartArea: {top, bottom, left, right}} = chart;
+      const meta = chart.getDatasetMeta(0);
+      console.log(top, bottom, left, right)
+      const centerX = (left + right) / 2;
+      const centerY = (top + bottom) / 2;
+
+  meta.data.forEach((arc: any, index: number) => {
+  let angle = (arc.startAngle + arc.endAngle) / 2;
+  const radius = arc.outerRadius;
+  if(index === 0 && vulnerablePercentage > 10) angle += 0.3;  
+  else if(index === 1) angle += 0.6;
+  const x = centerX + Math.cos(angle) * radius;
+  const y = centerY + Math.sin(angle) * radius;
+  const lineEndX = centerX + Math.cos(angle) * (radius + 15);
+  const lineEndY = (index === 0 && vulnerablePercentage < 10) ? 5 : centerY + Math.sin(angle) * (radius + 15);
+
+  const isTop = Math.sin(angle) < 0;
+  console.log(lineEndX)
+  const labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 20 : 40 ;
+  const labelY = index === 0 ? 10 : 145;
+  console.log(centerX, lineEndY);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(lineEndX, lineEndY);
+  ctx.lineTo(labelX, labelY);
+  ctx.strokeStyle = 'blue';
+  ctx.stroke();
+
+  const label = chart.data.labels[index];
+  const value = chart.data.datasets[0].data[index];
+
+  ctx.font = '12px sans-serif';
+  ctx.fillStyle = '#333';
+  ctx.fillText(value, labelX, labelY);
+});
+    }
+  };
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -329,7 +371,8 @@ this.updatePagedData(this.pageIndex);
           font: { weight: 'bold', size: 12 }
         }
       }
-    }
+    },
+    plugins:[leaderLinePlugin]
   });
 }
 
