@@ -305,8 +305,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   ctx.moveTo(x, y);
   ctx.lineTo(lineEndX, lineEndY);
   ctx.lineTo(labelX, labelY);
-  ctx.strokeStyle = index === 0 ? '#66b3ffea' : '#3366ffe7';
-  ctx.lineWidth = 2;
+  ctx.strokeStyle = 'gray';
+  ctx.lineWidth = 1;
   ctx.setLineDash([7, 3]);
   // ctx.shadowColor = 'rgba(0,0,0,0.3)';
   // ctx.shadowBlur = 4;
