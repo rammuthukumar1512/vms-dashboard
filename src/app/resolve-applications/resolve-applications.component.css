@@ -70,3 +70,16 @@
   outline: none;
   width: 200px;
 }
+
+.table-container {
+  max-height: 319px; /* adjust as needed */
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.comp-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: #ffffff; /* must match your header bg */
+  z-index: 2;
+}

@@ -1,12 +1,13 @@
 <div class="container-fluid bg-white p-4">
   <div class="border border-1 bg-light rounded-3 p-3">
     <div class="d-flex justify-content-between mb-0">
-         <h2 class="text-black-shade fs-5 fnw-bold mb-3">Unresolved Applications</h2>
+         <h2 class="text-black-shade fs-5 fnw-bold mb-2">Unresolved Applications</h2>
     <input class="comp-search-field rounded ps-3 py-1 border border-1 height-fit-content"
          type="text"
          placeholder="Search"
          (keyup)="searchApplications($event)">
         </div>
+        <div class="table-container">
    <table mat-table [dataSource]="pagedApps" class="comp-table w-100">
       <!-- Software Name -->
       <ng-container matColumnDef="softwareName">
@@ -16,14 +17,14 @@
 
       <!-- Software Version -->
       <ng-container matColumnDef="softwareVersion">
-        <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Version</th>
-        <td mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
+        <th class="text-secondary fw-bolder px-5" mat-header-cell *matHeaderCellDef>Version</th>
+        <td class="px-5" mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
       </ng-container>
 
       <!-- Vendor -->
       <ng-container matColumnDef="vendorName">
-        <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Vendor Name</th>
-        <td mat-cell *matCellDef="let app">{{ app.vendorName }}</td>
+        <th class="text-secondary fw-bolder px-5" mat-header-cell *matHeaderCellDef>Vendor Name</th>
+        <td class="px-5" mat-cell *matCellDef="let app">{{ app.vendorName }}</td>
       </ng-container>
 
       <!-- Action -->
@@ -39,7 +40,7 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer"></tr>
     </table>
-
+</div>
     <!-- No Data -->
     <div *ngIf="!pagedApps.length" class="text-center p-2">No unresolved applications found</div>
 

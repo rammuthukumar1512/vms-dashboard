@@ -110,22 +110,23 @@
           <ng-container  matColumnDef="softwareName">
             <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
 
-<td mat-cell *matCellDef="let app" class="gap-1">
+<td mat-cell  *matCellDef="let app" class="gap-1">
   <span class="p-1">{{ app.softwareName }}</span>
-  <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning">shield_question</span>
-  <span *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
-        class="text-danger">
+  <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning"  matTooltip="Unresolved application">shield_question</span>
+  <span  *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
+        class="text-danger"  matTooltip="Contains vulnerabilities">
     ({{
       app.criticalVulnerabilityCount +
       app.highVulnerabilityCount +
       app.mediumVulnerabilityCount +
       app.lowVulnerabilityCount
     }})
-  </span>
-   <i
+
+   <i 
     *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
     class="fa-solid fa-triangle-exclamation text-danger"
   ></i>
+    </span>
 </td>
 
           </ng-container>
