@@ -56,3 +56,23 @@ export interface SecurityReport {
   totalLowVulnerableApplications: number ;
   computerDetails: ComputerDetails[];
 }
+export interface CvssMetric {
+  version: string;
+  baseSeverity: string;
+  baseScore: number;
+}
+
+export interface CveResult {
+  cveId: string;
+  cveDescription: string;
+  cvssMetrics: CvssMetric[];
+  affectedProducts: { cpeName: string }[];
+}
+
+export interface CpeResult {
+  cpe23Uri: string;
+  vendor: string;
+  product: string;
+  version: string;
+}
+
