@@ -142,6 +142,30 @@ searchApplications(event: Event): void {
   this.updatePagedData(this.initialIndex);
 }
 
+// updatePagedData(initialIndex: number): void {
+//   let filteredApps = this.unresolvedApps;
+//   if (this.searchValue) {
+//     filteredApps = filteredApps.filter(app =>
+//       app.softwareName.toLowerCase().includes(this.searchValue) ||
+//       app.softwareVersion.toLowerCase().includes(this.searchValue) ||
+//       app.vendorName.toLowerCase().includes(this.searchValue)
+//     );
+//   }
+
+//   const totalItems = filteredApps.length;
+//   this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
+//                    totalItems >= 50  ? [5, 10, 25, 50] :
+//                    totalItems >= 25  ? [5, 10, 25] :
+//                    totalItems >= 10  ? [5, 10] :
+//                    totalItems > 0    ? [5] : [];
+
+//   this.totalPages = Math.ceil(totalItems / this.pageSize);
+//   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+
+//   this.start = initialIndex * this.pageSize;
+//   this.end = this.start + this.pageSize;
+//   this.pagedApps = filteredApps.slice(this.start, this.end);
+// }
 updatePagedData(initialIndex: number): void {
   let filteredApps = this.unresolvedApps;
   if (this.searchValue) {
@@ -153,11 +177,28 @@ updatePagedData(initialIndex: number): void {
   }
 
   const totalItems = filteredApps.length;
-  this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
-                   totalItems >= 50  ? [5, 10, 25, 50] :
-                   totalItems >= 25  ? [5, 10, 25] :
-                   totalItems >= 10  ? [5, 10] :
-                   totalItems > 0    ? [5] : [0];
+
+  // Dynamically set pageSizes
+  if (totalItems >= 100) {
+    this.pageSizes = [5, 10, 25, 50, 100];
+  } else if (totalItems >= 50) {
+    this.pageSizes = [5, 10, 25, 50];
+  } else if (totalItems >= 25) {
+    this.pageSizes = [5, 10, 25];
+  } else if (totalItems >= 10) {
+    this.pageSizes = [5, 10];
+  } else if (totalItems > 0) {
+    // this.pageSizes = Array.from({ length: totalItems }, (_, i) => i + 1); // 👈 Show 1 to N options
+      this.pageSizes = Array.from({ length: Math.min(totalItems, 10) }, (_, i) => i + 1);
+
+  } else {
+    this.pageSizes = [];
+  }
+
+  // If current pageSize is larger than filtered total, adjust it
+  if (this.pageSize > totalItems && totalItems > 0) {
+    this.pageSize = totalItems;
+  }
 
   this.totalPages = Math.ceil(totalItems / this.pageSize);
   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);

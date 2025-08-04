@@ -89,6 +89,7 @@ export class LikelyCpeDialogComponent {
   softwareName: string = '';
   private cpePattern = /^cpe:2\.3:[aho](:[^:]*){10}$/;
   app: any;
+  isValidCpe: boolean = false;
 
   constructor(
     public dialogRef: MatDialogRef<LikelyCpeDialogComponent>,
@@ -103,6 +104,7 @@ export class LikelyCpeDialogComponent {
     private toastService: ToastService
 
   ) {
+    this.softwareName = this.data.softwareName;
     this.fetchLikelyCpeNames();
   }
 
@@ -121,7 +123,13 @@ export class LikelyCpeDialogComponent {
     });
   }
 
+  validateCpeInput(): void {
+    this.cpeError = false; // Reset error on input change
+    this.isValidCpe = this.cpePattern.test(this.customCpeName);
+  }
+
   addCpeName(cpeName: string = this.customCpeName): void {
+    this.cpeError = false; // Reset error before validation
     if (cpeName === this.customCpeName && !this.cpePattern.test(cpeName)) {
       this.cpeError = true;
       return;

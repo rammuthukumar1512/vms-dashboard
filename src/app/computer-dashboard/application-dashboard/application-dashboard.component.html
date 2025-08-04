@@ -3,12 +3,24 @@
    <!-- First column container start -->
 <div class="container-fluid"> 
   <div class="row border border-1 bg-light rounded-3">
-      <div class="bg-gray-shade rounded-top-3 d-flex justify-content-between border border-top-0 border-start-0 border-end-0 border-bottoms">
-         <span class="text-secondary fs-10 fw-bold p-2"> Machine Name :<span class="text-primary"> {{ machineName }}</span></span>
-          <span class="text-secondary fs-10 fw-bold p-2"> Logged In User :<span class="text-primary"> {{ loggedInUser }}</span></span>
-      </div>
+      <!-- <div class="bg-gray-shade rounded-top-3 d-flex justify-content-between border border-top-0 border-start-0 border-end-0 border-bottoms w-100">
+         <span class="text-secondary fs-10 fw-bold p-2 w-50"> Machine Name :<span class="text-primary" style="word-break: break-all;"> {{ machineName }}</span></span>
+          <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
+      </div> -->
+      <div class="bg-gray-shade rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+<div class="info-row d-flex flex-wrap gap-2 p-2">
+  <div class="label">Machine Name:</div>
+  <div class="value">{{ machineName }}</div>
+</div>
+<div class="info-row d-flex flex-wrap gap-2 p-2">
+  <div class="label">LoggedIn User:</div>
+  <div class="value">{{ loggedInUser }}</div>
+</div>
+</div>
+
     <div class="container-fluid">
       <!-- Top Metrics start -->
+
       <div class="row align-items-center pt-3">
         <div class="col-6 d-flex justify-content-center">
           <div class="w-75 rounded border border-1 py-2">
@@ -26,7 +38,6 @@
       <!-- top metrics end -->
     </div>
    
-
 
     <!-- Charts Section start -->
     <div class="container-fluid mt-3">
