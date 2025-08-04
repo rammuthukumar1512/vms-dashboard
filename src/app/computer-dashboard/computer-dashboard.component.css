@@ -95,7 +95,10 @@
   background-color: blue;
 } */
 .comp-table-parent {
-  height: 35vh;
+  height: 50vh;
+}
+.word-break {
+  word-break: break-word;
 }
 @media (max-width: 768px) {
   .section-card {
