@@ -47,13 +47,6 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 lastResolvedApp: Partial<ApplicationDetails> | null = null;
 
   appData: ApplicationDetails[] = [];
-  // pagedAppData: ApplicationDetails[] = [];
-// selectedComputerId: number = 0;
-// applicationDashboardComponent: any;
-// pagedComputerData: any[] = [];
-// searchInputRef: ElementRef<HTMLInputElement> | undefined;
-// finalComputerDetails: any;
-// computerDetails: any;
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
@@ -79,64 +72,6 @@ lastResolvedApp: Partial<ApplicationDetails> | null = null;
 
   searchValue: string = ''; // make sure this is kept updated by your search input
 
-// constructor(
-//   private sharedDataService: SharedDataService,
-//   private dialog: MatDialog,
-//   private http: HttpClient,
-//   private cdRef: ChangeDetectorRef
-  
-
-// ) {
-  
-
-//   this.sharedDataService.currentData$.subscribe(data => {
-//   console.log('Received appData in ApplicationDashboard:', data); // Debug log
-//    if (data) {
-//     // const previousMachineName = this.machineName;
-//     this.loggedInUser = data.loggedInUser || 'Unknown';
-//     this.machineName = data.machineName || 'Unknown';
-
-//   //  if (this.machineName !== previousMachineName) {
-//   //     this.searchValue = '';
-//   //     this.pageIndex = 0;
-//   //     this.updatePagedData(this.pageIndex);
-//   //   }
-
-//   if (data?.appData && Array.isArray(data.appData)) { // Ensure appData is an array
-//     const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
-//       const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
-//       const bVulns = b.criticalVulnerabilityCount + b.highVulnerabilityCount + b.mediumVulnerabilityCount + b.lowVulnerabilityCount;
-//       return bVulns - aVulns;
-//     });
-
-//     this.appData = sortedData;
-//     this.allApplications = sortedData; 
-//     this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
-//     this.machineName = data.machineName || 'Unknown';
-//     this.calculateSeverityCounts();
-//   } else {
-//     console.warn('No valid appData received:', data);
-//     this.appData = [];
-//     // this.allApplications = []; 
-//     this.vulnerableSoftwareCount = 0;
-//     this.machineName = 'Unknown';
-//     // this.searchValue = ''; // Clear search box if no data
-//     this.loggedInUser = 'Unknown'; 
-//     this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-//   }
-
-//   this.updatePagedData(this.initialIndex);
-//   this.cdRef.detectChanges(); // Ensure DOM updates first
-
-//   setTimeout(() => {
-//     this.drawAppChart();
-//     this.drawSeverityChart();
-//     this.cdRef.detectChanges(); // Fixes ExpressionChangedAfterItHasBeenCheckedError
-//   }, 0);
-// }
-// });
-
-// }
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -224,8 +159,6 @@ ngOnInit(): void {
   //     this.selectedComputerId = computerId;
 
   // // Reset filters in Application Dashboard
-  // this.applicationDashboardComponent['resetFilters']();
-  // Reset pagination settings on new selection
 this.pageSize = 5;
 this.pageIndex = 0;
 this.recordIndex = 1;
@@ -240,18 +173,7 @@ this.updatePagedData(this.pageIndex);
     console.log('Sending appData:', appData);
     this.sharedDataService.sendAppData(appData);
 
-    //under the assumption and observation
-  //   this.pagedComputerData = this.pagedComputerData.map((computer) => {
-  //   computer.selected = (this.selectedComputerId === computer.id);
-  //   return computer;
-  // });
-
-  // // ✅ Reset search input and computer list
-  // if (this.searchInputRef?.nativeElement) {
-  //   this.searchInputRef.nativeElement.value = '';
-  // }
-  // this.finalComputerDetails = this.computerDetails;
-  // this.updatePagedData(this.initialIndex);
+  this.resetFilters();
 
   }
 
@@ -478,11 +400,7 @@ getFilteredApps(): ApplicationDetails[] {
 
   // Apply search
   if (this.searchValue) {
-    // data = data.filter(app =>
-    //   app.softwareName.toLowerCase().includes(this.searchValue) ||
-    //   app.softwareVersion.toLowerCase().includes(this.searchValue) ||
-    //   (app.vendor || '').toLowerCase().includes(this.searchValue)
-    // );
+
   const keyword = this.searchValue.toLowerCase();
   data = data.filter(app =>
     app.softwareName?.toLowerCase().includes(keyword) ||

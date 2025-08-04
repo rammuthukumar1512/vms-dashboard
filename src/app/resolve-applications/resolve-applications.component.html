@@ -38,7 +38,7 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-pointer"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="cursor-arraow"></tr>
     </table>
 </div>
     <!-- No Data -->
@@ -55,6 +55,7 @@
           </mat-option>
         </mat-select>
         <mat-select class="border rounded page-size-width p-2"
+          *ngIf="pageSizes.length > 0"
                     [(ngModel)]="pageSize"
                     (ngModelChange)="onPageSizeChange($event)">
           <mat-option *ngFor="let size of pageSizes" [value]="size">{{ size }}</mat-option>

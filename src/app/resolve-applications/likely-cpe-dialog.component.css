@@ -25,3 +25,35 @@ input{
    background-color: #f9f5f5;
     cursor: pointer;
 }
+
+p{
+  font-size: 14.5px;
+}
+
+.valid-input {
+  border: 2px solid #28a745 !important; /* Green border for valid input */
+}
+
+.invalid-input {
+  border: 2px solid #dc3545 !important; /* Red border for invalid input */
+}
+
+.checkmark-icon {
+  position: absolute;
+  right: 80px; /* Adjust to position inside the input field */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #28a745; /* Green checkmark */
+  font-size: 20px;
+}
+
+/* Error message animation */
+.error-message {
+  opacity: 0;
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
