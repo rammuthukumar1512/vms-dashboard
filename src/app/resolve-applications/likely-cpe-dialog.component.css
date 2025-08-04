@@ -10,13 +10,20 @@
 }
 
 .heading{
-    color: rgb(61, 16, 243);
+    color: rgb(243, 141, 16);
 }
 
 .head{
   background-color: #f9f5f5;
 
 }
+
+input:focus, textarea:focus, select:focus {
+  outline: none;              /* Removes the blue glow */
+  box-shadow: none;           /* Removes the focus shadow */
+  border: 1px solid #ccc;     /* Keeps a simple border */
+}
+
 
 input{
     width: 70%;
