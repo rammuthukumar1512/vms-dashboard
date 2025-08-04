@@ -6,17 +6,33 @@
     mode="side"
     [position]="sidenavPosition"
     class="sidenav"
-    [ngClass]="{ 'mini-sidenav': isMobile, }"
+    [ngClass]="{ 'mini-sidenav': isMobile || isMiniSidenav }"
     role="navigation"
     aria-label="Main navigation menu"
   >
-    <mat-toolbar role="banner" aria-label="Application header">
+    <mat-toolbar role="banner"  class="p-0" aria-label="Application header">
+      <div class="w-100 px-2">
       <img src="images/isteer.png" height="50px" alt="iSteer logo">
+      </div>
     </mat-toolbar>
     <mat-nav-list role="list" class="d-flex flex-column align-items-center p-0">
         <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'justify-content-center': !isMobile}" class="container-fluid menu-item bg-white d-flex align-items-center text-dark rounded-0 py-2 text-decoration-none"  matTooltipPosition="right"  matTooltip="{{item.title}}">
-        <span class="material-symbols-outlined">{{item.icon}}</span>&nbsp;&nbsp; <span *ngIf="isMobile">{{item.title}}</span></a>
+        [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'justify-content-center': !isMobile && !isMiniSidenav}" class="container-fluid menu-item bg-white d-flex align-items-center text-dark rounded-0 py-2 text-decoration-none"  matTooltipPosition="right"  matTooltip="{{item.title}}">
+        <span class="material-symbols-outlined">{{item.icon}}</span>&nbsp;&nbsp; <span *ngIf="isMobile || isMiniSidenav">{{item.title}}</span></a>
+        <div class="sidemenu-expand">
+        <div class="py-2 expand-arrow-container" click="toggleSubMenu()">
+          <button (click)="expandSidenav()" *ngIf="!isMiniSidenav" class="btn expand-btn d-flex justify-content-center p-2 rounded-circle">
+        <mat-icon class="material-symbols-outlined">
+          arrow_forward_ios
+        </mat-icon>
+        </button>
+        <button (click)="expandSidenav()" *ngIf="isMiniSidenav" class="btn expand-btn d-flex justify-content-center p-2 rounded-circle">
+        <mat-icon class="material-symbols-outlined">
+          arrow_back_ios
+        </mat-icon>
+        </button>
+        </div>
+        </div>
     </mat-nav-list>
   </mat-sidenav>
 

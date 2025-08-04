@@ -49,14 +49,18 @@ export class MainDashboardComponent implements AfterViewInit{
         this.isMobile = result.matches;
         this.sidenav.mode = this.isMobile ? 'over' : 'side';
         this.sidenav.opened = !this.isMobile;
+        if(!this.isMobile) this.isMiniSidenav = false;
       });
   }
 
    toggleSidenavMode(): void {
+    console.log(this.isMobile)
     if (this.isMobile) {
       this.sidenav.toggle();
-    } else {
-      this.isMiniSidenav = !this.isMiniSidenav;
     }
   }
+
+  expandSidenav(): void {
+      this.isMiniSidenav = !this.isMiniSidenav;
+}
 }

@@ -26,3 +26,22 @@
 .menu-item {
     outline: 0;
 }
+.sidemenu-expand {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    padding: 20px 0;
+}
+.expand-arrow-container {
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid rgb(228, 227, 227);
+}
+.expand-btn {
+    border: none;
+    outline: none;
+}
+
+.expand-btn:hover {
+    background-color: #ddd;
+}
