@@ -34,7 +34,6 @@
 }
 .expand-arrow-container {
     display: flex;
-    justify-content: center;
     border-top: 1px solid rgb(228, 227, 227);
 }
 .expand-btn {

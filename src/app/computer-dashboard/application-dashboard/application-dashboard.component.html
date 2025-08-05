@@ -7,7 +7,8 @@
          <span class="text-secondary fs-10 fw-bold p-2 w-50"> Machine Name :<span class="text-primary" style="word-break: break-all;"> {{ machineName }}</span></span>
           <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
       </div> -->
-  <div class="bg-gray-shade rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+  <div class="bg-gray-shade d-flex rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+<div class="col-11">
 <div class="info-row d-flex flex-wrap gap-2 p-2">
   <div class="label">Machine Name:</div>
   <div class="value">{{ machineName }}</div>
@@ -15,6 +16,14 @@
 <div class="info-row d-flex flex-wrap gap-2 p-2">
   <div class="label">LoggedIn User:</div>
   <div class="value">{{ loggedInUser }}</div>
+</div>
+</div>
+<div class="col-1 d-flex justify-content-center ms-2 align-items-center">
+   <button class="btn p-1 btn-border-none">
+    <span class="material-symbols-outlined text-blue-theme">
+    send
+    </span>
+    </button>
 </div>
 </div>
 

@@ -247,14 +247,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
       const {ctx, chartArea: {top, bottom, left, right}} = chart;
       const meta = chart.getDatasetMeta(0);
-      console.log(top, bottom, left, right)
       const centerX = (left + right) / 2;
       const centerY = (top + bottom) / 2;
 
   meta.data.forEach((arc: any, index: number) => {
   let angle = (arc.startAngle + arc.endAngle) / 2;
   const radius = arc.outerRadius;
-  console.log(nonVulnerablePercentage, index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100))
   if(index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <=20)) angle += 0.3;
   else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
   else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
@@ -278,7 +276,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   else { lineEndY = centerY + Math.sin(angle) * (radius + 15);}
 
   const isTop = Math.sin(angle) < 0;
-  console.log(lineEndX)
   let labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 120 : 40 ;
   let labelY = 0;
   if(index === 0 && vulnerablePercentage < 10) {labelX = 220; labelY = 20;}
@@ -300,7 +297,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   else if (index === 1 && (nonVulnerablePercentage > 60 && nonVulnerablePercentage <= 70)) labelY = 145;
   else if (index === 1 && (nonVulnerablePercentage > 70 && nonVulnerablePercentage <= 100)) labelY = 115;
   else {};
-  console.log(centerX, lineEndY);
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.lineTo(lineEndX, lineEndY);
@@ -328,7 +324,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       data: {
         labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : ['No Data'],
         datasets: [{
-          data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1],
+          data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1, 1],
           backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
           borderColor: ['#ffffff', '#ffffff'],
           borderWidth: 0
@@ -348,7 +344,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
               label: function (context) {
                 const label = context.label || '';
                 const value = context.parsed || 0;
-                return `${label}: ${value} computers`;
+                return isDataFetched ? `${label}: ${value} computers` : 'No Data';
               }
             }
           },
@@ -368,7 +364,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         }
         }
       },
-      plugins: [leaderLinePlugin]
+      plugins: isDataFetched ? [leaderLinePlugin] : []
     });
   }
 
@@ -466,5 +462,19 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      }
      this.updatePagedData(this.initialIndex);
   } 
+
+  public sendNotificationToAllComputers() {
+    const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
+    });
+      this.http.get<any>(environments.sendNotificationToAllComputers, {headers}).subscribe({
+        next:(response)=>{
+             this.toastService.showToast(response.Status);
+        }, error: (error)=>{
+             this.toastService.showToast('Send Notification Failed')
+        }
+      })
+  }
 
 }  

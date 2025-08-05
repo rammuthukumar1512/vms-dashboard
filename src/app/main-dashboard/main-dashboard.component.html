@@ -20,7 +20,7 @@
         [routerLinkActiveOptions]="{ exact: true }" [ngClass]="{'justify-content-center': !isMobile && !isMiniSidenav}" class="container-fluid menu-item bg-white d-flex align-items-center text-dark rounded-0 py-2 text-decoration-none"  matTooltipPosition="right"  matTooltip="{{item.title}}">
         <span class="material-symbols-outlined">{{item.icon}}</span>&nbsp;&nbsp; <span *ngIf="isMobile || isMiniSidenav">{{item.title}}</span></a>
         <div class="sidemenu-expand">
-        <div class="py-2 expand-arrow-container" click="toggleSubMenu()">
+        <div class="py-2 expand-arrow-container" [ngClass]="{'justify-content-center': !isMiniSidenav, 'justify-content-end': isMiniSidenav}" click="toggleSubMenu()">
           <button (click)="expandSidenav()" *ngIf="!isMiniSidenav" class="btn expand-btn d-flex justify-content-center p-2 rounded-circle">
         <mat-icon class="material-symbols-outlined">
           arrow_forward_ios
