@@ -231,14 +231,12 @@ this.updatePagedData(this.pageIndex);
 
       const {ctx, chartArea: {top, bottom, left, right}} = chart;
       const meta = chart.getDatasetMeta(0);
-      console.log(top, bottom, left, right)
       const centerX = (left + right) / 2;
       const centerY = (top + bottom) / 2;
 
   meta.data.forEach((arc: any, index: number) => {
   let angle = (arc.startAngle + arc.endAngle) / 2;
   const radius = arc.outerRadius;
-  console.log(nonVulnerablePercentage, index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100))
   if(index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <=20)) angle += 0.3;
   else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
   else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
@@ -262,7 +260,6 @@ this.updatePagedData(this.pageIndex);
   else { lineEndY = centerY + Math.sin(angle) * (radius + 15);}
 
   const isTop = Math.sin(angle) < 0;
-  console.log(lineEndX)
   let labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 120 : 40 ;
   let labelY = 0;
   if(index === 0 && vulnerablePercentage < 10) {labelX = 220; labelY = 20;}
@@ -284,7 +281,6 @@ this.updatePagedData(this.pageIndex);
   else if (index === 1 && (nonVulnerablePercentage > 60 && nonVulnerablePercentage <= 70)) labelY = 145;
   else if (index === 1 && (nonVulnerablePercentage > 70 && nonVulnerablePercentage <= 100)) labelY = 115;
   else {};
-  console.log(centerX, lineEndY);
   ctx.beginPath();
   ctx.moveTo(x, y);
   ctx.lineTo(lineEndX, lineEndY);

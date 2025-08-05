@@ -56,10 +56,13 @@
                   </div>
                   </div>
                   <div class="mt-3 p-2 rounded-3 border border-1 bg-light">
-                  <div class="sticky-top d-flex justify-content-end">   
-                      <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 mt-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
+                  <div class="sticky-top d-flex justify-content-between align-items-center">   
+                      <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
+                      <button (click)="sendNotificationToAllComputers()" class="btn px-3 py-1 btn-border-none btn-primary">
+                        Send Notification To All
+                      </button>
                     </div>
-                  <div #compTableParent class="overflow-auto comp-table-parent">
+                  <div #compTableParent [ngClass]="{'comp-table-parent': totalComputers}" class="overflow-auto comp-table-parent">
                     <div>
                     <table class="comp-table w-100">
                     <thead class="sticky-top bg-light">

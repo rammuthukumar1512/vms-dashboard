@@ -4,6 +4,7 @@ export const environments = {
   likelyCpeUrl: 'http://localhost:8082/api/hint/likelyCpeNames',
   addHintUrl: 'http://localhost:8082/api/hint/addHint',
   unresolvedAppsUrl: 'http://localhost:8082/api/applications/unresolved' ,
-  searchVulnerabilityUrl: 'http://localhost:8082/api/search/vulnerability'
+  searchVulnerabilityUrl: 'http://localhost:8082/api/search/vulnerability',
+  sendNotificationToAllComputers: 'http://localhost:8082/api/sendNotifications'
 
 };

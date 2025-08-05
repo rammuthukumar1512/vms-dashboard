@@ -100,6 +100,16 @@
 .word-break {
   word-break: break-word;
 }
+.btn-border-none {
+  border: none;
+  outline: none;
+}
+.bg-blue-theme{
+  background-color: #3366ffe7;
+}
+.text-blue-theme {
+  color: #3366ffe7;
+}
 @media (max-width: 768px) {
   .section-card {
     flex: 1 1 100%;
