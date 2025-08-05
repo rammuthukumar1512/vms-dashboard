@@ -44,3 +44,9 @@
 .expand-btn:hover {
     background-color: #ddd;
 }
+::ng-deep .sidenav-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
