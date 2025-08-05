@@ -10,11 +10,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatIconModule } from '@angular/material/icon';
 import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import { ArcElement, BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, PieController, Tooltip } from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 import { Subject, takeUntil } from 'rxjs';
+import { ToastService } from '../../core/services/toast.service';
+import { environments } from '../../../environments/environments';
 
 // Register Chart.js components
 Chart.register(PieController, ArcElement, Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale, ChartDataLabels);
@@ -45,6 +47,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
 lastResolvedApp: Partial<ApplicationDetails> | null = null;
+computer: ComputerDetails | null = null;
 
   appData: ApplicationDetails[] = [];
 
@@ -77,7 +80,9 @@ constructor(
   private sharedDataService: SharedDataService,
   private dialog: MatDialog,
   private http: HttpClient,
-  private cdRef: ChangeDetectorRef
+  private cdRef: ChangeDetectorRef,
+  private toastService: ToastService,
+
 ) {}
 
 ngOnInit(): void {
@@ -156,7 +161,8 @@ ngOnInit(): void {
   }
 
   public sendAppData(data: ComputerDetails | null , computerId: number): void {
-  //     this.selectedComputerId = computerId;
+      // this.selectedComputerId = computerId;
+  this.computer = data;
 
   // // Reset filters in Application Dashboard
 this.pageSize = 5;
@@ -500,6 +506,23 @@ resetFilters(): void {
       uuid: app.uuid,
       softwareVersion: app.softwareVersion,
       vendor: app.vendor
+    }
+  });
+}
+
+sendNotificationToComputer(computerUuid: string) {
+  const headers = new HttpHeaders({
+    'Accept': 'application/json'
+  });
+
+  const url = `${environments.sendNotificationToAllComputers}/${computerUuid}`;
+
+  this.http.get<any>(url, { headers }).subscribe({
+    next: (response) => {
+      this.toastService.showToast(response.Status);
+    },
+    error: (error) => {
+      this.toastService.showToast('Send Notification Failed');
     }
   });
 }
