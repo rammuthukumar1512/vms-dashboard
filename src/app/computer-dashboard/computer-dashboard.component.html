@@ -59,7 +59,7 @@
                   <div class="sticky-top d-flex justify-content-between align-items-center">   
                       <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
                       <button (click)="sendNotificationToAllComputers()" class="btn px-3 py-1 btn-border-none btn-primary">
-                        Send Notification To All
+                        Notify All Users
                       </button>
                     </div>
                   <div #compTableParent [ngClass]="{'comp-table-parent': totalComputers}" class="overflow-auto comp-table-parent">

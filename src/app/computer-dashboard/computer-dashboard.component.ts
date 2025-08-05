@@ -78,7 +78,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   private fetchSecurityData(): void {
     const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
     'Accept': 'application/json'
     });
 
@@ -465,14 +464,13 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   public sendNotificationToAllComputers() {
     const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
     'Accept': 'application/json'
     });
       this.http.get<any>(environments.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showToast(response.Status);
         }, error: (error)=>{
-             this.toastService.showToast('Send Notification Failed')
+             this.toastService.showToast('Send Notification Failed');
         }
       })
   }
