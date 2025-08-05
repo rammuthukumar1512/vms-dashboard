@@ -18,11 +18,16 @@
   <div class="value">{{ loggedInUser }}</div>
 </div>
 </div>
-<div class="col-1 d-flex justify-content-center ms-2 align-items-center" matTooltip="Send Notification">
-   <button class="btn p-1 btn-border-none">
+<div class="col-1 d-flex justify-content-center ms-2 align-items-center" matTooltip="Send Notification" *ngIf="computer">
+   <!-- <button class="btn p-1 btn-border-none">
     <span class="material-symbols-outlined text-blue-theme">
     send
     </span>
+    </button> -->
+<button (click)="sendNotificationToComputer(computer.uuid)" class="btn p-1 btn-border-none">
+      <span class="material-symbols-outlined text-blue-theme">
+        send
+      </span>
     </button>
 </div>
 </div>

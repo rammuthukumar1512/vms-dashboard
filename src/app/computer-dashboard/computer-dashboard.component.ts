@@ -465,7 +465,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   public sendNotificationToAllComputers() {
     const headers = new HttpHeaders({
-    'Content-Type': 'application/json',
     'Accept': 'application/json'
     });
       this.http.get<any>(environments.sendNotificationToAllComputers, {headers}).subscribe({
