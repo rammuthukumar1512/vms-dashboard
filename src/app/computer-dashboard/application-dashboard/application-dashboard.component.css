@@ -211,8 +211,32 @@ td {
   font-size: 14px;
   color: #0d6efd;
   flex: 1;
-}
-.text-blue-theme {
-  color: #3366ffe7;
+  width: 10px;
 }
 
+
+
+.headerDetails{
+  width: 425px;
+}
+
+/* .notify-button-container{
+  padding-top: 30px;
+} */
+
+.notify-button-container {
+    padding-top: 20px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.notify-button-container button {
+    padding: 2px 8px; /* Reduce padding to make it smaller */
+    font-size: 12px; /* Smaller font size */
+    width: auto; /* Allow button to size based on content */
+    height: 28px; /* Set a specific height */
+}
+
+.bg-blue-theme{
+  background-color: #3366ffe7;
+}
