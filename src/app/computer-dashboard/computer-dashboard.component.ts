@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -13,14 +13,16 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { Subject, takeUntil, timeout } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil, timeout } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
+import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
+import { MatDialogContent } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule
+   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogActions, MatDialogContent
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
@@ -60,12 +62,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   start:number = 0;
   end:number = 0;
   private destroy$ = new Subject<void>();
+  dialogRef!: MatDialogRef<any>;
 
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
- @ViewChild(ApplicationDashboardComponent) applicationDashboardComponent!: ApplicationDashboardComponent;
+  @ViewChild(ApplicationDashboardComponent) applicationDashboardComponent!: ApplicationDashboardComponent;
+  @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>;
 
-  constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService
+  constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService,
+    private dialog: MatDialog
   ) {};
 
   ngOnInit(): void {
@@ -330,9 +335,44 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         cutout: '50%',
+        scales: {
+          x: {
+            position: 'top',  // 👈 move X-axis to top
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Score'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Computers'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          }
+        },
         plugins: {
           legend: {
             display:isDataFetched ?  true : false,
@@ -348,19 +388,19 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             }
           },
           datalabels: {
-          formatter: (value, context) => {
-          const data = context.chart.data.datasets[0].data as number[];
-          const total = data.reduce((sum, val) => sum + val, 0);
-          const percentage = total ? ((value / total) * 100).toFixed(0) : '0';
-          if(isDataFetched) {return percentage + '%';}
-          else {return ''}
-          },
-          color: '#ffffff',
-          font: {
-            weight: 'bold',
-            size: 12
+            formatter: (value, context) => {
+              const data = context.chart.data.datasets[0].data as number[];
+              const total = data.reduce((sum, val) => sum + val, 0);
+              const percentage = total ? ((value / total) * 100).toFixed(0) : '0';
+              if(isDataFetched) {return percentage + '%';}
+              else {return ''}
+            },
+            color: '#ffffff',
+            font: {
+              weight: 'bold',
+              size: 12
+            }
           }
-        }
         }
       },
       plugins: isDataFetched ? [leaderLinePlugin] : []
@@ -462,7 +502,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      this.updatePagedData(this.initialIndex);
   } 
 
-  public sendNotificationToAllComputers() {
+  public async sendNotificationToAllComputers() {
+    this.dialogRef = this.dialog.open(this.notificationConfirmDialog);
+    const confirm = await firstValueFrom(this.dialogRef.afterClosed());
+    if(!confirm) return;
     const headers = new HttpHeaders({
     'Accept': 'application/json'
     });

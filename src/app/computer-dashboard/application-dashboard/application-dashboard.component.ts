@@ -320,9 +320,44 @@ this.updatePagedData(this.pageIndex);
       }]
     },
     options: {
-      responsive: true,
-      cutout: '50%',
-      maintainAspectRatio: false,
+       indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '50%',
+        scales: {
+          x: {
+            position: 'top',  // 👈 move X-axis to top
+            beginAtZero: false,
+            title: {
+              display: true,
+              text: 'Score'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              text: 'Computers'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          }
+        },
       plugins: {
         legend: { display: true, position: 'bottom' },
         tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed || 0} applications` } },
