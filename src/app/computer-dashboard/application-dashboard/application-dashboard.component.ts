@@ -345,7 +345,7 @@ this.updatePagedData(this.pageIndex);
           y: {
             title: {
               display: true,
-              text: 'Computers'
+              // text: 'Applications'
             },
             grid: {
               display: false

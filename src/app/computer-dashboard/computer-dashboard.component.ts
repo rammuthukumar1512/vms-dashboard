@@ -360,7 +360,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           y: {
             title: {
               display: true,
-              text: 'Computers'
+              // text: 'Computers'
             },
             grid: {
               display: false
