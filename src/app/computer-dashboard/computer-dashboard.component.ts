@@ -345,7 +345,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             beginAtZero: false,
             title: {
               display: true,
-              text: 'Score'
+              // text: 'Score'
             },
             grid: {
               display: false
