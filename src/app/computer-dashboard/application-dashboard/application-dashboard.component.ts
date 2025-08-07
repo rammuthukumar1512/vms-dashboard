@@ -230,7 +230,7 @@ this.updatePagedData(this.pageIndex);
   const nonVulnerableCount = this.appData.length - vulnerableCount;
   console.log('Chart data:', { vulnerableCount, nonVulnerableCount });
   const vulnerablePercentage = (vulnerableCount / this.appData.length) * 100;
-  const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
+  const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100;
   const leaderLinePlugin = {
     id: 'leaderLinePlugin',
     afterDatasetDraw(chart: any) {
@@ -253,8 +253,7 @@ this.updatePagedData(this.pageIndex);
   else if (index === 1 && (nonVulnerablePercentage >= 30 && nonVulnerablePercentage < 40)) angle -= 0.5;
   else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage <=50)) angle -= 0.5;  
   else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <=80)) angle += 0.1;
-  else if(index === 1 && (nonVulnerablePercentage > 80 && nonVulnerablePercentage < 95)) angle += 0.3;
-  else if(index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100)) angle += 0.6;
+  else if(index === 1 && (nonVulnerablePercentage > 80 && nonVulnerablePercentage <= 100)) angle += 0.6;
   else {};
   const x = centerX + Math.cos(angle) * radius;
   const y = centerY + Math.sin(angle) * radius;
@@ -269,16 +268,16 @@ this.updatePagedData(this.pageIndex);
   let labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 120 : 40 ;
   let labelY = 0;
   if(index === 0 && vulnerablePercentage < 10) {labelX = 220; labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage >= 10 && vulnerablePercentage <= 20)) {labelX = 240; labelY = 30;}
-  else if (index === 0 && (vulnerablePercentage > 20 && vulnerablePercentage <= 30)) {labelX = 250;labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage > 30 && vulnerablePercentage <= 40)) {labelX = 230; labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage > 40 && vulnerablePercentage <= 50)) {labelX = 240; labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage > 50 && vulnerablePercentage <= 60)) {labelX = 260; labelY = 80}
-  // else if (index === 0 && (nonVulnerablePercentage > 60)) labelY = 145;
-  else if (index === 0 && (vulnerablePercentage > 60 && vulnerablePercentage <= 70)) {labelX = 240; labelY = 130}
-  else if (index === 0 && (vulnerablePercentage > 70)) {labelX = 260; labelY = 80}
+  else if (index === 0 && (vulnerablePercentage >= 10 && vulnerablePercentage <= 20)) {labelX = 270; labelY = 30;}
+  else if (index === 0 && (vulnerablePercentage > 20 && vulnerablePercentage <= 30)) {labelX = 270;labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage > 30 && vulnerablePercentage <= 40)) {labelX = 250; labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage > 40 && vulnerablePercentage <= 50)) {labelX = 255; labelY = 20;}
+  else if (index === 0 && (vulnerablePercentage > 50 && vulnerablePercentage <= 60)) {labelX = 270; labelY = 80}
+  else if (index === 0 && (vulnerablePercentage > 60 && vulnerablePercentage <= 70)) {labelX = 270; labelY = 130}
+  else if (index === 0 && (vulnerablePercentage > 70 && vulnerablePercentage <= 90)) {labelX = 280; labelY = 80}
+  else if (index === 0 && (vulnerablePercentage > 90 && vulnerablePercentage <= 100)) {labelX = 280; labelY = 120}
   else {};
-  if(index === 1 && nonVulnerablePercentage < 10) { labelY = 20;}
+  if(index === 1 && nonVulnerablePercentage < 10) { labelX = 70;labelY = 20;}
   else if (index === 1 && (nonVulnerablePercentage >= 10 && nonVulnerablePercentage <= 20)) labelY = 40;
   else if (index === 1 && (nonVulnerablePercentage > 20 && nonVulnerablePercentage <= 30)) labelY = 50;
   else if (index === 1 && (nonVulnerablePercentage > 30 && nonVulnerablePercentage <= 40)) labelY = 60;
@@ -294,9 +293,6 @@ this.updatePagedData(this.pageIndex);
   ctx.strokeStyle = 'gray';
   ctx.lineWidth = 1;
   ctx.setLineDash([7, 3]);
-  // ctx.shadowColor = 'rgba(0,0,0,0.3)';
-  // ctx.shadowBlur = 4;
-  // ctx.shadowOffsetX = 1;
   ctx.stroke();
 
   const label = chart.data.labels[index];
@@ -326,7 +322,7 @@ this.updatePagedData(this.pageIndex);
         cutout: '50%',
         scales: {
           x: {
-            position: 'top',  // 👈 move X-axis to top
+            position: 'top', 
             beginAtZero: false,
             title: {
               display: true,
@@ -345,7 +341,6 @@ this.updatePagedData(this.pageIndex);
           y: {
             title: {
               display: true,
-              // text: 'Applications'
             },
             grid: {
               display: false
