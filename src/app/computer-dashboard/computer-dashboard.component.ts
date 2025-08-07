@@ -15,14 +15,14 @@ import { ApplicationDashboardComponent } from './application-dashboard/applicati
 import { MatOption, MatSelectModule } from '@angular/material/select';
 import { firstValueFrom, Subject, takeUntil, timeout } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
-import { MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogContent
+   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogContent, MatDialogActions
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
