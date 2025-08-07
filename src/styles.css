@@ -42,3 +42,7 @@ html, body { height: 100%; }
   max-height: 90vh !important;
   height: auto !important;
 }
+
+mat-sidenav-content {
+  background-color: #ffffff;
+}
