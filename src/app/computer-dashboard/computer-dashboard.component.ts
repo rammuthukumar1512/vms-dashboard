@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -15,14 +15,14 @@ import { ApplicationDashboardComponent } from './application-dashboard/applicati
 import { MatOption, MatSelectModule } from '@angular/material/select';
 import { firstValueFrom, Subject, takeUntil, timeout } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
-import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogActions, MatDialogContent
+   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogContent
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
