@@ -206,7 +206,11 @@ td {
 }
 
 .value {
-  word-break: break-all; /* Allow long strings to wrap */
+  /* word-break: break-all; */
+        text-overflow: ellipsis;
+          white-space: nowrap;
+  overflow: hidden;
+ /* Allow long strings to wrap */
   overflow-wrap: anywhere;
   font-size: 14px;
   color: #0d6efd;
