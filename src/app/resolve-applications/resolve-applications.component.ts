@@ -94,14 +94,6 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
   }
 
   resolveApplication(app: UnresolvedApplication): void {
-    // const dialogRef = this.dialog.open(LikelyCpeDialogComponent, {
-    //   width: '800px',
-    //   data: {
-    //     uuid: app.uuid,
-    //     softwareName: app.softwareName,
-    //     softwareVersion: app.softwareVersion,
-    //     vendor: app.vendorName
-    //   }
         this.openLikelyCpeDialog(app);
     }
 
@@ -136,36 +128,17 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
 
   searchValue: string = '';
 
+
 searchApplications(event: Event): void {
   this.searchValue = (event.target as HTMLInputElement).value.toLowerCase();
-  this.pageIndex = 0;
+  if (this.searchValue === '') {
+    this.pageIndex = 0; // Reset to first page
+    this.pageSize = 5;  // Reset to initial page size
+    this.recordIndex = 1; // Reset record index
+  }
   this.updatePagedData(this.initialIndex);
 }
 
-// updatePagedData(initialIndex: number): void {
-//   let filteredApps = this.unresolvedApps;
-//   if (this.searchValue) {
-//     filteredApps = filteredApps.filter(app =>
-//       app.softwareName.toLowerCase().includes(this.searchValue) ||
-//       app.softwareVersion.toLowerCase().includes(this.searchValue) ||
-//       app.vendorName.toLowerCase().includes(this.searchValue)
-//     );
-//   }
-
-//   const totalItems = filteredApps.length;
-//   this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
-//                    totalItems >= 50  ? [5, 10, 25, 50] :
-//                    totalItems >= 25  ? [5, 10, 25] :
-//                    totalItems >= 10  ? [5, 10] :
-//                    totalItems > 0    ? [5] : [];
-
-//   this.totalPages = Math.ceil(totalItems / this.pageSize);
-//   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-
-//   this.start = initialIndex * this.pageSize;
-//   this.end = this.start + this.pageSize;
-//   this.pagedApps = filteredApps.slice(this.start, this.end);
-// }
 updatePagedData(initialIndex: number): void {
   let filteredApps = this.unresolvedApps;
   if (this.searchValue) {
@@ -178,7 +151,7 @@ updatePagedData(initialIndex: number): void {
 
   const totalItems = filteredApps.length;
 
-  // Dynamically set pageSizes
+  // Dynamically set pageSizes to match ApplicationDashboardComponent logic
   if (totalItems >= 100) {
     this.pageSizes = [5, 10, 25, 50, 100];
   } else if (totalItems >= 50) {
@@ -188,16 +161,14 @@ updatePagedData(initialIndex: number): void {
   } else if (totalItems >= 10) {
     this.pageSizes = [5, 10];
   } else if (totalItems > 0) {
-    // this.pageSizes = Array.from({ length: totalItems }, (_, i) => i + 1); // 👈 Show 1 to N options
-      this.pageSizes = Array.from({ length: Math.min(totalItems, 10) }, (_, i) => i + 1);
-
+    this.pageSizes = [5]; // Minimum page size is 5, adjust if totalItems < 5
   } else {
     this.pageSizes = [];
   }
 
-  // If current pageSize is larger than filtered total, adjust it
+  // Adjust pageSize if it exceeds totalItems after filtering
   if (this.pageSize > totalItems && totalItems > 0) {
-    this.pageSize = totalItems;
+    this.pageSize = Math.min(5, totalItems); // Reset to 5 or totalItems if less
   }
 
   this.totalPages = Math.ceil(totalItems / this.pageSize);
@@ -207,8 +178,6 @@ updatePagedData(initialIndex: number): void {
   this.end = this.start + this.pageSize;
   this.pagedApps = filteredApps.slice(this.start, this.end);
 }
-
-
 
   nextPage(): void {
     if (this.pageIndex < this.totalPages - 1) {

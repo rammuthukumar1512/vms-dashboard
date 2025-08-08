@@ -1,9 +1,9 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef,TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -43,6 +43,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 
   @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
+  @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>; // Add template reference
 
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
@@ -74,6 +75,7 @@ computer: ComputerDetails | null = null;
   allApplications: any[] = []; // or whatever type it holds
 
   searchValue: string = ''; // make sure this is kept updated by your search input
+dialogRef!: MatDialogRef<any>; // Add dialog reference
 
 
 constructor(
@@ -540,6 +542,18 @@ resetFilters(): void {
   });
 }
 
+openNotificationConfirmDialog(computerUuid: string): void {
+    this.dialogRef = this.dialog.open(this.notificationConfirmDialog, {
+      width: '600px'
+    });
+
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.sendNotificationToComputer(computerUuid);
+      }
+    });
+  }
+
 sendNotificationToComputer(computerUuid: string) {
   const headers = new HttpHeaders({
     'Accept': 'application/json'
@@ -558,4 +572,5 @@ sendNotificationToComputer(computerUuid: string) {
 }
 
 }
+
 
