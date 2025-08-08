@@ -1,3 +1,4 @@
+version: 1
 frontend:
   phases:
     preBuild:
@@ -5,7 +6,7 @@ frontend:
         - npm ci
     build:
       commands:
-        - npm run build
+        - npm run build -- --configuration production
   artifacts:
     baseDirectory: dist/vms-dashboard
     files:
@@ -14,15 +15,3 @@ frontend:
     paths:
       - node_modules/**
 
-# Add the rewrites rule
-customHeaders:
-  - pattern: '**/*'
-    headers:
-      - key: 'Cache-Control'
-        value: 'no-cache'
-
-# Most important for routing in Angular
-rewriteRules:
-  - source: </^((?!\.).)*$/>
-    target: /index.html
-    status: 200
