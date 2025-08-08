@@ -8,10 +8,10 @@ frontend:
       commands:
         - npm run build -- --configuration production
   artifacts:
-    baseDirectory: dist/vms-dashboard
+    baseDirectory: dist/vms-dashboard/browser
     files:
       - '**/*'
   cache:
     paths:
-      - node_modules/**
+      - node_modules/**/*
 
