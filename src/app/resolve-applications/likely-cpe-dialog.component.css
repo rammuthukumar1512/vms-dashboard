@@ -54,6 +54,10 @@ p{
   font-size: 20px;
 }
 
+/* Ensure button is properly positioned when visible */
+/* button[mat-raised-button] {
+  margin-left: 10px; /* Space between input and button */
+/* } */
 /* Error message animation */
 .error-message {
   opacity: 0;
