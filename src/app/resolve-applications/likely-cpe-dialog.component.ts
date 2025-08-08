@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, ElementRef, Inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,6 +8,7 @@ import { environments } from '../../environments/environments';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../core/services/toast.service';
+import { Subject, debounceTime } from 'rxjs';
 
 // Confirm Dialog Component
 @Component({
@@ -83,6 +84,7 @@ export class ConfirmDialogComponent {
   styleUrls: ['./likely-cpe-dialog.component.css']
 })
 export class LikelyCpeDialogComponent {
+  @ViewChild('cpeInput') cpeInput!: ElementRef;
   customCpeName: string = '';
   likelyCpeNames: { cpe23Uri: string; vendor: string; product: string; version: string }[] = [];
   cpeError: boolean = false;
@@ -90,7 +92,7 @@ export class LikelyCpeDialogComponent {
   private cpePattern = /^cpe:2\.3:[aho](:[^:]*){10}$/;
   app: any;
   isValidCpe: boolean = false;
-
+  private validateSubject = new Subject<string>(); // For debouncing
   constructor(
     public dialogRef: MatDialogRef<LikelyCpeDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: {
@@ -106,6 +108,18 @@ export class LikelyCpeDialogComponent {
   ) {
     this.softwareName = this.data.softwareName;
     this.fetchLikelyCpeNames();
+    this.setupDebounceValidation();
+  }
+
+  ngOnInit() {
+    this.setupDebounceValidation();
+  }
+
+  setupDebounceValidation() {
+    this.validateSubject.pipe(debounceTime(800)).subscribe(value => {
+      this.cpeError = !this.cpePattern.test(value); // Show error only if invalid and not empty
+      this.isValidCpe = !this.cpeError;
+    });
   }
 
   fetchLikelyCpeNames(): void {
@@ -125,7 +139,14 @@ export class LikelyCpeDialogComponent {
 
   validateCpeInput(): void {
     this.cpeError = false; // Reset error on input change
-    this.isValidCpe = this.cpePattern.test(this.customCpeName);
+    // this.isValidCpe = this.cpePattern.test(this.customCpeName);
+    this.validateSubject.next(this.customCpeName); // Trigger debounced validation
+  }
+
+  onEnterKey(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && this.isValidCpe) {
+      this.addCpeName();
+    }
   }
 
   addCpeName(cpeName: string = this.customCpeName): void {

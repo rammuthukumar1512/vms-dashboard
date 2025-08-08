@@ -17,12 +17,13 @@
         type="text"
         [(ngModel)]="customCpeName"
         (ngModelChange)="validateCpeInput()"
+        (keyup)="onEnterKey($event)"
         placeholder="Enter CPE Name "
         class="form-control"
         [ngClass]="{'valid-input': isValidCpe, 'invalid-input': cpeError}"
       />
       <mat-icon *ngIf="isValidCpe" class="checkmark-icon">check_circle</mat-icon>
-      <button mat-raised-button color="primary" (click)="addCpeName()">Add</button>
+      <button mat-raised-button color="primary" (click)="addCpeName()" *ngIf="isValidCpe">Add</button>
     </div>
     <p *ngIf="cpeError" class="text-danger mt-1">
       Invalid CPE format. Eg: cpe:2.3:a:microsoft:edge:138.0.3351.77:*:*:*:*:*:*:*
