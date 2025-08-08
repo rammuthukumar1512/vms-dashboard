@@ -89,7 +89,7 @@ export class LikelyCpeDialogComponent {
   likelyCpeNames: { cpe23Uri: string; vendor: string; product: string; version: string }[] = [];
   cpeError: boolean = false;
   softwareName: string = '';
-  private cpePattern = /^cpe:2\.3:[aho](:[^:]*){10}$/;
+  private cpePattern =  /^cpe:2\.3:[aho]:[^:]+:[^:]+:[^:]+(?::[^:]*){7}$/;
   app: any;
   isValidCpe: boolean = false;
   private validateSubject = new Subject<string>(); // For debouncing
