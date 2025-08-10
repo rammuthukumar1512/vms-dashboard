@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { firstValueFrom, Subject, takeUntil, timeout } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';

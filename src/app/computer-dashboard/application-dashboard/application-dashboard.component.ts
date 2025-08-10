@@ -12,14 +12,11 @@ import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { ArcElement, BarController, BarElement, CategoryScale, Chart, Legend, LinearScale, PieController, Tooltip } from 'chart.js';
+import { Chart} from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { environments } from '../../../environments/environments';
-
-// Register Chart.js components
-Chart.register(PieController, ArcElement, Tooltip, Legend, BarController, BarElement, CategoryScale, LinearScale, ChartDataLabels);
 
 @Component({
   selector: 'app-application-dashboard',
