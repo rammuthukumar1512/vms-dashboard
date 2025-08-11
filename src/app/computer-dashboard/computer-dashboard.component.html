@@ -99,7 +99,7 @@
                    
                   </div>
                   <div *ngIf="pagedComputerData.length > 0;" class="d-flex justify-content-end mt-2">
-                            <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content">
+                            <div class="pagination d-flex justify-content-evenly align-items-center height-fit-content">
                             <mat-select class="border rounded page-size-width p-2" (ngModelChange)="getPage($event)" [(ngModel)]="recordIndex">
                              <mat-option *ngFor="let record of totalRecords" [value]="record">
                                 {{ record }}
