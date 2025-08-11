@@ -1,15 +1,14 @@
+/* Existing styles (no change here) */
 .chart {
   height: 230px;
   margin: auto;
   padding: 8px 0;
   border-radius: 12px;
   color: #47a2fc;
-  /* background-color: #F6AE2D; */
 }
 
 .comp-table {
   overflow-x: auto;
-  /* table-layout: fixed; */
 }
 
 .comp-table th,
@@ -35,7 +34,6 @@ td {
   background-color: #f5f5f5;
 }
 
-/* Common styling for all rows */
 .comp-table tr.mat-row {
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -44,23 +42,17 @@ td {
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-/* Vulnerable rows: red border and background */
 .comp-table tr.vulnerable-row {
-  /* border: 1px solid #dc3545; Red border */
-  /* background-color: #fdd3e7; Light red bg */
-  /* box-shadow: 0 0 5px rgba(220, 53, 69, 0.3); Soft red shadow */
   border: 1px 0px solid #f86db3;
 }
 
 .comp-table tr.vulnerable-row:hover {
-  /* background-color: #feb2d8; Darker red on hover */
-  background-color: #fdd3e7; /* Lighter red on hover */
-  box-shadow: 0 0 8px rgba(220, 53, 69, 0.5); /* Stronger shadow on hover */
-
+  background-color: #fdd3e7;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
 }
 
 .comp-table tr.normal-row:hover {
-  background-color: #dad7d7; /* Pale grey on hover */
+  background-color: #dad7d7;
   cursor: pointer;
 }
 
@@ -99,11 +91,11 @@ td {
   font-size: 1.25rem;
 }
 
-.machine{
+.machine {
   color: rgb(245, 114, 104);
 }
 
-/* Buttons for severity*/
+/* Buttons for severity (no change) */
 .custom-low:hover, .custom-low:focus {
   background-color: #33658A !important;
   color: white !important;
@@ -128,17 +120,14 @@ td {
 ::ng-deep .mat-mdc-cell {
   padding-top: 4px !important;
   padding-bottom: 4px !important;
-  /* font-size: 13px; Optional: smaller font */
-  /* line-height: 1.2; Optional: tighter spacing */
 }
 
 ::ng-deep .mat-mdc-row,
 ::ng-deep .mat-mdc-header-row {
   height: 44px !important;
-  /* min-height: 480px !important; */
 }
 
-/* Base styles for all severity buttons */
+/* Base styles for all severity buttons (no change) */
 .severity-btn {
   border: 1px solid #ccc;
   color: black;
@@ -146,7 +135,7 @@ td {
   transition: background-color 0.2s, color 0.2s;
 }
 
-/* ACTIVE Styles */
+/* ACTIVE Styles (no change) */
 .active-critical {
   background-color: #F26419 !important;
   color: white !important;
@@ -172,45 +161,32 @@ td {
   color: white !important;
 }
 
-/* Optional: Add hover effects */
 .severity-btn:hover {
   opacity: 0.9;
   cursor: pointer;
 }
 
 .text-warning {
-  color: #ffc107; /* Yellow color for shield_question icon */
-  font-size:large;
+  color: #ffc107;
+  font-size: large;
   vertical-align: middle;
 }
-/* .severity-btn.active-unresolved {
-  border: 2px solid #000;
-  background-color: #ffc107;
-  color: white;
-} */
- .comp-table tr.unresolved-row:hover {
-  background-color: #fff3cd !important; /* Light yellow background */
+
+.comp-table tr.unresolved-row:hover {
+  background-color: #fff3cd !important;
 }
-
-
 
 .label {
   font-weight: bold;
-  /* margin-right: 0px; */
   color: #6c757d;
-  /* background-color: #007bff; */
-  display: inline-block; /* Ensure label stays inline */
-  white-space: nowrap;   /* Prevent line break in label */
-  /* padding: 4px 8px; */
-  /* border-radius: 4px; */
+  display: inline-block;
+  white-space: nowrap;
 }
 
 .value {
-  /* word-break: break-all; */
-        text-overflow: ellipsis;
-          white-space: nowrap;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   overflow: hidden;
- /* Allow long strings to wrap */
   overflow-wrap: anywhere;
   font-size: 14px;
   color: #0d6efd;
@@ -218,29 +194,63 @@ td {
   width: 10px;
 }
 
-
-
-.headerDetails{
-  width: 425px;
+.headerDetails {
+  width: 400px;
+  /* background-color: #007bff; */
 }
 
-/* .notify-button-container{
-  padding-top: 30px;
-} */
-
-.notify-button-container {
-    padding-top: 20px;
-    display: flex;
-    justify-content: flex-end;
+.notify-button-container{
+  /* display: flex;
+  justify-content: center; */
+  padding-top: 15px;
+  margin-left: 20px;
 }
 
-.notify-button-container button {
-    padding: 2px 8px; /* Reduce padding to make it smaller */
-    font-size: 12px; /* Smaller font size */
-    width: auto; /* Allow button to size based on content */
-    height: 28px; /* Set a specific height */
+/* New Changes for Mobile Responsiveness (Button and Pagination) */
+/* No change needed for existing notify-button-container; we'll add media queries */
+
+/* Media query for mobile views (screens < 768px) */
+@media (max-width: 767px) {
+  /* Fix "Notify User" button overflow by making header flex-wrap */
+  .bg-gray-shade {
+    flex-wrap: wrap; /* Allow wrapping on small screens */
+  }
+
+  .headerDetails {
+    width: 100%; /* Full width on mobile */
+  }
+
+  .notify-button-container {
+    justify-content: center; /* Center button on mobile */
+    padding-top: 10px;
+    width: 100%; /* Full width to avoid overflow */
+  }
+  .notify-button-container button {
+    margin-bottom: 10px;
+  }
+
+  /* No change needed for pagination container; add gap for buttons */
+  .col-7 {
+    gap: 10px; /* Add small space between pagination elements */
+    flex-wrap: nowrap; /* Allow wrapping if needed on very small screens */
+    justify-content: center; /* Center pagination on mobile */
+  }
+
+  .page-size-width {
+    width: 280px; /* Reduce width on mobile for better fit */
+  }
+
+  .page-custom-btn {
+    padding: 15px; /* Reduce padding for smaller buttons */
+  }
 }
 
-.bg-blue-theme{
+/* General pagination spacing (add small space between buttons) */
+.col-7 {
+  gap: 5px; /* Small space between all pagination elements */
+}
+
+/* No change needed for bg-blue-theme; it's not used in the provided code */
+.bg-blue-theme {
   background-color: #3366ffe7;
 }
