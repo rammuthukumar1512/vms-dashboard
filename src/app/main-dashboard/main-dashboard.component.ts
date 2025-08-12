@@ -30,7 +30,7 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
     
     constructor(private breakpointObserver: BreakpointObserver){}
 
-    ngAfterViewInit(): void {
+  ngAfterViewInit(): void {
     this.setupSidenav();
   }
 
