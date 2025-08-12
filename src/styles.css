@@ -46,3 +46,10 @@ html, body { height: 100%; }
 mat-sidenav-content {
   background-color: #ffffff;
 }
+.mat-mdc-snackbar-surface, .mdc-snackbar__surface {
+  background-color: white !important;
+  padding: 0 !important;
+}
+.mat-mdc-snack-bar-label,.mdc-snackbar__label {
+  padding: 0 !important;
+}

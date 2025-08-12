@@ -88,7 +88,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching unresolved applications:', error);
-          this.toastService.showToast('Failed to fetch unresolved applications')
+          this.toastService.showErrorToast('Failed to fetch unresolved applications')
         }
       });
   }
@@ -113,7 +113,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
       if (result && result.cpeName) {
         this.unresolvedApps = this.unresolvedApps.filter(a => a.uuid !== app.uuid);
         this.updatePagedData(this.pageIndex);
-        this.toastService.showToast(`CPE resolved for ${app.softwareName}`);
+        this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
       this.http.get(environments.unique_url).subscribe({
         next: () => {
           console.log('Dashboard data refreshed');

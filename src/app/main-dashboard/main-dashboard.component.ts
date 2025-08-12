@@ -35,7 +35,7 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
   }
 
   ngAfterViewChecked(): void {
-    if(!this.isMiniSidenav && this.matSideNavContent.getElementRef().nativeElement.style.marginLeft !== '5%') {
+    if(!this.isMiniSidenav && this.matSideNavContent.getElementRef().nativeElement.style.marginLeft !== '5%' && !this.isMobile) {
       this.matSideNavContent.getElementRef().nativeElement.style.marginLeft = '5%';
     }
   }

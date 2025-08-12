@@ -108,17 +108,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
-    this.toastService.showToast('Data fetched successfully');
+    this.toastService.showSuccessToast('Data fetched successfully');
   }
 
   private handleErrorResponse(error: any): void {
     console.error('Error fetching security data:', error);
     if (error.status === 0) {
-      this.toastService.showToast(
+      this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
       );
     } else {
-      this.toastService.showToast(
+      this.toastService.showErrorToast(
         'Error : Failed to fetch security data'
       );
     }
@@ -288,7 +288,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   else if (index === 0 && (vulnerablePercentage > 30 && vulnerablePercentage <= 40)) {labelX = 230; labelY = 20;}
   else if (index === 0 && (vulnerablePercentage > 40 && vulnerablePercentage <= 50)) {labelX = 240; labelY = 20;}
   else if (index === 0 && (vulnerablePercentage > 50 && vulnerablePercentage <= 60)) {labelX = 260; labelY = 80}
-  // else if (index === 0 && (nonVulnerablePercentage > 60)) labelY = 145;
   else if (index === 0 && (vulnerablePercentage > 60 && vulnerablePercentage <= 70)) {labelX = 240; labelY = 130}
   else if (index === 0 && (vulnerablePercentage > 70)) {labelX = 260; labelY = 80}
   else {};
@@ -341,7 +340,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         cutout: '50%',
         scales: {
           x: {
-            position: 'top',  // 👈 move X-axis to top
+            position: 'top',
             beginAtZero: false,
             title: {
               display: true,
@@ -511,9 +510,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     });
       this.http.get<any>(environments.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
-             this.toastService.showToast(response.Status);
+             this.toastService.showSuccessToast(response.Status);
         }, error: (error)=>{
-             this.toastService.showToast('Send Notification Failed');
+             this.toastService.showErrorToast('Send Notification Failed');
         }
       })
   }

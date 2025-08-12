@@ -66,3 +66,12 @@
   flex-direction: column;
   overflow: auto;
 }
+
+@media (max-width: 959px) {
+    .menu-title {
+        display: block;
+    }
+    .menu-link {
+        justify-content: flex-start;
+    }
+}
