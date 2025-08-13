@@ -63,6 +63,7 @@ p{
   to { opacity: 1; transform: translateY(0); }
 }
 
+
 /* Ensure the add button always appears styled properly */
 button[mat-raised-button] {
   background-color: #1976d2; /* Default Material primary color */
@@ -72,6 +73,37 @@ button[mat-raised-button] {
 /* Optional: make sure hover works */
 button[mat-raised-button]:hover {
   background-color: #155a9c;
+
+
+/* @media screen and (max-width: 768px) {
+  
+} */
+
+
+.cpe-row {
+  display: grid;
+  grid-template-columns: 1fr auto; /* CPE name takes remaining space, button is auto-sized */
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.cpe-row:hover {
+  background-color: #f9f5f5;
+  cursor: pointer;
+}
+
+.cpe-name {
+  word-break: break-word;
+  font-size: 14px;
+  padding-right: 10px;
+}
+
+.cpe-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 @media screen and (max-width: 768px) {
