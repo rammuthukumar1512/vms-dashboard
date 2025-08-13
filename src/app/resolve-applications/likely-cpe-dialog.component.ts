@@ -166,7 +166,7 @@ export class LikelyCpeDialogComponent {
     dialogRef.afterClosed().subscribe(result => {
       
       if (result) {
-        this.toastService.showToast('CPE resolved successfully!')
+        // this.toastService.showToast('CPE resolved successfully!')
         const body = {
           uuid: this.data.uuid,
           softwareName: this.data.softwareName,
