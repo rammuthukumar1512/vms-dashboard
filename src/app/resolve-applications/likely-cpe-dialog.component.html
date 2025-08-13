@@ -22,7 +22,7 @@
         class="form-control"
         [ngClass]="{'valid-input': isValidCpe, 'invalid-input': cpeError}"
       />
-      <mat-icon *ngIf="isValidCpe" class="checkmark-icon">check_circle</mat-icon>
+      <mat-icon *ngIf="isValidCpe" class="material-icons checkmark-icon">check_circle</mat-icon>
       <button mat-raised-button color="primary" (click)="addCpeName()" *ngIf="isValidCpe">Add</button>
     </div>
     <p *ngIf="cpeError" class="text-danger mt-1">
@@ -30,7 +30,7 @@
     </p>
   </div>
 
-  <div *ngIf="likelyCpeNames.length === 0" class="text-center p-2">No likely CPEs found</div>
+  <div *ngIf="!cpeLoadingComplete && likelyCpeNames.length === 0" class="text-center bg-info">No likely CPEs found</div>
 
   <div *ngFor="let cpe of likelyCpeNames" class="d-flex align-items-center mb-2 cpe23Uri">
     <span class="flex-grow-1 px-3 ">{{ cpe.cpe23Uri }}</span>
