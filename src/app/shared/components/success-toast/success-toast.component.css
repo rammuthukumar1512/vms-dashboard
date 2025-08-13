@@ -1,9 +1,9 @@
 .success-toast {
-    background-color: rgb(187, 238, 187);
+    background-color: rgb(184, 226, 188);
     /* border: 1px solid rgb(127, 252, 127); */
 }
 .bg-success-toast {
-    background-color: rgb(187, 238, 187);
+    background-color: rgb(184, 226, 188);
 }
 .toast {
     box-shadow: none !important;
