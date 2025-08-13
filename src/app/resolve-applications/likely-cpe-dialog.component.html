@@ -1,4 +1,3 @@
-
 <div class="d-flex justify-content-between align-items-center px-3 py-2 head">
   <h2 class="m-0 fs-5 ">
     Likely CPEs Model for <span class="heading">"{{ data.softwareName }}"</span>
@@ -32,9 +31,16 @@
 
   <div *ngIf="!cpeLoadingComplete && likelyCpeNames.length === 0" class="text-center bg-info">No likely CPEs found</div>
 
-  <div *ngFor="let cpe of likelyCpeNames" class="d-flex align-items-center mb-2 cpe23Uri">
+  <!-- <div *ngFor="let cpe of likelyCpeNames" class="d-flex align-items-center mb-2 cpe23Uri">
     <span class="flex-grow-1 px-3 ">{{ cpe.cpe23Uri }}</span>
     <button mat-raised-button color="primary" (click)="addCpeName(cpe.cpe23Uri)" class="ms-2">Add</button>
+  </div> -->
+  <div *ngFor="let cpe of likelyCpeNames" class="cpe-row mb-2">
+  <div class="cpe-name">{{ cpe.cpe23Uri }}</div>
+  <div class="cpe-action">
+    <button mat-raised-button color="primary" (click)="addCpeName(cpe.cpe23Uri)">Add</button>
   </div>
+</div>
+
 </mat-dialog-content>
 <footer class="p-1"></footer>
