@@ -92,6 +92,8 @@ export class LikelyCpeDialogComponent {
   private cpePattern =  /^cpe:2\.3:[aho]:[^:]+:[^:]+:[^:]+(?::[^:]*){7}$/;
   app: any;
   isValidCpe: boolean = false;
+  cpeLoadingComplete = false;
+
   private validateSubject = new Subject<string>(); // For debouncing
 
   constructor(
@@ -130,10 +132,14 @@ export class LikelyCpeDialogComponent {
       next: (response) => {
         this.likelyCpeNames = response || [];
         console.log('Fetched likely CPEs:', this.likelyCpeNames); // Debug log
+                this.cpeLoadingComplete = true;
+
       },
       error: (error) => {
         console.error('Error fetching likely CPE names:', error);
         this.toastService.showToast('Failed to fetch likely CPE names')
+                this.cpeLoadingComplete = true;
+
       }
     });
   }
