@@ -7,7 +7,7 @@
          placeholder="Search"
          (keyup)="searchApplications($event)">
         </div>
-        <div class="table-container">
+        <div class="table-container table-scroll-wrapper">
    <table mat-table [dataSource]="pagedApps" class="comp-table w-100">
       <!-- Software Name -->
       <ng-container matColumnDef="softwareName">
@@ -46,7 +46,7 @@
 
     <!-- Pagination -->
     <div *ngIf="pagedApps.length > 0" class="d-flex justify-content-center mt-2">
-      <div class="col-4 d-flex justify-content-evenly align-items-center height-fit-content">
+      <div class="col-4 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
         <mat-select class="border rounded page-size-width p-2"
                     [(ngModel)]="recordIndex"
                     (ngModelChange)="getPage($event)">

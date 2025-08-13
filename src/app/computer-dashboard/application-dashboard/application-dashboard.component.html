@@ -7,7 +7,7 @@
          <span class="text-secondary fs-10 fw-bold p-2 w-50"> Machine Name :<span class="text-primary" style="word-break: break-all;"> {{ machineName }}</span></span>
           <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
       </div> -->
-  <div class="bg-gray-shade d-flex rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+  <!-- <div class="bg-gray-shade d-flex rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
 <div class="col-11 headerDetails">
 <div class="info-row d-flex flex-wrap gap-2 p-2">
   <div class="label">Machine Name:</div>
@@ -17,7 +17,7 @@
   <div class="label">LoggedIn User:</div>
   <div class="value" matTooltip="{{loggedInUser}}">{{ loggedInUser }}</div>
 </div>
-</div>
+</div> -->
 
 
 <!-- <div class="notify-button-container" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
@@ -25,12 +25,37 @@
       Notify User
     </button>
 </div> -->
-<div class="notify-button-container" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
+<!-- <div class="notify-button-container" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
     <button (click)="openNotificationConfirmDialog(computer.uuid)" class="btn btn-border-none btn-primary">
       Notify User
     </button>
 </div>
+</div> -->
+
+
+<div class="bg-gray-shade d-flex flex-wrap justify-content-between align-items-start rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms w-100">
+  <div class="col headerDetails">
+    <div class="info-row d-flex flex-wrap gap-2 p-2">
+      <div class="label">Machine Name:</div>
+      <div class="value" matTooltip="{{machineName}}">{{ machineName }}</div>
+    </div>
+    <div class="info-row d-flex flex-wrap gap-2 p-2">
+      <div class="label">LoggedIn User:</div>
+      <div class="value" matTooltip="{{loggedInUser}}">{{ loggedInUser }}</div>
+    </div>
+  </div>
+
+  <div
+    class="notify-button-container d-flex align-items-center"
+    *ngIf="computer && computer.vulnerableSoftwareCount > 0"
+    matTooltip="Send Notification"
+  >
+    <button (click)="openNotificationConfirmDialog(computer.uuid)" class="btn btn-border-none btn-primary">
+      Notify User
+    </button>
+  </div>
 </div>
+
 
     <div class="container-fluid">
       <!-- Top Metrics start -->
@@ -191,7 +216,7 @@
 
       <!-- Pagination -->
       <div *ngIf="pagedAppData.length > 0" class="d-flex justify-content-end mt-2">
-        <div class="col-7 d-flex justify-content-evenly align-items-center  height-fit-content">
+        <div class="col-7 d-flex justify-content-evenly align-items-center  height-fit-content pagination-controls">
            <mat-select
           class="border rounded page-size-width p-2"
           [(ngModel)]="recordIndex"
