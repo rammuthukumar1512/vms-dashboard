@@ -5,3 +5,6 @@
 .bg-success-toast {
     background-color: rgb(187, 238, 187);
 }
+.toast {
+    box-shadow: none !important;
+}

@@ -49,7 +49,9 @@ mat-sidenav-content {
 .mat-mdc-snackbar-surface, .mdc-snackbar__surface {
   background-color: white !important;
   padding: 0 !important;
+  box-shadow: none !important;
 }
 .mat-mdc-snack-bar-label,.mdc-snackbar__label {
   padding: 0 !important;
+  box-shadow: none !important;
 }
