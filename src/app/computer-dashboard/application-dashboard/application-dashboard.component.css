@@ -199,51 +199,6 @@ td {
   /* background-color: #007bff; */
 }
 
-.notify-button-container{
-  /* display: flex;
-  justify-content: center; */
-  padding-top: 15px;
-  margin-left: 20px;
-}
-
-/* New Changes for Mobile Responsiveness (Button and Pagination) */
-/* No change needed for existing notify-button-container; we'll add media queries */
-
-/* Media query for mobile views (screens < 768px) */
-@media (max-width: 767px) {
-  /* Fix "Notify User" button overflow by making header flex-wrap */
-  .bg-gray-shade {
-    flex-wrap: wrap; /* Allow wrapping on small screens */
-  }
-
-  .headerDetails {
-    width: 100%; /* Full width on mobile */
-  }
-
-  .notify-button-container {
-    justify-content: center; /* Center button on mobile */
-    padding-top: 10px;
-    width: 100%; /* Full width to avoid overflow */
-  }
-  .notify-button-container button {
-    margin-bottom: 10px;
-  }
-
-  /* No change needed for pagination container; add gap for buttons */
-  .col-7 {
-    gap: 10px; /* Add small space between pagination elements */
-    flex-wrap: nowrap; /* Allow wrapping if needed on very small screens */
-    justify-content: center; /* Center pagination on mobile */
-  }
-
-  .page-size-width {
-    width: 280px; /* Reduce width on mobile for better fit */
-  }
-
-  .page-custom-btn {
-    padding: 15px; /* Reduce padding for smaller buttons */
-  }
-}
 
 /* General pagination spacing (add small space between buttons) */
 .col-7 {
@@ -253,4 +208,56 @@ td {
 /* No change needed for bg-blue-theme; it's not used in the provided code */
 .bg-blue-theme {
   background-color: #3366ffe7;
+}
+
+.notify-button-container {
+  padding-top: 15px;
+  margin-left: 20px;
+  white-space: nowrap; /* Prevents button text wrapping */
+}
+
+@media (max-width: 767px) {
+  .notify-button-container {
+    width: 100%;
+    justify-content: flex-start; /* Align to left under info on mobile */
+    margin: 10px 0 0 10px;
+  }
+
+  .notify-button-container button {
+    /* width: fit-content; */
+    margin-top: 10px;
+padding: 10px 15px;  
+}
+
+  
+  /* No change needed for pagination container; add gap for buttons */
+  .col-7 {
+    gap: 10px; /* Add small space between pagination elements */
+    flex-wrap: nowrap; /* Allow wrapping if needed on very small screens */
+    justify-content: center; /* Center pagination on mobile */
+  }
+
+  .page-size-width{
+  min-width: 100px;
+}
+
+.pagination-controls{
+  display: inline-block;
+position: relative;
+right: 55px;
+
+}
+
+  .page-custom-btn {
+    padding: 15px; /* Reduce padding for smaller buttons */
+  }
+
+  .headerDetails {
+    width: 100%;
+  }
+
+  .bg-gray-shade {
+    flex-direction: column; /* Stack on mobile */
+    align-items: flex-start;
+  }
 }
