@@ -325,7 +325,7 @@ this.updatePagedData(this.pageIndex);
         cutout: '50%',
         scales: {
           x: {
-            position: 'top',  // 👈 move X-axis to top
+            position: 'top', 
             beginAtZero: false,
             title: {
               display: true,
@@ -565,10 +565,11 @@ sendNotificationToComputer(computerUuid: string) {
 
   this.http.get<any>(url, { headers }).subscribe({
     next: (response) => {
-      this.toastService.showToast(`Mail sent successfully `);
+
+      this.toastService.showSuccessToast(`Mail sent successfully `);
     },
     error: (error) => {
-      this.toastService.showToast('Send Notification Failed');
+      this.toastService.showErrorToast('Send Notification Failed');
     }
   });
 }

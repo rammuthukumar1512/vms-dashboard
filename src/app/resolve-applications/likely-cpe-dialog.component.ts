@@ -132,7 +132,7 @@ export class LikelyCpeDialogComponent {
       },
       error: (error) => {
         console.error('Error fetching likely CPE names:', error);
-        this.toastService.showToast('Failed to fetch likely CPE names')
+        this.toastService.showErrorToast('Failed to fetch likely CPE names')
       }
     });
   }
@@ -164,7 +164,7 @@ export class LikelyCpeDialogComponent {
     dialogRef.afterClosed().subscribe(result => {
       
       if (result) {
-        // this.toastService.showToast('CPE resolved successfully!')
+        this.toastService.showSuccessToast('CPE resolved successfully!')
         const body = {
           uuid: this.data.uuid,
           softwareName: this.data.softwareName,
@@ -180,7 +180,7 @@ export class LikelyCpeDialogComponent {
           },
           error: (error) => {
             console.error('Error adding CPE name:', error);
-            this.toastService.showToast('Failed to add CPE Name')
+            this.toastService.showErrorToast('Failed to add CPE Name')
           }
         });
       }

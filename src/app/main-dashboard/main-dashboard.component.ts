@@ -30,12 +30,12 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
     
     constructor(private breakpointObserver: BreakpointObserver){}
 
-    ngAfterViewInit(): void {
+  ngAfterViewInit(): void {
     this.setupSidenav();
   }
 
   ngAfterViewChecked(): void {
-    if(!this.isMiniSidenav && this.matSideNavContent.getElementRef().nativeElement.style.marginLeft !== '5%') {
+    if(!this.isMiniSidenav && this.matSideNavContent.getElementRef().nativeElement.style.marginLeft !== '5%' && !this.isMobile) {
       this.matSideNavContent.getElementRef().nativeElement.style.marginLeft = '5%';
     }
   }

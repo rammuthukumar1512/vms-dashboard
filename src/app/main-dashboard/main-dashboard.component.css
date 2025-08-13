@@ -4,6 +4,23 @@
 .sidenav{
     width: 5%;
 }
+.menu-title {
+    display: none;
+}
+.menu-link {
+    display: flex;
+    justify-content: center;
+}
+.sidenav:hover {
+    width: 250px;
+    transition: 0.1s width ease-in-out;
+    .menu-title {
+        display: block;
+    }
+    .menu-link {
+        justify-content: flex-start;
+    }
+}
 .menu-item:hover{
    background-color: #ddd !important;
 }
@@ -21,7 +38,6 @@
 .mini-sidenav {
     width: 250px;
     padding: 0;
-    
 }
 .menu-item {
     outline: 0;
@@ -49,4 +65,13 @@
   display: flex;
   flex-direction: column;
   overflow: auto;
+}
+
+@media (max-width: 959px) {
+    .menu-title {
+        display: block;
+    }
+    .menu-link {
+        justify-content: flex-start;
+    }
 }
