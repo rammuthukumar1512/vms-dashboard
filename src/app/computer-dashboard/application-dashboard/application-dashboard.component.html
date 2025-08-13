@@ -252,9 +252,10 @@
 <ng-template #notificationConfirmDialog>
   <h6 class="bg-blue-theme text-white fs-5 ps-2 py-2">Confirm</h6>
   <mat-dialog-content class="p-3">
-    <p class="text-center">
+    <p class="text-start">
       You are about to notify the user 
-      <span class="machine fw-bold">{{ loggedInUser }}</span> 
+      <span matTooltipPosition="right"
+ matTooltip="{{loggedInUser}}" class="machine fw-bold">{{ loggedInUser }}</span> 
       by email. Do you want to continue?
     </p>
   </mat-dialog-content>
