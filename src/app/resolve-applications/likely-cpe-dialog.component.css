@@ -64,3 +64,45 @@ p{
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* @media screen and (max-width: 768px) {
+  
+} */
+
+
+.cpe-row {
+  display: grid;
+  grid-template-columns: 1fr auto; /* CPE name takes remaining space, button is auto-sized */
+  align-items: center;
+  gap: 10px;
+  padding: 5px 10px;
+  border-radius: 4px;
+}
+
+.cpe-row:hover {
+  background-color: #f9f5f5;
+  cursor: pointer;
+}
+
+.cpe-name {
+  word-break: break-word;
+  font-size: 14px;
+  padding-right: 10px;
+}
+
+.cpe-action {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+@media screen and (max-width: 768px) {
+  .cpe-row {
+    grid-template-columns: 1fr auto; /* Keep layout same, allow text wrapping */
+  }
+
+  .cpe-name {
+    max-width: 100%;
+  }
+}
