@@ -565,7 +565,7 @@ sendNotificationToComputer(computerUuid: string) {
 
   this.http.get<any>(url, { headers }).subscribe({
     next: (response) => {
-      this.toastService.showToast(response.Status);
+      this.toastService.showToast(`Mail sent successfully `);
     },
     error: (error) => {
       this.toastService.showToast('Send Notification Failed');
