@@ -47,14 +47,12 @@ p{
 
 .checkmark-icon {
   position: absolute;
-  right: 80px; /* Adjust to position inside the input field */
+  right: 80px; 
   top: 50%;
   transform: translateY(-50%);
-  color: #28a745; /* Green checkmark */
+  color: #28a745; 
   font-size: 20px;
 }
-
-/* Error message animation */
 .error-message {
   opacity: 0;
   animation: fadeIn 0.3s ease-in forwards;
@@ -64,6 +62,17 @@ p{
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+
+/* Ensure the add button always appears styled properly */
+button[mat-raised-button] {
+  background-color: #1976d2; /* Default Material primary color */
+  color: white;
+}
+
+/* Optional: make sure hover works */
+button[mat-raised-button]:hover {
+  background-color: #155a9c;
 
 
 /* @media screen and (max-width: 768px) {

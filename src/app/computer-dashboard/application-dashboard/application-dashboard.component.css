@@ -244,7 +244,8 @@ padding: 10px 15px;
 .pagination-controls{
   display: inline-block;
 position: relative;
-right: 55px;
+right: 40%;
+
 
 }
 
