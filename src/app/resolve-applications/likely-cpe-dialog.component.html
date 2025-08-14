@@ -20,9 +20,10 @@
         placeholder="Enter CPE Name "
         class="form-control"
         [ngClass]="{'valid-input': isValidCpe, 'invalid-input': cpeError}"
+        
       />
       <mat-icon *ngIf="isValidCpe" class="material-icons checkmark-icon">check_circle</mat-icon>
-      <button mat-raised-button color="primary" (click)="addCpeName()" *ngIf="isValidCpe">Add</button>
+      <button mat-raised-button color="primary" class="me-2" (click)="addCpeName()" *ngIf="isValidCpe">Add</button>
     </div>
     <p *ngIf="cpeError" class="text-danger mt-1">
       Invalid CPE format. Eg: cpe:2.3:a:microsoft:edge:138.0.3351.77:*:*:*:*:*:*:*
@@ -38,7 +39,7 @@
   <div *ngFor="let cpe of likelyCpeNames" class="cpe-row mb-2">
   <div class="cpe-name">{{ cpe.cpe23Uri }}</div>
   <div class="cpe-action">
-    <button mat-raised-button color="primary" (click)="addCpeName(cpe.cpe23Uri)">Add</button>
+    <button mat-raised-button color="primary" class="me-0" (click)="addCpeName(cpe.cpe23Uri)">Add</button>
   </div>
 </div>
 

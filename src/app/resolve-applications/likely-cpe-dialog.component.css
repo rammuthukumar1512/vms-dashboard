@@ -47,7 +47,7 @@ p{
 
 .checkmark-icon {
   position: absolute;
-  right: 80px; 
+  right: 190px; 
   top: 50%;
   transform: translateY(-50%);
   color: #28a745; 
@@ -91,7 +91,7 @@ button[mat-raised-button]:hover {
 
 .cpe-row:hover {
   background-color: #f9f5f5;
-  cursor: pointer;
+  cursor:auto;
 }
 
 .cpe-name {

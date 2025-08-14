@@ -19,7 +19,7 @@ import { Subject, debounceTime } from 'rxjs';
       Confirm Action
     </h2>
     <mat-dialog-content class="dialog-content">
-      <p>Are you sure you want to <strong>add </strong> <span class="highlight"> {{ data.cpeName }}</span> for <span class="highlight1">{{data.softwareName}}</span>?</p>
+      <p>Are you sure you want to add <span class="highlight"> {{ data.cpeName }}</span> for <span class="highlight1">{{data.softwareName}}</span>?</p>
     </mat-dialog-content>
     <mat-dialog-actions align="end" class="p-3">
       <button mat-stroked-button color="warn" (click)="onNo()">No</button>
