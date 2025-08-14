@@ -6,8 +6,14 @@
     padding: 0;
 
 }
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 body {
   font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 body, button, input, textarea, mat-card, mat-toolbar {
   font-family: 'Inter', 'Roboto', 'Arial', sans-serif !important;
