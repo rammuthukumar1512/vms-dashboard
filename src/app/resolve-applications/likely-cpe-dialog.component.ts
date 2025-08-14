@@ -15,7 +15,7 @@ import { Subject, debounceTime } from 'rxjs';
   selector: 'app-confirm-dialog',
   template: `
     <h2 mat-dialog-title class="dialog-title p-0">
-      <mat-icon class="dialog-icon" color="warn">help_outline</mat-icon>
+      <mat-icon class="material-icons dialog-icon" color="warn">help_outline</mat-icon>
       Confirm Action
     </h2>
     <mat-dialog-content class="dialog-content">
@@ -45,7 +45,7 @@ import { Subject, debounceTime } from 'rxjs';
       font-weight: bold;
       color: #1976d2;
     }
-      .highlight1 {
+    .highlight1 {
       font-weight: bold;
       color: #cf4522ff;
     }
@@ -56,8 +56,7 @@ import { Subject, debounceTime } from 'rxjs';
 export class ConfirmDialogComponent {
   constructor(
     public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { cpeName: string ,  softwareName: string;
-},
+    @Inject(MAT_DIALOG_DATA) public data: { cpeName: string, softwareName: string },
   ) {}
 
   onNo(): void {
@@ -79,22 +78,22 @@ export class ConfirmDialogComponent {
     MatButtonModule,
     FormsModule,
     MatIconModule,
-],
+  ],
   templateUrl: './likely-cpe-dialog.component.html',
   styleUrls: ['./likely-cpe-dialog.component.css']
 })
 export class LikelyCpeDialogComponent {
-  @ViewChild('cpeInput') cpeInput!: ElementRef; // Reference to the input element
+  @ViewChild('cpeInput') cpeInput!: ElementRef;
   customCpeName: string = '';
   likelyCpeNames: { cpe23Uri: string; vendor: string; product: string; version: string }[] = [];
   cpeError: boolean = false;
   softwareName: string = '';
-  private cpePattern =  /^cpe:2\.3:[aho]:[^:]+:[^:]+:[^:]+(?::[^:]*){7}$/;
+  private cpePattern = /^cpe:2\.3:[aho]:(?!\*)([^:\s]+):(?!\*)([^:\s]+):(?!\*)([^:\s]+):([^:\s]+):([^:\s]+):([^:\s]+):([^:\s]+):([^:\s]+):([^:\s]+):([^:\s]+)$/;
   app: any;
   isValidCpe: boolean = false;
   cpeLoadingComplete = false;
 
-  private validateSubject = new Subject<string>(); // For debouncing
+  private validateSubject = new Subject<string>();
 
   constructor(
     public dialogRef: MatDialogRef<LikelyCpeDialogComponent>,
@@ -107,7 +106,6 @@ export class LikelyCpeDialogComponent {
     private http: HttpClient,
     private dialog: MatDialog,
     private toastService: ToastService
-
   ) {
     this.softwareName = this.data.softwareName;
     this.fetchLikelyCpeNames();
@@ -119,9 +117,13 @@ export class LikelyCpeDialogComponent {
   }
 
   setupDebounceValidation() {
- this.validateSubject.pipe(debounceTime(500)).subscribe(value => {
-      this.cpeError = !this.cpePattern.test(value); // Show error only if invalid and not empty
+    this.validateSubject.pipe(debounceTime(500)).subscribe(value => {
+      const normalizedValue = value.replace(/\s+/g, ''); // Remove all spaces
+      this.cpeError = !this.cpePattern.test(normalizedValue); // Validate normalized value
       this.isValidCpe = !this.cpeError;
+      if (this.isValidCpe) {
+        this.customCpeName = normalizedValue; // Update customCpeName with normalized value
+      }
     });
   }
 
@@ -130,25 +132,22 @@ export class LikelyCpeDialogComponent {
       `${environments.likelyCpeUrl}?vendor=${encodeURIComponent(this.data.vendor)}&product=${encodeURIComponent(this.data.softwareName)}`
     ).subscribe({
       next: (response) => {
-        this.likelyCpeNames = response || [];
-        console.log('Fetched likely CPEs:', this.likelyCpeNames); // Debug log
-                this.cpeLoadingComplete = true;
-
+        this.likelyCpeNames = Array.isArray(response) ? response : [];
+        console.log('Fetched likely CPEs:', this.likelyCpeNames);
+        this.cpeLoadingComplete = true;
       },
       error: (error) => {
         console.error('Error fetching likely CPE names:', error);
-        this.toastService.showToast('Failed to fetch likely CPE names')
-                this.cpeLoadingComplete = true;
-
+        this.toastService.showToast('Failed to fetch likely CPE names');
+        this.likelyCpeNames = [];
+        this.cpeLoadingComplete = true;
       }
     });
   }
 
   validateCpeInput(): void {
- this.validateSubject.next(this.customCpeName); // Trigger validation on input change
- this.cpeError = false; // Hide error while typing
-    // this.cpeError = !this.cpePattern.test(this.customCpeName); // Show error while typing
-    // this.isValidCpe = !this.cpeError;
+    this.validateSubject.next(this.customCpeName); // Trigger validation on input change
+    this.cpeError = false; // Hide error while typing
   }
 
   onEnterKey(event: KeyboardEvent): void {
@@ -159,36 +158,35 @@ export class LikelyCpeDialogComponent {
 
   addCpeName(cpeName: string = this.customCpeName): void {
     this.cpeError = false; // Reset error before validation
-    if (cpeName === this.customCpeName && !this.cpePattern.test(cpeName)) {
+    const normalizedCpeName = cpeName.replace(/\s+/g, ''); // Normalize by removing spaces
+    if (!normalizedCpeName || !this.cpePattern.test(normalizedCpeName)) {
       this.cpeError = true;
       return;
     }
     this.cpeError = false;
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      data: { cpeName ,softwareName:this.data.softwareName}
+      data: { cpeName: normalizedCpeName, softwareName: this.data.softwareName }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      
       if (result) {
-        // this.toastService.showToast('CPE resolved successfully!')
         const body = {
           uuid: this.data.uuid,
-          softwareName: this.data.softwareName,
+          softwareName: this.data.softwareName.replace(/\s+/g, '').toLowerCase(),
           softwareVersion: this.data.softwareVersion,
-          vendorName: this.data.vendor
+          vendorName: this.data.vendor.replace(/\s+/g, '').toLowerCase()
         };
 
         this.http.post(
-          `${environments.addHintUrl}?cpeName=${encodeURIComponent(cpeName)}`, body
+          `${environments.addHintUrl}?cpeName=${encodeURIComponent(normalizedCpeName)}`, body
         ).subscribe({
           next: () => {
-            this.dialogRef.close({ cpeName });
+            this.dialogRef.close({ cpeName: normalizedCpeName });
           },
           error: (error) => {
             console.error('Error adding CPE name:', error);
-            this.toastService.showToast('Failed to add CPE Name')
+            this.toastService.showToast('Failed to add CPE Name');
           }
         });
       }

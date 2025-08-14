@@ -99,8 +99,14 @@ td {
   font-size: 1.25rem;
 }
 
-.machine{
+.machine {
   color: rgb(245, 114, 104);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: inline-block;
+  max-width: 150px; /* or a fixed width like width: 150px */
+  vertical-align: middle;
 }
 
 
