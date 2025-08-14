@@ -55,3 +55,29 @@ mat-sidenav-content {
   padding: 0 !important;
   box-shadow: none !important;
 }
+.mat-mdc-snackbar-surface {
+  animation: toast 5.3s ease;
+}
+
+.fnw-medium {
+  font-weight: 500;
+}
+
+@keyframes toast {
+  0% {
+    opacity: 0;
+    transform: translateY(70px);
+  }
+  5% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  95% {
+    opacity: 1;
+    transform: translateY(0px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(70px);
+  }
+}

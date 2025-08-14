@@ -13,7 +13,7 @@
 }
 .sidenav:hover {
     width: 250px;
-    transition: 0.1s width ease-in-out;
+    transition: 0.3s width ease-in-out;
     .menu-title {
         display: block;
     }
