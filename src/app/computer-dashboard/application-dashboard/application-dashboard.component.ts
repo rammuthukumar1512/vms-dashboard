@@ -569,7 +569,9 @@ sendNotificationToComputer(computerUuid: string) {
       this.toastService.showSuccessToast(`Mail sent successfully `);
     },
     error: (error) => {
-      this.toastService.showErrorToast('Send Notification Failed');
+      // const errorMessage = error.error?.message || error.message || 'Failed to send notification. Please try again.';
+      const errorMessage = error.error?.message || 'Failed to send notification. Please try again later.';
+      this.toastService.showErrorToast(`Error: ${errorMessage}`);
     }
   });
 }
