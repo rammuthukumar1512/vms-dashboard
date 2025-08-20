@@ -233,22 +233,68 @@ td {
 } */
 
 
-.notify-button-container {
+/* .notify-button-container {
     padding-top: 20px;
     display: flex;
     justify-content: flex-end;
-}
+} */
 
-.notify-button-container button {
-    padding: 2px 8px; /* Reduce padding to make it smaller */
-    font-size: 12px; /* Smaller font size */
-    width: auto; /* Allow button to size based on content */
-    height: 28px; /* Set a specific height */
-}
+/* .notify-button-container button {
+    padding: 2px 8px; 
+    font-size: 12px;
+    width: auto; 
+    height: 28px; 
+} */
 
 .bg-blue-theme{
   background-color: #3366ffe7;
 }
 
 
+.notify-button-container {
+  padding-top: 15px;
+  margin-left: 20px;
+  white-space: nowrap; /* Prevents button text wrapping */
+}
+
+@media (max-width: 767px) {
+  .notify-button-container {
+    width: 100%;
+    justify-content: flex-start; /* Align to left under info on mobile */
+    margin: 10px 0 0 10px;
+    position: relative;
+    bottom: 10%;
+  }
+  
+  /* No change needed for pagination container; add gap for buttons */
+  .col-7 {
+    gap: 10px; /* Add small space between pagination elements */
+    flex-wrap: nowrap; /* Allow wrapping if needed on very small screens */
+    justify-content: center; /* Center pagination on mobile */
+  }
+
+  .page-size-width{
+  min-width: 100px;
+}
+
+.pagination-controls{
+  display: inline-block;
+  position: relative;
+  right: 30%;
+
+}
+
+  .page-custom-btn {
+    padding: 15px; /* Reduce padding for smaller buttons */
+  }
+
+  .headerDetails {
+    width: 100%;
+  }
+
+  .bg-gray-shade {
+    flex-direction: column; /* Stack on mobile */
+    align-items: flex-start;
+  }
+}
 
