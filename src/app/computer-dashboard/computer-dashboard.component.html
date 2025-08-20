@@ -32,8 +32,10 @@
           <div class="row">
             <div class="col-md-6 p-0">
               <p class="fw-bold text-center text-secondary">Computer Overview</p>
+            <div class="comp-chart">  
             <div class="chart">
               <canvas #computerChart></canvas>
+            </div>
             </div>
             </div>
             <div class="col-md-6 p-0">
@@ -96,7 +98,7 @@
                    
                   </div>
                   <div *ngIf="pagedComputerData.length > 0;" class="d-flex justify-content-end mt-2">
-                            <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content">
+                            <div class="pagination col-7 d-flex justify-content-evenly align-items-center height-fit-content">
                             <mat-select class="border rounded page-size-width p-2" (ngModelChange)="getPage($event)" [(ngModel)]="recordIndex">
                              <mat-option *ngFor="let record of totalRecords" [value]="record">
                                 {{ record }}

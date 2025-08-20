@@ -8,3 +8,12 @@
 .toast {
     box-shadow: none !important;
 }
+.text-dark-green {
+    color: rgb(18, 75, 18);
+}
+.toast-heading-font {
+    font-family: sans-serif;
+}
+.text-success {
+    color: rgb(1, 97, 1) !important;
+}
