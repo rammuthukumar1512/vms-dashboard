@@ -113,12 +113,18 @@
 .pagination {
   width: 58.31%;
 }
+.chart-section {
+  width: 41.65%;
+}
 @media (max-width: 768px) {
   .section-card {
     flex: 1 1 100%;
   }
   .pagination {
     width: 60%;
+  }
+  .chart-section {
+   width: 58.31%;
   }
 }
 @media (min-width: 960px) and (max-width: 1172px) {
