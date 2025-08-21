@@ -126,9 +126,6 @@
     display: flex;
     justify-content: center;
   }
-  .chart{
-    width: 50%;
-  }
 }
 @media (min-width: 960px) and (max-width: 1172px) {
   .pagination {
