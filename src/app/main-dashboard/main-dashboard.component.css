@@ -3,6 +3,7 @@
 }
 .sidenav{
     width: 5%;
+    overflow: hidden;
 }
 .menu-title {
     display: none;
@@ -16,6 +17,7 @@
     transition: 0.3s width ease-in-out;
     .menu-title {
         display: block;
+        animation: textshow 1.5s ease;
     }
     .menu-link {
         justify-content: flex-start;
@@ -73,5 +75,13 @@
     }
     .menu-link {
         justify-content: flex-start;
+    }
+}
+@keyframes textshow {
+    0%{
+       opacity: 0;
+    }
+    100% {
+        opacity: 1;
     }
 }

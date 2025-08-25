@@ -61,8 +61,8 @@ mat-sidenav-content {
   padding: 0 !important;
   box-shadow: none !important;
 }
-.mat-mdc-snackbar-surface {
-  animation: toast 5.3s ease;
+.inner-toast {
+  animation: toast ease !important;
 }
 
 .fnw-medium {
