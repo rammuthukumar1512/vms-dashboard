@@ -113,6 +113,9 @@
 .pagination {
   width: 58.31%;
 }
+.notify-btn {
+  padding: 0 7px;
+}
 @media (max-width: 768px) {
   .section-card {
     flex: 1 1 100%;
