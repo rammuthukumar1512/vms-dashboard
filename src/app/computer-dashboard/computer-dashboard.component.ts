@@ -247,76 +247,74 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const nonVulnerablePercentage = ( nonVulnerableCount / this.totalComputers) * 100; 
     const leaderLinePlugin = {
     id: 'leaderLinePlugin',
-    afterDatasetDraw(chart: any) {
-
-      const {ctx, chartArea: {top, bottom, left, right}} = chart;
-      const meta = chart.getDatasetMeta(0);
-      const centerX = (left + right) / 2;
-      const centerY = (top + bottom) / 2;
+  afterDatasetDraw(chart: any) {
+  const { ctx, chartArea: { top, bottom, left, right } } = chart;
+  const meta = chart.getDatasetMeta(0);
+  const centerX = (left + right) / 2;
+  const centerY = (top + bottom) / 2;
 
   meta.data.forEach((arc: any, index: number) => {
-  let angle = (arc.startAngle + arc.endAngle) / 2;
-  const radius = arc.outerRadius;
-  if(index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <=20)) angle += 0.3;
-  else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
-  else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
-  else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
-  else if (index === 0 && (vulnerablePercentage >= 70 && vulnerablePercentage < 100)) angle -= 0.7;
-  else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
-  else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 30)) angle -= 0.5;
-  else if (index === 1 && (nonVulnerablePercentage >= 30 && nonVulnerablePercentage < 40)) angle -= 0.5;
-  else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage <=50)) angle -= 0.5;  
-  else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <=80)) angle += 0.1;
-  else if(index === 1 && (nonVulnerablePercentage > 80 && nonVulnerablePercentage < 95)) angle += 0.3;
-  else if(index === 1 && (nonVulnerablePercentage >= 95 && nonVulnerablePercentage <= 100)) angle += 0.6;
-  else {};
-  const x = centerX + Math.cos(angle) * radius;
-  const y = centerY + Math.sin(angle) * radius;
-  const lineEndX = centerX + Math.cos(angle) * (radius + 15);
-  let lineEndY = 0;
-  if (index === 0 && vulnerablePercentage <= 10) { lineEndY = 15 }
-  else if(index === 1 && nonVulnerablePercentage <= 10 ) {lineEndY = 15}
-  else if(index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 50 )) {lineEndY = 10}
-  else { lineEndY = centerY + Math.sin(angle) * (radius + 15);}
+    let angle = (arc.startAngle + arc.endAngle) / 2;
+    const radius = arc.outerRadius;
 
-  const isTop = Math.sin(angle) < 0;
-  let labelX = (index === 0 && vulnerablePercentage < 10) ? lineEndX + 60 : (index === 0 && vulnerablePercentage > 10) ? 120 : 40 ;
-  let labelY = 0;
-  if(index === 0 && vulnerablePercentage < 10) {labelX = 300; labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage >= 10 && vulnerablePercentage <= 20)) {labelX = 340; labelY = 30;}
-  else if (index === 0 && (vulnerablePercentage > 20 && vulnerablePercentage <= 30)) {labelX = 350;labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage > 30 && vulnerablePercentage <= 40)) {labelX = 330; labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage > 40 && vulnerablePercentage <= 50)) {labelX = 320; labelY = 20;}
-  else if (index === 0 && (vulnerablePercentage > 50 && vulnerablePercentage <= 60)) {labelX = 360; labelY = 80}
-  else if (index === 0 && (vulnerablePercentage > 60 && vulnerablePercentage <= 70)) {labelX = 340; labelY = 130}
-  else if (index === 0 && (vulnerablePercentage > 70)) {labelX = 360; labelY = 80}
-  else {};
-  if(index === 1 && nonVulnerablePercentage < 10) { labelX = 150;labelY = 20;}
-  else if (index === 1 && (nonVulnerablePercentage >= 10 && nonVulnerablePercentage <= 20)) {labelY = 40;labelX = 100}
-  else if (index === 1 && (nonVulnerablePercentage > 20 && nonVulnerablePercentage <= 30)) {labelY = 50;labelX = 100}
-  else if (index === 1 && (nonVulnerablePercentage > 30 && nonVulnerablePercentage <= 40)) {labelY = 60; labelX = 100}
-  else if (index === 1 && (nonVulnerablePercentage > 40 && nonVulnerablePercentage <= 50)) {labelY = 145; labelX = 100}
-  else if (index === 1 && (nonVulnerablePercentage > 50 && nonVulnerablePercentage <= 60)) {labelY = 105; labelX = 100}
-  else if (index === 1 && (nonVulnerablePercentage > 60 && nonVulnerablePercentage <= 70)) {labelY = 145; labelX = 100}
-  else if (index === 1 && (nonVulnerablePercentage > 70 && nonVulnerablePercentage <= 100)) {labelY = 165; labelX = 100}
-  else {};
-  ctx.beginPath();
-  ctx.moveTo(x, y);
-  ctx.lineTo(lineEndX, lineEndY);
-  ctx.lineTo(labelX, labelY);
-  ctx.strokeStyle = 'gray';
-  ctx.lineWidth = 1;
-  ctx.setLineDash([7, 3]);
-  ctx.stroke();
+    // ---- your existing angle adjustment logic ----
+    if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
+    else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
+    else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
+    else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage >= 70 && vulnerablePercentage < 100)) angle -= 0.7;
+    else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
+    else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 30)) angle -= 0.5;
+    else if (index === 1 && (nonVulnerablePercentage >= 30 && nonVulnerablePercentage < 40)) angle -= 0.5;
+    else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage <= 50)) angle -= 0.5;
+    else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 80)) angle += 0.1;
+    else if (index === 1 && (nonVulnerablePercentage > 80 && nonVulnerablePercentage < 95)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    // ------------------------------------------------
 
-  const label = chart.data.labels[index];
-  const value = chart.data.datasets[0].data[index];
+    // Start point on arc edge
+    const x = centerX + Math.cos(angle) * radius;
+    const y = centerY + Math.sin(angle) * radius;
 
-  ctx.font = '12px sans-serif';
-  ctx.fillStyle = '#333';
-  ctx.fillText(value, labelX, labelY);
-});
+    // Fixed leader line lengths
+    const lineLength = 20;   // radial outwards
+    const horizLength = 40;  // horizontal offset
+
+    // First segment: radial outward
+    const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
+    const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
+
+    // Second segment: horizontal fixed length
+    let labelX: number;
+    let labelY: number;
+    if (Math.cos(angle) >= 0) {
+      labelX = lineEndX + horizLength;
+      labelY = lineEndY;
+    } else {
+      labelX = lineEndX - horizLength;
+      labelY = lineEndY;
     }
+
+    // Draw leader line
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(lineEndX, lineEndY);
+    ctx.lineTo(labelX, labelY);
+    ctx.strokeStyle = 'gray';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([7, 3]);
+    ctx.stroke();
+
+    // Label
+    const value = chart.data.datasets[0].data[index];
+    ctx.font = '12px sans-serif';
+    ctx.fillStyle = '#333';
+    ctx.textAlign = (Math.cos(angle) >= 0) ? "left" : "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(value, labelX, labelY);
+  });
+}
+
   };
 
     this.computerChartInstance = new Chart(ctx, {
