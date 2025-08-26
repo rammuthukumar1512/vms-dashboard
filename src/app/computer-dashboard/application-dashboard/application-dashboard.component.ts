@@ -244,19 +244,17 @@ this.updatePagedData(this.pageIndex);
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
     console.log("arc", arc)
-
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
-    else if (index === 0 && (vulnerablePercentage >= 70 && vulnerablePercentage < 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 30)) angle -= 0.5;
-    else if (index === 1 && (nonVulnerablePercentage >= 30 && nonVulnerablePercentage < 40)) angle -= 0.5;
-    else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage <= 50)) angle -= 0.5;
-    else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 80)) angle += 0.1;
-    else if (index === 1 && (nonVulnerablePercentage > 80 && nonVulnerablePercentage < 95)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage > 95 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
+    else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
+    else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
 
     // Start point: slice edge
     const x = centerX + Math.cos(angle) * radius;

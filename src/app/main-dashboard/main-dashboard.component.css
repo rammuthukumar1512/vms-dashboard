@@ -3,6 +3,7 @@
 }
 .sidenav{
     width: 5%;
+    overflow: hidden;
 }
 .menu-item:hover{
    background-color: #ddd !important;
