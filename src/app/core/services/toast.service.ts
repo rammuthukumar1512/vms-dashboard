@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
-
-declare var bootstrap: any;
+import { Toast } from 'bootstrap';
 
 @Injectable({
   providedIn: 'root'
@@ -43,7 +42,7 @@ export class ToastService {
 
     toastContainer.appendChild(toastEl);
 
-    const bsToast = new bootstrap.Toast(toastEl, { delay: 5000 });
+    const bsToast = new Toast(toastEl, { delay: 5000 });
     bsToast.show();
 
     toastEl.addEventListener('hidden.bs.toast', () => {
