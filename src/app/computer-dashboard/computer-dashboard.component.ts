@@ -257,7 +257,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
 
-    // ---- your existing angle adjustment logic ----
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;

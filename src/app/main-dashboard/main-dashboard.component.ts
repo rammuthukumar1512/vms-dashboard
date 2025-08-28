@@ -21,6 +21,7 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
     isMiniSidenav = false;
     isMobile = false;
     sidenavPosition!: 'start';
+    hoverState: String = "";
 
     @ViewChild('sidenav') sidenav!: MatSidenav;
     @ViewChild('matSideNavContent') matSideNavContent!: MatSidenavContent;
@@ -69,6 +70,18 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
 
   expandSidenav(): void {
       this.isMiniSidenav = !this.isMiniSidenav;
+}
+
+public onMouseEnter() {
+     this.hoverState = "expand";
+}
+public onMouseLeave() {
+   if(!this.isMobile) {
+     this.hoverState = "collapse";
+     setTimeout(()=>{
+       this.hoverState = "";
+     }, 300);
+   } 
 }
 
 }
