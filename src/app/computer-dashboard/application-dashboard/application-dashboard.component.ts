@@ -123,6 +123,13 @@ ngOnInit(): void {
           this.cdRef.detectChanges();
         }, 0);
       }
+      else {
+        setTimeout(() => {
+          this.drawAppChart();
+          this.drawSeverityChart();
+          this.cdRef.detectChanges();
+        }, 0);
+      }
     });
 }
 
@@ -193,38 +200,8 @@ this.updatePagedData(this.pageIndex);
     return;
   }
   if (this.appChartInstance) this.appChartInstance.destroy();
-
-  if (this.appData.length === 0) {
-    console.log('No data to display in appChart');
-    this.appChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['No Data'],
-        datasets: [{
-          data: [1],
-          backgroundColor: ['#d3d3d3'],
-          borderColor: ['#ffffff'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false },
-          title: {
-            display: true,
-            text: 'No data found',
-            color: '#666'
-          },
-          datalabels: { display: false }
-        }
-      }
-    });
-    return;
-  }
-
+  
+  const isDataFetched = this.appData.length > 0;
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
   console.log('Chart data:', { vulnerableCount, nonVulnerableCount });
@@ -297,10 +274,10 @@ this.updatePagedData(this.pageIndex);
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Vulnerable', 'Non-Vulnerable'],
+      labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : ["No Data"],
       datasets: [{
-        data: [vulnerableCount, nonVulnerableCount],
-        backgroundColor: ['#66b3ffea', '#3366ffe7'],
+        data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1,1],
+        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
         borderColor: ['#ffffff', '#ffffff'],
         borderWidth: 0
       }]
@@ -345,13 +322,13 @@ this.updatePagedData(this.pageIndex);
           }
         },
       plugins: {
-        legend: { display: true, position: 'bottom' },
-        tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed || 0} applications` } },
+        legend: { display: isDataFetched ? true : false, position: 'bottom' },
+        tooltip: { callbacks: { label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
         datalabels: {
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            if(value) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
             else return '';
             
           },
@@ -360,7 +337,7 @@ this.updatePagedData(this.pageIndex);
         }
       }
     },
-    plugins:[leaderLinePlugin]
+    plugins: isDataFetched ? [leaderLinePlugin] : []
   });
 }
 
