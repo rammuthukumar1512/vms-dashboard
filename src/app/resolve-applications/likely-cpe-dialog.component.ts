@@ -138,7 +138,7 @@ export class LikelyCpeDialogComponent {
       },
       error: (error) => {
         console.error('Error fetching likely CPE names:', error);
-        this.toastService.showErrorToast('Failed to fetch likely CPE names');
+        this.toastService.showErrorToast('No Likely CPEs to fetch for this unresolved application');
         this.likelyCpeNames = [];
         this.cpeLoadingComplete = true;
       }

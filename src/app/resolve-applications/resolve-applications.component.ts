@@ -88,7 +88,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
         },
         error: (error) => {
           console.error('Error fetching unresolved applications:', error);
-          this.toastService.showErrorToast('Failed to fetch unresolved applications')
+          this.toastService.showErrorToast('No Likely CPEs to fetch for these unresolved applications')
         }
       });
   }
