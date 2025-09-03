@@ -16,7 +16,7 @@ import { BarController, Chart, LinearScale } from 'chart.js';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { environments } from '../../../environments/environments';
-
+import * as bootstrap from 'bootstrap';
 // Register Chart.js components
 
 @Component({
@@ -52,7 +52,8 @@ computer: ComputerDetails | null = null;
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
-  loggedInUser = 'Unknown';
+  loggedInUserName = 'Unknown';
+  loggedInUserEmail = 'Unknown'
  activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
@@ -91,7 +92,8 @@ ngOnInit(): void {
       console.log('Received appData in ApplicationDashboard:', data);
 
       if (data) {
-        this.loggedInUser = data.loggedInUser || 'Unknown';
+        this.loggedInUserName = data.loggedInUserName || 'Unknown';
+        this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
 
         if (data?.appData && Array.isArray(data.appData)) {
@@ -109,7 +111,7 @@ ngOnInit(): void {
           console.warn('No valid appData received:', data);
           this.appData = [];
           this.vulnerableSoftwareCount = 0;
-          this.loggedInUser = 'Unknown';
+          this.loggedInUserName = 'Unknown';
           this.machineName = 'Unknown';
           this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         }
@@ -143,6 +145,12 @@ ngOnInit(): void {
       this.showVulnerabilities(app);
       localStorage.removeItem('lastResolvedApp');
     }
+   const tooltipTriggerList = Array.from(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.forEach((el: any) => {
+      new bootstrap.Tooltip(el);
+    });
   }
 
 // Restore page state
@@ -178,7 +186,8 @@ this.updatePagedData(this.pageIndex);
 
     const appData = {
       machineName: data?.machineName || 'Unknown',
-      loggedInUser: data?.loggedInUser || 'Unknown',
+      loggedInUserName: data?.loggedInUserName || 'Unknown',
+      loggedInUserEmail: data?.loggedInUserEmail || 'Unknown',
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
       appData: data?.applicationDetails || []
     };
@@ -204,14 +213,12 @@ this.updatePagedData(this.pageIndex);
   const isDataFetched = this.appData.length > 0;
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
-  console.log('Chart data:', { vulnerableCount, nonVulnerableCount });
   const vulnerablePercentage = (vulnerableCount / this.appData.length) * 100;
   const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
   const leaderLinePlugin = {
     id: 'leaderLinePlugin',
     afterDatasetDraw(chart: any) {
   const { ctx, chartArea: { top, bottom, left, right } } = chart;
-  console.log(ctx, top, bottom, left, right, "destructure")
   const meta = chart.getDatasetMeta(0);
   const centerX = (left + right) / 2;
   const centerY = (top + bottom) / 2;
@@ -219,26 +226,26 @@ this.updatePagedData(this.pageIndex);
   meta.data.forEach((arc: any, index: number) => {
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
-    console.log("arc", arc)
 
    if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
     else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
+    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
 
     // Start point: slice edge
     const x = centerX + Math.cos(angle) * radius;
     const y = centerY + Math.sin(angle) * radius;
-    console.log(x,y, "xy");
-    console.log(angle, "angle")
-    console.log(Math.cos(angle), Math.sin(angle),"cos, sin")
 
     // Fixed leader line length
     const FIXED_LINE_LENGTH = 20; // distance out from slice
@@ -270,7 +277,6 @@ this.updatePagedData(this.pageIndex);
 }
 
   };
-  console.log(leaderLinePlugin)
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
@@ -540,5 +546,22 @@ sendNotificationToComputer(computerUuid: string) {
   });
 }
 
+public setProcessIdTooltip(processIds: any, maxLength: number) {
+   let tooltipText = processIds.slice(0, maxLength).join(', ')
+   let remainIds = 0;
+   let totalIds = processIds.length;
+   if(maxLength < totalIds) {
+   remainIds = totalIds - maxLength;
+   }
+   return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'ProcessIds:\n' + tooltipText : 'Application is currently not running'
 }
+
+
+
+  //  console.log(tooltip?.getBoundingClientRect())
+  //  let a = event.target
+  //  console.log()
+   
+}
+
 

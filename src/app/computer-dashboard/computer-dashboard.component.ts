@@ -262,12 +262,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
     else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
+    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
+
 
     // Start point on arc edge
     const x = centerX + Math.cos(angle) * radius;
@@ -402,7 +407,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      this.selectedComputerId = computerId;
      this.applicationDashboardComponent['resetFilters']();
      const appData = { machineName: data?.machineName || 'Unknown',
-      loggedInUser: data?.loggedInUser || 'Unknown',
+      loggedInUserName: data?.loggedInUserName || 'Unknown', loggedInUserEmail: data?.loggedInUserEmail,
      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
      console.log(appData)
      this.applicationDashboardComponent.sendAppData(data, computerId);
@@ -487,7 +492,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      } else {
       this.finalComputerDetails = this.computerDetails.filter(computer => {
         return computer.ipAddress.includes(searchValue) || computer.machineName.toLocaleLowerCase().includes(searchValue)
-        || computer.loggedInUser.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUserName.toLocaleLowerCase().includes(searchValue)
       });
      }
      this.updatePagedData(this.initialIndex);

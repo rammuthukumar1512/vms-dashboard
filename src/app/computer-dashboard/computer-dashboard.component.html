@@ -76,7 +76,7 @@
                       <tr class="cursor-pointer" [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id)">
                       <td class="text-secondary word-break">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                       <td class="word-break">{{computer.machineName}}</td>
-                      <td class="word-break">{{computer.loggedInUser}}</td>
+                      <td class="word-break">{{computer.loggedInUserName}}</td>
                       </tr>
                     </tbody>
                     <tbody *ngIf="!pagedComputerData.length;">

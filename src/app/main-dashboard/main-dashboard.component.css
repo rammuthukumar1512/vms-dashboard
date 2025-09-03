@@ -32,6 +32,15 @@
     }
         
     }
+
+/* .menu-item:hover::before {
+    content: "";
+    position: relative;
+    top: 80%;
+    width: 100%;
+    border-bottom: 4px solid #2899db;
+} */
+  
 .nav-list.collapse{
         height: 100vh !important;
         animation: collapseWidth 0.3s ease-in-out forwards;

@@ -17,6 +17,7 @@ export interface ApplicationDetails {
   uuid: string;
   softwareName: string;
   softwareVersion: string;
+  runningProcessIds: Array<number>,
   vendor: string;
   criticalVulnerabilityCount: number;
   highVulnerabilityCount: number;
@@ -36,7 +37,8 @@ export interface ComputerDetails {
   osVersion: string;
   antivirusStatus: string;
   firewallStatus: string;
-  loggedInUser: string;
+  loggedInUserEmail: string;
+  loggedInUserName: string;
   installedSoftwareCount: number;
   vulnerableSoftwareCount: number;
   criticalVulnerableApplicationCount: number;

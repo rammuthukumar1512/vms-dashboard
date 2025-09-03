@@ -143,9 +143,9 @@ updatePagedData(initialIndex: number): void {
   let filteredApps = this.unresolvedApps;
   if (this.searchValue) {
     filteredApps = filteredApps.filter(app =>
-      app.softwareName.toLowerCase().includes(this.searchValue) ||
-      app.softwareVersion.toLowerCase().includes(this.searchValue) ||
-      app.vendorName.toLowerCase().includes(this.searchValue)
+      app.softwareName?.toLowerCase().includes(this.searchValue) ||
+      app.softwareVersion?.toLowerCase().includes(this.searchValue) ||
+      app.vendorName?.toLowerCase().includes(this.searchValue)
     );
   }
 
