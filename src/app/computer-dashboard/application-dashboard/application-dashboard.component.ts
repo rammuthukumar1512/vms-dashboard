@@ -377,12 +377,12 @@ drawSeverityChart(): void {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: { y: { beginAtZero: true, grid: { display: false }, title: { display: true, text: 'Vulnerability Count' } },
+      scales: { y: { beginAtZero: true, grid: { display: false }, title: { display: true, text: 'Vulnerability Count' },  grace: '20%' },
                 x: { grid: { display: false }, title: { display: true, text: 'Severity Type' } } },
       plugins: {
         legend: { display: false },
         tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities` } },
-        datalabels: { color: 'white', anchor: 'center', align: 'center', font: { weight: 'bold', size: 10 }, formatter: (value) => value }
+        datalabels: { color: 'gray', anchor: 'end', align: 'end', font: { weight: 'bold', size: 10 }, formatter: (value) => value }
       }
     }
   });

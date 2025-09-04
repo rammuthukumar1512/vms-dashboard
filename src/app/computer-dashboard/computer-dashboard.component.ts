@@ -189,7 +189,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           title: {
             display: true,
             text: 'Application Count'
-          }
+          },
+          grace: "20%"
         },
         x: {
           grid: {           
@@ -213,9 +214,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           }
         },
          datalabels: {
-         color: 'white',      
-         anchor: 'center',       
-         align: 'center',
+         color: 'gray',      
+         anchor: 'end',       
+         align: 'end',
          font: {
             weight: 'bold',
             size: 12
