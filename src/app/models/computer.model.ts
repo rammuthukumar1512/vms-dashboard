@@ -46,6 +46,8 @@ export interface ComputerDetails {
   mediumVulnerableApplicationCount: number;
   lowVulnerableApplicationCount: number;
   applicationDetails: ApplicationDetails[];
+  createdAt: Date,
+  updatedAt: Date,
   selected?: boolean;
 }
 

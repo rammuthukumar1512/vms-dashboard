@@ -17,8 +17,8 @@
     </mat-toolbar>
     <mat-nav-list (mouseleave)="onMouseLeave()" [ngClass]="hoverState" role="list" class="d-flex flex-column align-items-center p-0 nav-list bg-white">
         <a [routerLink]="[item.link]" *ngFor="let item of sideMenuItems" routerLinkActive="active-link"
-        [routerLinkActiveOptions]="{ exact: true }" class="container-fluid menu-item menu-link bg-white d-flex align-items-center text-dark rounded-0 py-2 text-decoration-none">
-        <span class="material-symbols-outlined">{{item.icon}}</span>&nbsp;&nbsp; <span class="menu-title text-nowrap">{{item.title}}</span></a>
+        [routerLinkActiveOptions]="{ exact: true }" class="container-fluid menu-item menu-link text-dark rounded-0 py-2 text-decoration-none">
+        <div class="menu-name d-flex align-items-center"><span class="material-symbols-outlined">{{item.icon}}</span>&nbsp;&nbsp; <span class="menu-title text-nowrap">{{item.title}}</span></div></a>
         <div class="sidemenu-expand">
         <!-- <div class="py-2 expand-arrow-container" [ngClass]="{'justify-content-center': !isMiniSidenav, 'justify-content-end': isMiniSidenav}" click="toggleSubMenu()">
           <button (click)="expandSidenav()" *ngIf="!isMiniSidenav" class="btn expand-btn d-flex justify-content-center p-2 rounded-circle">

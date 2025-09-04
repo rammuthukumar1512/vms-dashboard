@@ -408,7 +408,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      this.applicationDashboardComponent['resetFilters']();
      const appData = { machineName: data?.machineName || 'Unknown',
       loggedInUserName: data?.loggedInUserName || 'Unknown', loggedInUserEmail: data?.loggedInUserEmail,
-     vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
+      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || [],
+      createdAt: data?.createdAt, updatedAt: data?.updatedAt };
      console.log(appData)
      this.applicationDashboardComponent.sendAppData(data, computerId);
      this.pagedComputerData = this.pagedComputerData.map((computer) => {
@@ -473,7 +474,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
 
   public onPageSizeChange(event: number): void {
-    console.log(event)
    this.pageSize = event;
    let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
    this.totalPages = pages;

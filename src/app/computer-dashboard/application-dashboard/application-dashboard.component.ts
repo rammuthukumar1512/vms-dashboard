@@ -45,16 +45,17 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
-lastResolvedApp: Partial<ApplicationDetails> | null = null;
-computer: ComputerDetails | null = null;
-
+  lastResolvedApp: Partial<ApplicationDetails> | null = null;
+  computer: ComputerDetails | null = null;
+  
   appData: ApplicationDetails[] = [];
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
   loggedInUserName = 'Unknown';
-  loggedInUserEmail = 'Unknown'
- activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
+  loggedInUserEmail = 'Unknown';
+  lastRefresh: string | null = null;
+  activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
   severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
@@ -95,7 +96,7 @@ ngOnInit(): void {
         this.loggedInUserName = data.loggedInUserName || 'Unknown';
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
-
+        this.lastRefresh = data.lastRefresh.split("T").join(" ");
         if (data?.appData && Array.isArray(data.appData)) {
      const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
             const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
@@ -189,6 +190,7 @@ this.updatePagedData(this.pageIndex);
       loggedInUserName: data?.loggedInUserName || 'Unknown',
       loggedInUserEmail: data?.loggedInUserEmail || 'Unknown',
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
+      lastRefresh: data?.updatedAt ? data?.updatedAt : data?.createdAt,
       appData: data?.applicationDetails || []
     };
     console.log('Sending appData:', appData);
