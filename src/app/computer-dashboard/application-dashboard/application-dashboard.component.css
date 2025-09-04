@@ -252,9 +252,46 @@ td {
 
 
 .notify-button-container {
-  padding-top: 15px;
-  margin-left: 20px;
-  white-space: nowrap; /* Prevents button text wrapping */
+
+}
+
+.rounded-left {
+  border-top-left-radius: 8px;
+}
+.rounded-right {
+  border-top-right-radius: 8px;
+}
+.small-font {
+  font-size: 12px;
+}
+.last-refresh {
+  /* width: 100px ; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notify-btn{
+  width: fit-content;
+}
+
+
+.menu-item:hover .menu-name::after {
+    content: "";
+    position: absolute;
+    top: 90%;
+    width: 50%;
+    left: 50%;
+    border-bottom: 4px solid rgb(20, 136, 245);
+    animation: menubottomborder 0.7s;
+}
+
+.menu-item:hover .menu-name::before {
+    content: "";
+    position: absolute;
+    top: 90%;
+    width: 50%;
+    right: 50%;
+    border-bottom: 4px solid rgb(20, 136, 245);
+    animation: menubottomborder 0.7s;
 }
 
 @media (max-width: 767px) {

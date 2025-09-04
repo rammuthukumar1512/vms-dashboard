@@ -1,14 +1,14 @@
 
 <!-- Application Dashboard section start -->
    <!-- First column container start -->
-<div class="container-fluid"> 
-  <div class="row border border-1 bg-light rounded-3">
+<div> 
+  <div class="container-fluid border border-1 bg-light rounded-3">
       <!-- <div class="bg-gray-shade rounded-top-3 d-flex justify-content-between border border-top-0 border-start-0 border-end-0 border-bottoms w-100">
          <span class="text-secondary fs-10 fw-bold p-2 w-50"> Machine Name :<span class="text-primary" style="word-break: break-all;"> {{ machineName }}</span></span>
           <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
       </div> -->
-  <div class="bg-gray-shade d-flex rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
-<div class="col-11 headerDetails">
+  <div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+<div class="col-7 headerDetails">
 <div class="info-row d-flex flex-wrap gap-2 p-2">
   <div class="label">Machine Name:</div>
 
@@ -19,7 +19,8 @@
   <div class="value" matTooltip="{{loggedInUser}}">{{ loggedInUser }}</div>
 </div>
 </div>
-<div class="notify-button-container" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
+<div class="notify-button-container col-5" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
+  <div class="label d-flex">Last Refresh:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
     <button (click)="openNotificationConfirmDialog(computer.uuid)" class="btn btn-border-none btn-primary">
       Notify User
     </button>
@@ -130,7 +131,7 @@
             <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
 
 <td mat-cell  *matCellDef="let app" class="gap-1">
-  <span class="p-1">{{ app.softwareName }}</span>
+  <span [matTooltip]="setProcessIdTooltip(app.runningProcessIds, 20)" class="p-1">{{ app.softwareName }}</span>
   <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning"  matTooltip="Unresolved application">shield_question</span>
   <span  *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
         class="text-danger"  matTooltip="Contains vulnerabilities">
