@@ -152,24 +152,22 @@ updatePagedData(initialIndex: number): void {
   const totalItems = filteredApps.length;
 
   // Dynamically set pageSizes to match ApplicationDashboardComponent logic
-  if (totalItems >= 100) {
-    this.pageSizes = [5, 10, 25, 50, 100];
-  } else if (totalItems >= 50) {
-    this.pageSizes = [5, 10, 25, 50];
-  } else if (totalItems >= 25) {
-    this.pageSizes = [5, 10, 25];
-  } else if (totalItems >= 10) {
-    this.pageSizes = [5, 10];
+if (totalItems >= 100) {
+  this.pageSizes = [5, 10, 25, 50, 100];
+} else if (totalItems >= 50) {
+  this.pageSizes = [5, 10, 25, 50];
+} else if (totalItems >= 25) {
+  this.pageSizes = [5, 10, 25];
+} else if (totalItems >= 10) {
+  this.pageSizes = [5, 10];
   } else if (totalItems > 0) {
     this.pageSizes = [5]; // Minimum page size is 5, adjust if totalItems < 5
-  } else {
+} else {
     this.pageSizes = [];
-  }
+}
 
   // Adjust pageSize if it exceeds totalItems after filtering
-  if (this.pageSize > totalItems && totalItems > 0) {
-    this.pageSize = Math.min(5, totalItems); // Reset to 5 or totalItems if less
-  }
+
 
   this.totalPages = Math.ceil(totalItems / this.pageSize);
   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
