@@ -15,7 +15,7 @@ import { BarController, Chart, LinearScale } from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
-import { environments } from '../../../environments/environments';
+import { ApiEndPoints } from '../../../environments/api-endpoints';
 import * as bootstrap from 'bootstrap';
 // Register Chart.js components
 
@@ -533,7 +533,7 @@ sendNotificationToComputer(computerUuid: string) {
     'Accept': 'application/json'
   });
 
-  const url = `${environments.sendNotificationToAllComputers}/${computerUuid}`;
+  const url = `${ApiEndPoints.sendNotificationToAllComputers}/${computerUuid}`;
 
   this.http.get<any>(url, { headers }).subscribe({
     next: (response) => {

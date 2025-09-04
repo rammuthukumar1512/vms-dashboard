@@ -3,7 +3,7 @@ import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnIn
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environments } from '../../environments/environments';
+import { ApiEndPoints } from '../../environments/api-endpoints';
 import { SecurityReport, ComputerDetails } from '../models/computer.model';
 import { Chart } from 'chart.js';
 import { MatIconModule } from '@angular/material/icon';
@@ -86,7 +86,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     'Accept': 'application/json'
     });
 
-    this.http.get<any>(environments.unique_url, { headers })
+    this.http.get<any>(ApiEndPoints.unique_url, { headers })
       .pipe(
         takeUntil(this.destroy$)
       )
@@ -506,7 +506,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const headers = new HttpHeaders({
     'Accept': 'application/json'
     });
-      this.http.get<any>(environments.sendNotificationToAllComputers, {headers}).subscribe({
+      this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showSuccessToast(response.Status);
         }, error: (error)=>{

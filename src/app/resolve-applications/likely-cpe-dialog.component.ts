@@ -4,7 +4,7 @@ import { MatDialogModule, MAT_DIALOG_DATA, MatDialogRef } from '@angular/materia
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { environments } from '../../environments/environments';
+import { ApiEndPoints } from '../../environments/api-endpoints';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../core/services/toast.service';
@@ -129,7 +129,7 @@ export class LikelyCpeDialogComponent {
 
   fetchLikelyCpeNames(): void {
     this.http.get<{ cpe23Uri: string; vendor: string; product: string; version: string }[]>(
-      `${environments.likelyCpeUrl}?vendor=${encodeURIComponent(this.data.vendor)}&product=${encodeURIComponent(this.data.softwareName)}`
+      `${ApiEndPoints.likelyCpeUrl}?vendor=${encodeURIComponent(this.data.vendor)}&product=${encodeURIComponent(this.data.softwareName)}`
     ).subscribe({
       next: (response) => {
         this.likelyCpeNames = Array.isArray(response) ? response : [];
@@ -179,7 +179,7 @@ export class LikelyCpeDialogComponent {
         };
 
         this.http.post(
-          `${environments.addHintUrl}?cpeName=${encodeURIComponent(normalizedCpeName)}`, body
+          `${ApiEndPoints.addHintUrl}?cpeName=${encodeURIComponent(normalizedCpeName)}`, body
         ).subscribe({
           next: () => {
             this.dialogRef.close({ cpeName: normalizedCpeName });

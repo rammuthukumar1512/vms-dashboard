@@ -1,10 +1,11 @@
 export const environments = {
   production: false,
-  unique_url: 'http://localhost:8082/api/getDashboardMetrics',
-  likelyCpeUrl: 'http://localhost:8082/api/hint/likelyCpeNames',
-  addHintUrl: 'http://localhost:8082/api/hint/addHint',
-  unresolvedAppsUrl: 'http://localhost:8082/api/applications/unresolved' ,
-  searchVulnerabilityUrl: 'http://localhost:8082/api/search/vulnerability',
-  sendNotificationToAllComputers: 'http://localhost:8082/api/sendNotifications'
+  baseUrl: "http://localhost:8081/",
+  unique_url: 'api/getDashboardMetrics',
+  likelyCpeUrl: 'api/hint/likelyCpeNames',
+  addHintUrl: 'api/hint/addHint',
+  unresolvedAppsUrl: 'api/applications/unresolved' ,
+  searchVulnerabilityUrl: 'api/search/vulnerability',
+  sendNotificationToAllComputers: 'api/sendNotifications'
 
 };

@@ -4,7 +4,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { HttpClient } from '@angular/common/http';
-import { environments } from '../../environments/environments';
+import { ApiEndPoints } from '../../environments/api-endpoints';
 import { Subject, takeUntil } from 'rxjs';
 import { LikelyCpeDialogComponent } from '../resolve-applications/likely-cpe-dialog.component';
 import { MatIconModule } from '@angular/material/icon';
@@ -73,7 +73,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
   }
 
   fetchUnresolvedApplications(): void {
-    this.http.get<UnresolvedApplication[]>(environments.unresolvedAppsUrl)
+    this.http.get<UnresolvedApplication[]>(ApiEndPoints.unresolvedAppsUrl)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data) => {
@@ -114,7 +114,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
         this.unresolvedApps = this.unresolvedApps.filter(a => a.uuid !== app.uuid);
         this.updatePagedData(this.pageIndex);
         this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
-      this.http.get(environments.unique_url).subscribe({
+      this.http.get(ApiEndPoints.unique_url).subscribe({
         next: () => {
           console.log('Dashboard data refreshed');
         },
