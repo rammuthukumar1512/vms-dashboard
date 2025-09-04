@@ -257,18 +257,22 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
 
-    // ---- your existing angle adjustment logic ----
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
     else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
+    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
+
 
     // Start point on arc edge
     const x = centerX + Math.cos(angle) * radius;
@@ -403,8 +407,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      this.selectedComputerId = computerId;
      this.applicationDashboardComponent['resetFilters']();
      const appData = { machineName: data?.machineName || 'Unknown',
-      loggedInUser: data?.loggedInUser || 'Unknown',
-     vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
+      loggedInUserName: data?.loggedInUserName || 'Unknown', loggedInUserEmail: data?.loggedInUserEmail,
+      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || [],
+      createdAt: data?.createdAt, updatedAt: data?.updatedAt };
      console.log(appData)
      this.applicationDashboardComponent.sendAppData(data, computerId);
      this.pagedComputerData = this.pagedComputerData.map((computer) => {
@@ -469,7 +474,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
 
   public onPageSizeChange(event: number): void {
-    console.log(event)
    this.pageSize = event;
    let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
    this.totalPages = pages;
@@ -488,7 +492,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      } else {
       this.finalComputerDetails = this.computerDetails.filter(computer => {
         return computer.ipAddress.includes(searchValue) || computer.machineName.toLocaleLowerCase().includes(searchValue)
-        || computer.loggedInUser.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUserName.toLocaleLowerCase().includes(searchValue)
       });
      }
      this.updatePagedData(this.initialIndex);

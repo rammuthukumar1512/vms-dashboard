@@ -1,8 +1,8 @@
 
 <!-- Application Dashboard section start -->
    <!-- First column container start -->
-<div class="container-fluid"> 
-  <div class="row border border-1 bg-light rounded-3">
+<div> 
+  <div class="container-fluid border border-1 bg-light rounded-3">
       <!-- <div class="bg-gray-shade rounded-top-3 d-flex justify-content-between border border-top-0 border-start-0 border-end-0 border-bottoms w-100">
          <span class="text-secondary fs-10 fw-bold p-2 w-50"> Machine Name :<span class="text-primary" style="word-break: break-all;"> {{ machineName }}</span></span>
           <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
@@ -33,24 +33,23 @@
 </div> -->
 
 
-<div class="bg-gray-shade d-flex flex-wrap justify-content-between align-items-start rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms w-100">
-  <div class="col headerDetails">
+<div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+  <div class="col-7 rounded-left">
     <div class="info-row d-flex flex-wrap gap-2 p-2">
       <div class="label">Machine Name:</div>
       <div class="value" matTooltip="{{machineName}}">{{ machineName }}</div>
     </div>
     <div class="info-row d-flex flex-wrap gap-2 p-2">
       <div class="label">LoggedIn User:</div>
-      <div class="value" matTooltip="{{loggedInUser}}">{{ loggedInUser }}</div>
+      <div class="value" matTooltip="{{loggedInUserName}}">{{ loggedInUserName }}</div>
     </div>
   </div>
 
   <div
-    class="notify-button-container d-flex align-items-center"
-    *ngIf="computer && computer.vulnerableSoftwareCount > 0"
-    matTooltip="Send Notification"
-  >
-    <button (click)="openNotificationConfirmDialog(computer.uuid)" class="btn btn-border-none btn-primary">
+    class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right"
+    *ngIf="computer && computer.vulnerableSoftwareCount > 0">
+    <div class="label d-flex">Last Refresh:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
+    <button (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn">
       Notify User
     </button>
   </div>
@@ -158,10 +157,11 @@
 
           <!-- Software Name -->
           <ng-container  matColumnDef="softwareName">
-            <th  class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
+            <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
 
-<td mat-cell  *matCellDef="let app" class="gap-1">
-  <span class="p-1">{{ app.softwareName }}</span>
+<td mat-cell  *matCellDef="let app" class="gap-1 col-4">
+  <div class="d-flex align-items-center mt-2" style="word-break: break-all;">
+  <span class="p-1 processIdsTooltip mb-2" [matTooltip]="setProcessIdTooltip(app.runningProcessIds, 20)" matTooltipPosition="above">{{ app.softwareName }}
   <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning"  matTooltip="Unresolved application">shield_question</span>
   <span  *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
         class="text-danger"  matTooltip="Contains vulnerabilities">
@@ -177,19 +177,21 @@
     class="fa-solid fa-triangle-exclamation text-danger"
   ></i>
     </span>
+<!-- <span class="tooltiptext">{{setProcessIdTooltip(app.runningProcessIds, 20)}}</span> -->
+    </span>
+</div>
 </td>
-
           </ng-container>
 
           <!-- Software Version -->
           <ng-container matColumnDef="softwareVersion">
-            <th  class="text-secondary fw-bolder text-center " mat-header-cell *matHeaderCellDef>Version</th>
+            <th class="text-secondary fw-bolder text-center col-4" mat-header-cell *matHeaderCellDef>Version</th>
             <td class="text-center" mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td> 
           </ng-container>
 
           <!-- Vendor -->
           <ng-container matColumnDef="vendor">
-            <th  class="text-secondary fw-bolder text-center " mat-header-cell *matHeaderCellDef>Vendor</th>
+            <th class="text-secondary fw-bolder text-center col-4" mat-header-cell *matHeaderCellDef>Vendor</th>
             <td class="text-center"mat-cell *matCellDef="let app">{{ app.vendor }}</td>
           </ng-container>
 
@@ -253,10 +255,10 @@
   <h6 class="bg-blue-theme text-white fs-5 ps-2 py-2">Confirm</h6>
   <mat-dialog-content class="p-3">
     <p class="text-start">
-      You are about to notify the user 
+      You are about to send a notification to 
       <span matTooltipPosition="below"
- matTooltip="{{loggedInUser}}" class="machine fw-bold">{{ loggedInUser }}</span> 
-      by email. Do you want to continue?
+ matTooltip="{{loggedInUserEmail}}" class="machine fw-bold">{{ loggedInUserEmail }}</span> 
+      Do you wish to continue?
     </p>
   </mat-dialog-content>
   <mat-dialog-actions align="end" class="p-2">

@@ -16,7 +16,7 @@ import { BarController, Chart, LinearScale } from 'chart.js';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { environments } from '../../../environments/environments';
-
+import * as bootstrap from 'bootstrap';
 // Register Chart.js components
 
 @Component({
@@ -45,15 +45,17 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
-lastResolvedApp: Partial<ApplicationDetails> | null = null;
-computer: ComputerDetails | null = null;
-
+  lastResolvedApp: Partial<ApplicationDetails> | null = null;
+  computer: ComputerDetails | null = null;
+  
   appData: ApplicationDetails[] = [];
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
-  loggedInUser = 'Unknown';
- activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
+  loggedInUserName = 'Unknown';
+  loggedInUserEmail = 'Unknown';
+  lastRefresh: string | null = null;
+  activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
   severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
@@ -91,9 +93,10 @@ ngOnInit(): void {
       console.log('Received appData in ApplicationDashboard:', data);
 
       if (data) {
-        this.loggedInUser = data.loggedInUser || 'Unknown';
+        this.loggedInUserName = data.loggedInUserName || 'Unknown';
+        this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
-
+        this.lastRefresh = data.lastRefresh.split("T").join(" ");
         if (data?.appData && Array.isArray(data.appData)) {
      const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
             const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
@@ -109,7 +112,7 @@ ngOnInit(): void {
           console.warn('No valid appData received:', data);
           this.appData = [];
           this.vulnerableSoftwareCount = 0;
-          this.loggedInUser = 'Unknown';
+          this.loggedInUserName = 'Unknown';
           this.machineName = 'Unknown';
           this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         }
@@ -117,6 +120,13 @@ ngOnInit(): void {
         this.updatePagedData(this.initialIndex);
         this.cdRef.detectChanges();
 
+        setTimeout(() => {
+          this.drawAppChart();
+          this.drawSeverityChart();
+          this.cdRef.detectChanges();
+        }, 0);
+      }
+      else {
         setTimeout(() => {
           this.drawAppChart();
           this.drawSeverityChart();
@@ -136,6 +146,12 @@ ngOnInit(): void {
       this.showVulnerabilities(app);
       localStorage.removeItem('lastResolvedApp');
     }
+   const tooltipTriggerList = Array.from(
+      document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    );
+    tooltipTriggerList.forEach((el: any) => {
+      new bootstrap.Tooltip(el);
+    });
   }
 
 // Restore page state
@@ -171,8 +187,10 @@ this.updatePagedData(this.pageIndex);
 
     const appData = {
       machineName: data?.machineName || 'Unknown',
-      loggedInUser: data?.loggedInUser || 'Unknown',
+      loggedInUserName: data?.loggedInUserName || 'Unknown',
+      loggedInUserEmail: data?.loggedInUserEmail || 'Unknown',
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
+      lastRefresh: data?.updatedAt ? data?.updatedAt : data?.createdAt,
       appData: data?.applicationDetails || []
     };
     console.log('Sending appData:', appData);
@@ -193,48 +211,16 @@ this.updatePagedData(this.pageIndex);
     return;
   }
   if (this.appChartInstance) this.appChartInstance.destroy();
-
-  if (this.appData.length === 0) {
-    console.log('No data to display in appChart');
-    this.appChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['No Data'],
-        datasets: [{
-          data: [1],
-          backgroundColor: ['#d3d3d3'],
-          borderColor: ['#ffffff'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false },
-          title: {
-            display: true,
-            text: 'No data found',
-            color: '#666'
-          },
-          datalabels: { display: false }
-        }
-      }
-    });
-    return;
-  }
-
+  
+  const isDataFetched = this.appData.length > 0;
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
-  console.log('Chart data:', { vulnerableCount, nonVulnerableCount });
   const vulnerablePercentage = (vulnerableCount / this.appData.length) * 100;
   const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
   const leaderLinePlugin = {
     id: 'leaderLinePlugin',
     afterDatasetDraw(chart: any) {
   const { ctx, chartArea: { top, bottom, left, right } } = chart;
-  console.log(ctx, top, bottom, left, right, "destructure")
   const meta = chart.getDatasetMeta(0);
   const centerX = (left + right) / 2;
   const centerY = (top + bottom) / 2;
@@ -242,26 +228,26 @@ this.updatePagedData(this.pageIndex);
   meta.data.forEach((arc: any, index: number) => {
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
-    console.log("arc", arc)
 
    if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
     else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
+    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
 
     // Start point: slice edge
     const x = centerX + Math.cos(angle) * radius;
     const y = centerY + Math.sin(angle) * radius;
-    console.log(x,y, "xy");
-    console.log(angle, "angle")
-    console.log(Math.cos(angle), Math.sin(angle),"cos, sin")
 
     // Fixed leader line length
     const FIXED_LINE_LENGTH = 20; // distance out from slice
@@ -293,14 +279,13 @@ this.updatePagedData(this.pageIndex);
 }
 
   };
-  console.log(leaderLinePlugin)
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Vulnerable', 'Non-Vulnerable'],
+      labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : ["No Data"],
       datasets: [{
-        data: [vulnerableCount, nonVulnerableCount],
-        backgroundColor: ['#66b3ffea', '#3366ffe7'],
+        data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1,1],
+        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
         borderColor: ['#ffffff', '#ffffff'],
         borderWidth: 0
       }]
@@ -345,13 +330,13 @@ this.updatePagedData(this.pageIndex);
           }
         },
       plugins: {
-        legend: { display: true, position: 'bottom' },
-        tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed || 0} applications` } },
+        legend: { display: isDataFetched ? true : false, position: 'bottom' },
+        tooltip: { callbacks: { label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
         datalabels: {
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            if(value) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
             else return '';
             
           },
@@ -360,7 +345,7 @@ this.updatePagedData(this.pageIndex);
         }
       }
     },
-    plugins:[leaderLinePlugin]
+    plugins: isDataFetched ? [leaderLinePlugin] : []
   });
 }
 
@@ -563,5 +548,22 @@ sendNotificationToComputer(computerUuid: string) {
   });
 }
 
+public setProcessIdTooltip(processIds: any, maxLength: number) {
+   let tooltipText = processIds.slice(0, maxLength).join(', ')
+   let remainIds = 0;
+   let totalIds = processIds.length;
+   if(maxLength < totalIds) {
+   remainIds = totalIds - maxLength;
+   }
+   return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'ProcessIds:\n' + tooltipText : 'Application is currently not running'
 }
+
+
+
+  //  console.log(tooltip?.getBoundingClientRect())
+  //  let a = event.target
+  //  console.log()
+   
+}
+
 

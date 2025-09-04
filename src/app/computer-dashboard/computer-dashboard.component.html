@@ -76,7 +76,7 @@
                       <tr class="cursor-pointer" [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id)">
                       <td class="text-secondary word-break">{{computer.ipAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                       <td class="word-break">{{computer.machineName}}</td>
-                      <td class="word-break">{{computer.loggedInUser}}</td>
+                      <td class="word-break">{{computer.loggedInUserName}}</td>
                       </tr>
                     </tbody>
                     <tbody *ngIf="!pagedComputerData.length;">
@@ -131,15 +131,13 @@
       <app-application-dashboard></app-application-dashboard>
       <!-- Application Content Here -->
     </mat-card>
-
-
   </div>
 
 </div>
 
 <ng-template #notificationConfirmDialog>
   <h6 class="bg-blue-theme text-white fs-5 ps-2 py-2">Confirm</h6>
-  <mat-dialog-content>You are about to notify the users by email. Do you want to continue?</mat-dialog-content>
+  <mat-dialog-content>You are about to notify multiple users by email. Do you want to continue?</mat-dialog-content>
   <mat-dialog-actions align="end">
     <button class="btn btn-outline-primary" (click)="dialogRef.close(false)">Cancel</button> 
     &nbsp;

@@ -223,11 +223,28 @@ td {
 }
 
 .notify-button-container {
-  padding-top: 15px;
+  /* padding-top: 15px;
   margin-left: 20px;
-  white-space: nowrap; /* Prevents button text wrapping */
+  white-space: nowrap;  */
+  overflow: hidden;
 }
-
+.rounded-left {
+  border-top-left-radius: 8px;
+}
+.rounded-right {
+  border-top-right-radius: 8px;
+}
+.small-font {
+  font-size: 12px;
+}
+.last-refresh {
+  /* width: 100px ; */
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.notify-btn{
+  width: fit-content;
+}
 @media (max-width: 767px) {
   .notify-button-container {
     width: 100%;
@@ -238,8 +255,11 @@ td {
   .notify-button-container button {
     /* width: fit-content; */
     margin-top: 10px;
-padding: 10px 15px;  
-}
+    padding: 10px 15px;  
+  }
+  .notify-btn{
+    margin-bottom: 7px;
+  }
 
   
   /* No change needed for pagination container; add gap for buttons */
