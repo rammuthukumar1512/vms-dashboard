@@ -1,0 +1,17 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        - npm ci
+    build:
+      commands:
+        - npm run build -- --configuration production
+  artifacts:
+    baseDirectory: dist/vms-dashboard/browser
+    files:
+      - '**/*'
+  cache:
+    paths:
+      - node_modules/**/*
+
