@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef,TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, TemplateRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -11,12 +11,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import ChartDataLabels from 'chartjs-plugin-datalabels';
-import { Chart} from 'chart.js';
+import { BarController, Chart, LinearScale } from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { environments } from '../../../environments/environments';
+import * as bootstrap from 'bootstrap';
+// Register Chart.js components
 
 @Component({
   selector: 'app-application-dashboard',
@@ -40,19 +41,21 @@ export class ApplicationDashboardComponent implements AfterViewInit {
 
   @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
-  @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>; // Add template reference
+ @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>; // Add template reference
 
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
-lastResolvedApp: Partial<ApplicationDetails> | null = null;
-computer: ComputerDetails | null = null;
-
+  lastResolvedApp: Partial<ApplicationDetails> | null = null;
+  computer: ComputerDetails | null = null;
+  
   appData: ApplicationDetails[] = [];
 
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
-  loggedInUser = 'Unknown';
- activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
+  loggedInUserName = 'Unknown';
+  loggedInUserEmail = 'Unknown';
+  lastRefresh: string | null = null;
+  activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
   severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
@@ -74,7 +77,6 @@ computer: ComputerDetails | null = null;
   searchValue: string = ''; // make sure this is kept updated by your search input
 dialogRef!: MatDialogRef<any>; // Add dialog reference
 
-
 constructor(
   private sharedDataService: SharedDataService,
   private dialog: MatDialog,
@@ -91,9 +93,10 @@ ngOnInit(): void {
       console.log('Received appData in ApplicationDashboard:', data);
 
       if (data) {
-        this.loggedInUser = data.loggedInUser || 'Unknown';
+        this.loggedInUserName = data.loggedInUserName || 'Unknown';
+        this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
-
+        this.lastRefresh = data.lastRefresh.split("T").join(" ");
         if (data?.appData && Array.isArray(data.appData)) {
      const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
             const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
@@ -109,7 +112,7 @@ ngOnInit(): void {
           console.warn('No valid appData received:', data);
           this.appData = [];
           this.vulnerableSoftwareCount = 0;
-          this.loggedInUser = 'Unknown';
+          this.loggedInUserName = 'Unknown';
           this.machineName = 'Unknown';
           this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         }
@@ -117,6 +120,13 @@ ngOnInit(): void {
         this.updatePagedData(this.initialIndex);
         this.cdRef.detectChanges();
 
+        setTimeout(() => {
+          this.drawAppChart();
+          this.drawSeverityChart();
+          this.cdRef.detectChanges();
+        }, 0);
+      }
+      else {
         setTimeout(() => {
           this.drawAppChart();
           this.drawSeverityChart();
@@ -171,8 +181,10 @@ this.updatePagedData(this.pageIndex);
 
     const appData = {
       machineName: data?.machineName || 'Unknown',
-      loggedInUser: data?.loggedInUser || 'Unknown',
+      loggedInUserName: data?.loggedInUserName || 'Unknown',
+      loggedInUserEmail: data?.loggedInUserEmail || 'Unknown',
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
+      lastRefresh: data?.updatedAt ? data?.updatedAt : data?.createdAt,
       appData: data?.applicationDetails || []
     };
     console.log('Sending appData:', appData);
@@ -193,49 +205,16 @@ this.updatePagedData(this.pageIndex);
     return;
   }
   if (this.appChartInstance) this.appChartInstance.destroy();
-
-  if (this.appData.length === 0) {
-    console.log('No data to display in appChart');
-    this.appChartInstance = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['No Data'],
-        datasets: [{
-          data: [1],
-          backgroundColor: ['#d3d3d3'],
-          borderColor: ['#ffffff'],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false },
-          title: {
-            display: true,
-            text: 'No data found',
-            color: '#666'
-          },
-          datalabels: { display: false }
-        }
-      }
-    });
-    return;
-  }
-
+  
+  const isDataFetched = this.appData.length > 0;
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
-  console.log('Chart data:', { vulnerableCount, nonVulnerableCount });
   const vulnerablePercentage = (vulnerableCount / this.appData.length) * 100;
-  const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100;
+  const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
   const leaderLinePlugin = {
     id: 'leaderLinePlugin',
-  
- afterDatasetDraw(chart: any) {
+    afterDatasetDraw(chart: any) {
   const { ctx, chartArea: { top, bottom, left, right } } = chart;
-  console.log(ctx, top, bottom, left, right, "destructure")
   const meta = chart.getDatasetMeta(0);
   const centerX = (left + right) / 2;
   const centerY = (top + bottom) / 2;
@@ -243,34 +222,35 @@ this.updatePagedData(this.pageIndex);
   meta.data.forEach((arc: any, index: number) => {
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
-    console.log("arc", arc)
-    if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
+
+   if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
     else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
+    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
 
     // Start point: slice edge
     const x = centerX + Math.cos(angle) * radius;
     const y = centerY + Math.sin(angle) * radius;
-    console.log(x,y, "xy");
-    console.log(angle, "angle")
-    console.log(Math.cos(angle), Math.sin(angle),"cos, sin")
 
-    //Fixed leader line length
+    // Fixed leader line length
     const FIXED_LINE_LENGTH = 20; // distance out from slice
     const HORIZONTAL_OFFSET = 40; // horizontal length
 
     const lineEndX = centerX + Math.cos(angle) * (radius + FIXED_LINE_LENGTH);
     const lineEndY = centerY + Math.sin(angle) * (radius + FIXED_LINE_LENGTH);
 
-    //fixed horizontal/vertical leader extension
+    // fixed horizontal/vertical leader extension
     const labelX = lineEndX + (Math.cos(angle) > 0 ? HORIZONTAL_OFFSET : -HORIZONTAL_OFFSET);
     const labelY = lineEndY; // keep aligned horizontally
 
@@ -291,14 +271,15 @@ this.updatePagedData(this.pageIndex);
     ctx.fillText(value, labelX, labelY);
   });
 }
+
   };
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: ['Vulnerable', 'Non-Vulnerable'],
+      labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : ["No Data"],
       datasets: [{
-        data: [vulnerableCount, nonVulnerableCount],
-        backgroundColor: ['#66b3ffea', '#3366ffe7'],
+        data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1,1],
+        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
         borderColor: ['#ffffff', '#ffffff'],
         borderWidth: 0
       }]
@@ -329,6 +310,7 @@ this.updatePagedData(this.pageIndex);
           y: {
             title: {
               display: true,
+              // text: 'Applications'
             },
             grid: {
               display: false
@@ -342,13 +324,13 @@ this.updatePagedData(this.pageIndex);
           }
         },
       plugins: {
-        legend: { display: true, position: 'bottom' },
-        tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed || 0} applications` } },
+        legend: { display: isDataFetched ? true : false, position: 'bottom' },
+        tooltip: { callbacks: { label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
         datalabels: {
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            if(value) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
             else return '';
             
           },
@@ -357,7 +339,7 @@ this.updatePagedData(this.pageIndex);
         }
       }
     },
-    plugins:[leaderLinePlugin]
+    plugins: isDataFetched ? [leaderLinePlugin] : []
   });
 }
 
@@ -549,13 +531,12 @@ sendNotificationToComputer(computerUuid: string) {
 
   this.http.get<any>(url, { headers }).subscribe({
     next: (response) => {
-      this.toastService.showToast(response.Status);
+
+      this.toastService.showToast(`Mail sent successfully `);
     },
     error: (error) => {
-      
-      // this.toastService.showToast('Send Notification Failed');
-
-       const errorMessage = error.error?.message || 'Failed to send notification. Please try again later.';
+      // const errorMessage = error.error?.message || error.message || 'Failed to send notification. Please try again.';
+      const errorMessage = error.error?.message || 'Failed to send notification. Please try again later.';
       this.toastService.showToast(`Error: ${errorMessage}`);
     }
   });
@@ -571,6 +552,12 @@ public setProcessIdTooltip(processIds: any, maxLength: number) {
    return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'ProcessIds:\n' + tooltipText : 'Application is currently not running'
 }
 
+
+
+  //  console.log(tooltip?.getBoundingClientRect())
+  //  let a = event.target
+  //  console.log()
+   
 }
 
 

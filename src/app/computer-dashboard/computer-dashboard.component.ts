@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { firstValueFrom, Subject, takeUntil } from 'rxjs';
+import { firstValueFrom, Subject, takeUntil, timeout } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
@@ -22,7 +22,7 @@ import { MatDialogContent } from '@angular/material/dialog';
   selector: 'app-computer-dashboard',
   standalone: true,
   imports: [CommonModule, FormsModule, FlexLayoutModule, MatCardModule, MatIconModule, MatSlideToggleModule,
-   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogContent, MatDialogActions
+   MatTooltipModule,ApplicationDashboardComponent, MatOption, MatSelectModule, MatDialogActions, MatDialogContent
   ],
   templateUrl: './computer-dashboard.component.html',
   styleUrl: './computer-dashboard.component.css'
@@ -247,7 +247,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const nonVulnerablePercentage = ( nonVulnerableCount / this.totalComputers) * 100; 
     const leaderLinePlugin = {
     id: 'leaderLinePlugin',
-  afterDatasetDraw(chart: any) {
+   afterDatasetDraw(chart: any) {
   const { ctx, chartArea: { top, bottom, left, right } } = chart;
   const meta = chart.getDatasetMeta(0);
   const centerX = (left + right) / 2;
@@ -262,12 +262,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
     else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
     else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
+    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
+    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
+
 
     // Start point on arc edge
     const x = centerX + Math.cos(angle) * radius;
@@ -332,11 +337,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         cutout: '50%',
         scales: {
           x: {
-            position: 'top', 
+            position: 'top',
             beginAtZero: false,
             title: {
               display: true,
-              text: 'Score'
+              // text: 'Score'
             },
             grid: {
               display: false
@@ -351,6 +356,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           y: {
             title: {
               display: true,
+              // text: 'Computers'
             },
             grid: {
               display: false
@@ -401,8 +407,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      this.selectedComputerId = computerId;
      this.applicationDashboardComponent['resetFilters']();
      const appData = { machineName: data?.machineName || 'Unknown',
-      loggedInUser: data?.loggedInUser || 'Unknown',
-     vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || []};
+      loggedInUserName: data?.loggedInUserName || 'Unknown', loggedInUserEmail: data?.loggedInUserEmail,
+      vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || [],
+      createdAt: data?.createdAt, updatedAt: data?.updatedAt };
      console.log(appData)
      this.applicationDashboardComponent.sendAppData(data, computerId);
      this.pagedComputerData = this.pagedComputerData.map((computer) => {
@@ -467,7 +474,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
 
   public onPageSizeChange(event: number): void {
-    console.log(event)
    this.pageSize = event;
    let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
    this.totalPages = pages;
@@ -486,7 +492,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      } else {
       this.finalComputerDetails = this.computerDetails.filter(computer => {
         return computer.ipAddress.includes(searchValue) || computer.machineName.toLocaleLowerCase().includes(searchValue)
-        || computer.loggedInUser.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUserName.toLocaleLowerCase().includes(searchValue)
       });
      }
      this.updatePagedData(this.initialIndex);

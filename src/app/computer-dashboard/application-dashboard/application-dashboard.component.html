@@ -8,23 +8,25 @@
           <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
       </div> -->
   <div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
-<div class="col-7 headerDetails">
-<div class="info-row d-flex flex-wrap gap-2 p-2">
-  <div class="label">Machine Name:</div>
+  <div class="col-7 rounded-left">
+    <div class="info-row d-flex flex-wrap gap-2 p-2">
+      <div class="label">Machine Name:</div>
+      <div class="value" matTooltip="{{machineName}}">{{ machineName }}</div>
+    </div>
+    <div class="info-row d-flex flex-wrap gap-2 p-2">
+      <div class="label">LoggedIn User:</div>
+      <div class="value" matTooltip="{{loggedInUserName}}">{{ loggedInUserName }}</div>
+    </div>
+  </div>
 
-  <div class="value" matTooltip="{{machineName}}">{{ machineName }}</div>
-</div>
-<div class="info-row d-flex flex-wrap gap-2 p-2">
-  <div class="label">LoggedIn User:</div>
-  <div class="value" matTooltip="{{loggedInUser}}">{{ loggedInUser }}</div>
-</div>
-</div>
-<div class="notify-button-container col-5" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
-  <div class="label d-flex">Last Refresh:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
-    <button (click)="openNotificationConfirmDialog(computer.uuid)" class="btn btn-border-none btn-primary">
+  <div
+    class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right"
+    *ngIf="computer && computer.vulnerableSoftwareCount > 0">
+    <div class="label d-flex">Last Refresh:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
+    <button (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn">
       Notify User
     </button>
-</div>
+  </div>
 </div>
 
     <div class="container-fluid">
@@ -225,7 +227,7 @@
      <p class="text-start">
       You are about to notify the user 
       <span matTooltipPosition="below"
- matTooltip="{{loggedInUser}}" class="machine fw-bold">{{ loggedInUser }}</span> 
+ matTooltip="{{loggedInUserEmail}}" class="machine fw-bold">{{ loggedInUserEmail }}</span> 
       by email. Do you want to continue?
     </p>
   </mat-dialog-content>

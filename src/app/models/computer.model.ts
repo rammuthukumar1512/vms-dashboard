@@ -36,7 +36,8 @@ export interface ComputerDetails {
   osVersion: string;
   antivirusStatus: string;
   firewallStatus: string;
-  loggedInUser: string;
+  loggedInUserEmail: string;
+  loggedInUserName: string;
   installedSoftwareCount: number;
   vulnerableSoftwareCount: number;
   criticalVulnerableApplicationCount: number;
@@ -44,6 +45,8 @@ export interface ComputerDetails {
   mediumVulnerableApplicationCount: number;
   lowVulnerableApplicationCount: number;
   applicationDetails: ApplicationDetails[];
+   createdAt: Date,
+  updatedAt: Date,
   selected?: boolean;
 }
 
