@@ -248,13 +248,13 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const nonVulnerablePercentage = ( nonVulnerableCount / this.totalComputers) * 100; 
     const leaderLinePlugin = {
     id: 'leaderLinePlugin',
-   afterDatasetDraw(chart: any) {
-  const { ctx, chartArea: { top, bottom, left, right } } = chart;
-  const meta = chart.getDatasetMeta(0);
-  const centerX = (left + right) / 2;
-  const centerY = (top + bottom) / 2;
+    afterDatasetDraw(chart: any) {
+    const { ctx, chartArea: { top, bottom, left, right } } = chart;
+    const meta = chart.getDatasetMeta(0);
+    const centerX = (left + right) / 2;
+    const centerY = (top + bottom) / 2;
 
-  meta.data.forEach((arc: any, index: number) => {
+    meta.data.forEach((arc: any, index: number) => {
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
 
@@ -411,7 +411,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       loggedInUserName: data?.loggedInUserName || 'Unknown', loggedInUserEmail: data?.loggedInUserEmail,
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0, appData: data?.applicationDetails || [],
       createdAt: data?.createdAt, updatedAt: data?.updatedAt };
-     console.log(appData)
      this.applicationDashboardComponent.sendAppData(data, computerId);
      this.pagedComputerData = this.pagedComputerData.map((computer) => {
         if(this.selectedComputerId === computer.id) computer.selected = true
@@ -421,7 +420,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   public getPage(page: number): void {
-    console.log(page)
     this.recordIndex = page - 1;
     this.pageIndex = this.recordIndex;
     this.start = this.recordIndex * this.pageSize;

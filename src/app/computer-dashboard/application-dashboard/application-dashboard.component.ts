@@ -75,7 +75,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   allApplications: any[] = []; // or whatever type it holds
 
   searchValue: string = ''; // make sure this is kept updated by your search input
-dialogRef!: MatDialogRef<any>; // Add dialog reference
+  dialogRef!: MatDialogRef<any>; // Add dialog reference
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -219,7 +219,7 @@ this.updatePagedData(this.pageIndex);
   const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
   const leaderLinePlugin = {
     id: 'leaderLinePlugin',
-    afterDatasetDraw(chart: any) {
+  afterDatasetDraw(chart: any) {
   const { ctx, chartArea: { top, bottom, left, right } } = chart;
   const meta = chart.getDatasetMeta(0);
   const centerX = (left + right) / 2;
@@ -557,12 +557,6 @@ public setProcessIdTooltip(processIds: any, maxLength: number) {
    }
    return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'ProcessIds:\n' + tooltipText : 'Application is currently not running'
 }
-
-
-
-  //  console.log(tooltip?.getBoundingClientRect())
-  //  let a = event.target
-  //  console.log()
    
 }
 
