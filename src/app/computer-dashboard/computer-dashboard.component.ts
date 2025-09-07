@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ApiEndPoints } from '../../environments/api-endpoints';
+import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { SecurityReport, ComputerDetails } from '../models/computer.model';
 import { Chart } from 'chart.js';
 import { MatIconModule } from '@angular/material/icon';
@@ -91,17 +91,32 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         takeUntil(this.destroy$)
       )
       .subscribe({
-        next: (data: any) => this.handleSuccessResponse(data),
-        error: (error: any) => this.handleErrorResponse(error)
+        next: (response: HttpResponse<any>) => {
+          console.log(response)
+      if (response === null) {
+        console.log('No content');
+        this.handleNoContent();
+      } else {
+        console.log(response)
+        this.handleSuccessResponse(response);
+      }
+    },
+    error: (error: HttpErrorResponse) => {
+      console.error('HTTP Error:', error.status, error.message);
+      this.handleErrorResponse(error);
+    }
       });
   }
 
+  private handleNoContent(): void {
+      this.toastService.showSuccessToast('No data available');
+  }
+
   private handleSuccessResponse(data: any): void {
-    console.log(data)
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
-    this.computerDetails = this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) ?? [];
+    this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
     this.finalComputerDetails = this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     this.sendAppData(this.computerDetails[0] ?? null, 1);
