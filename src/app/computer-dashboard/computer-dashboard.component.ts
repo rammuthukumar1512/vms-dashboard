@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { firstValueFrom, Subject, takeUntil, timeout } from 'rxjs';
+import { firstValueFrom, Subject, Subscription, takeUntil, timeout, timer } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
@@ -61,6 +61,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   pageSizes:Array<number> = [];
   start:number = 0;
   end:number = 0;
+  toDay: String = new Date().toLocaleDateString();
+  currentTime: Date = new Date();
+  timeSubscription?: Subscription;
   private destroy$ = new Subject<void>();
   dialogRef!: MatDialogRef<any>;
 
@@ -75,10 +78,28 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   ngOnInit(): void {
     this.fetchSecurityData();
+    let now = new Date();
+    let initialDelay = (60 - now.getSeconds()) * 1000;
+    this.timeSubscription = timer(initialDelay, 60000).subscribe(()=>{
+        this.currentTime = new Date();
+    });
   }
   ngAfterViewInit(): void {
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.timeSubscription?.unsubscribe();
+
+    if (this.computerChartInstance) {
+       this.computerChartInstance.destroy();
+    }
+    if (this.severityChartInstance) {
+       this.severityChartInstance.destroy();
+    }
   }
 
   private fetchSecurityData(): void {
@@ -136,18 +157,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.toastService.showErrorToast(
         'Error : Failed to fetch security data'
       );
-    }
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-
-    if (this.computerChartInstance) {
-       this.computerChartInstance.destroy();
-    }
-    if (this.severityChartInstance) {
-       this.severityChartInstance.destroy();
     }
   }
 
