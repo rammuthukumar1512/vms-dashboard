@@ -162,6 +162,7 @@
 <td mat-cell  *matCellDef="let app" class="gap-1 col-4">
   <div class="d-flex align-items-center mt-2" style="word-break: break-all;">
   <span class="p-1 processIdsTooltip mb-2" [matTooltip]="setProcessIdTooltip(app.runningProcessIds, 20)" matTooltipPosition="above">{{ app.softwareName }}
+    <span class="material-symbols-outlined" *ngIf="app.runningProcessIds?.length > 0" matTooltip="Actively Running">fiber_manual_record</span>
   <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning"  matTooltip="Unresolved application">shield_question</span>
   <span  *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
         class="text-danger"  matTooltip="Contains vulnerabilities">
