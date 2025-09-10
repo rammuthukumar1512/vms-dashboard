@@ -347,7 +347,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.computerChartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : ['No Data'],
+        labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : [''],
         datasets: [{
           data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1, 1],
           backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
