@@ -5,6 +5,7 @@
   padding: 8px 0;
   border-radius: 12px;
   color: #47a2fc;
+  /* min-width: 200px; */
 }
 
 .comp-table {
@@ -245,6 +246,7 @@ td {
 .notify-btn{
   width: fit-content;
 }
+
 @media (max-width: 767px) {
   .notify-button-container {
     width: 100%;
@@ -294,3 +296,4 @@ right: 40%;
     align-items: flex-start;
   }
 }
+
