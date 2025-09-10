@@ -128,6 +128,10 @@ td {
   background-color: #F26419 !important;
   color: white !important;
 }
+.custom-all:hover, .custom-all:focus{
+  background-color: #007bff !important;
+  color: white !important;
+}
 
 ::ng-deep .mat-mdc-header-cell,
 ::ng-deep .mat-mdc-cell {

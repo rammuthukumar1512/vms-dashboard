@@ -3,36 +3,7 @@
    <!-- First column container start -->
 <div> 
   <div class="container-fluid border border-1 bg-light rounded-3">
-      <!-- <div class="bg-gray-shade rounded-top-3 d-flex justify-content-between border border-top-0 border-start-0 border-end-0 border-bottoms w-100">
-         <span class="text-secondary fs-10 fw-bold p-2 w-50"> Machine Name :<span class="text-primary" style="word-break: break-all;"> {{ machineName }}</span></span>
-          <span class="text-secondary fs-10 fw-bold p-2 w-50"> Logged In User :<span class="text-primary"style="word-break: break-all;"> {{ loggedInUser }}</span></span>
-      </div> -->
-  <!-- <div class="bg-gray-shade d-flex rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
-<div class="col-11 headerDetails">
-<div class="info-row d-flex flex-wrap gap-2 p-2">
-  <div class="label">Machine Name:</div>
-  <div class="value" matTooltip="{{machineName}}">{{ machineName }}</div>
-</div>
-<div class="info-row d-flex flex-wrap gap-2 p-2">
-  <div class="label">LoggedIn User:</div>
-  <div class="value" matTooltip="{{loggedInUser}}">{{ loggedInUser }}</div>
-</div>
-</div> -->
-
-
-<!-- <div class="notify-button-container" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
-    <button (click)="sendNotificationToComputer(computer.uuid)" class="btn btn-border-none btn-primary">
-      Notify User
-    </button>
-</div> -->
-<!-- <div class="notify-button-container" *ngIf="computer && computer.vulnerableSoftwareCount > 0" matTooltip="Send Notification">
-    <button (click)="openNotificationConfirmDialog(computer.uuid)" class="btn btn-border-none btn-primary">
-      Notify User
-    </button>
-</div>
-</div> -->
-
-
+    <!--Header Section -->
 <div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
   <div class="col-7 rounded-left">
     <div class="info-row d-flex flex-wrap gap-2 p-2">
@@ -78,7 +49,7 @@
    
 
     <!-- Charts Section start -->
-    <div class="container-fluid mt-3">
+    <div class="container-fluid p-0 mt-3">
       <div class="row">
         <div class="col-md-6 p-0">
           <p class="fw-bold text-center text-secondary">Applications Overview</p>
@@ -133,7 +104,7 @@
     Low
   </button>
 
-  <button class="btn btn-sm severity-btn"
+  <button class="btn btn-sm severity-btn custom-all"
           [class.active-all]="!severityFilter"
           (click)="filterBySeverity(null)">
     All
@@ -166,7 +137,7 @@
    style="color: #3DDC84; font-size: 5px; border: #30af69;
           text-shadow: 0 0 3px #3DDC84, 0 0 2px #0cf872;" 
    *ngIf="app.runningProcessIds?.length > 0"
-   [matTooltip]="'Running Process IDs: ' + setProcessIdTooltip(app.runningProcessIds, 20)"
+   [matTooltip]="setProcessIdTooltip(app.runningProcessIds, 20)"
    matTooltipPosition="above">
 </i>
 
