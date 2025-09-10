@@ -555,7 +555,7 @@ public setProcessIdTooltip(processIds: any, maxLength: number) {
    if(maxLength < totalIds) {
    remainIds = totalIds - maxLength;
    }
-   return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'ProcessIds:\n' + tooltipText : 'Application is currently not running'
+   return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'Running Process IDs:\n' + tooltipText : 'Application is currently not running'
 }
    
 }
