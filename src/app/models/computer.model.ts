@@ -39,6 +39,8 @@ export interface ComputerDetails {
   firewallStatus: string;
   loggedInUserEmail: string;
   loggedInUserName: string;
+  serialNumber?: string;
+  macAddress?: string;
   installedSoftwareCount: number;
   vulnerableSoftwareCount: number;
   criticalVulnerableApplicationCount: number;

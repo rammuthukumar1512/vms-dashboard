@@ -14,8 +14,10 @@ export const routes: Routes = [
         ,
           { path: 'cpe-cve-search', loadComponent: () => import('./cpe-cve-search/cpe-cve-search.component').then(m => m.CpeCveSearchComponent) },
           { path: 'vulnerability-metrics/:type/:cveId', loadComponent: () => import('./computer-dashboard/vulnerability-metrics/vulnerability-metrics.component').then(m=> m.VulnerabilityMetricsComponent) },
-    ]
+    ]            
+
     },
+    {path: 'user-report', loadComponent: () => import('./report/user-report-page/user-report-page.component').then(m => m.UserReportPageComponent)},
     { path: 'not-found', loadComponent: () => import('./not-found/not-found.component').then(m => m.NotFoundComponent) },
     {path: '**', redirectTo: 'not-found'},
     

@@ -1,0 +1,136 @@
+<div class="container-fluid user-report-container">
+  <!-- Top Box -->
+  <div class="top-box bg-light border rounded-3 mb-3">
+    <div class="bg-gray-shade p-2 rounded-top-3">
+      <h5 class="text-center text-secondary">System Details</h5>
+    </div>
+    <div class="p-3">
+      <div class="row">
+        <div class="col-4 d-flex gap-2 align-items-center">
+          <span class="label">Machine Name:</span>
+          <span class="value" matTooltip="{{machineName}}">{{machineName}}</span>
+        </div>
+        <div class="col-4 d-flex gap-2 align-items-center">
+          <span class="label">MAC Address:</span>
+          <span class="value" matTooltip="{{macAddress}}">{{macAddress}}</span>
+        </div>
+        <div class="col-4 d-flex gap-2 align-items-center">
+          <span class="label">IP Address:</span>
+          <span class="value" matTooltip="{{ipAddress}}">{{ipAddress}}</span>
+        </div>
+      </div>
+      <div class="row mt-2">
+        <div class="col-4 d-flex gap-2 align-items-center">
+          <span class="label">Serial Number:</span>
+          <span class="value" matTooltip="{{serialNumber}}">{{serialNumber}}</span>
+        </div>
+        <div class="col-4 d-flex gap-2 align-items-center">
+          <span class="label">Email:</span>
+          <span class="value" matTooltip="{{loggedInUserEmail}}">{{loggedInUserEmail}}</span>
+        </div>
+        <div class="col-4 d-flex gap-2 align-items-center">
+          <span class="label">Logged-in User:</span>
+          <span class="value" matTooltip="{{loggedInUserName}}">{{loggedInUserName}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chart Section -->
+  <div class="chart-section bg-light border rounded-3 mb-3">
+    <div class="p-2 bg-gray-shade rounded-top-3">
+      <h5 class="text-center text-secondary">Applications Overview</h5>
+    </div>
+    <div class="p-3">
+      <div class="row">
+        <div class="col-6 chart">
+          <canvas #appChart></canvas>
+        </div>
+        <div class="col-6 chart">
+          <canvas #severityChart></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table Section -->
+  <div class="table-section bg-light border rounded-3 mb-3">
+    <div class="p-2 bg-gray-shade rounded-top-3 d-flex justify-content-between align-items-center">
+      <h5 class="text-secondary">Applications</h5>
+      <div class="d-flex align-items-center gap-2">
+        <mat-slide-toggle [checked]="showVulnerableOnly" (change)="toggleVulnerableOnly()" color="warn" matTooltip="Toggle to show only vulnerable applications"></mat-slide-toggle>
+        <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" [(ngModel)]="searchValue" (keyup)="searchApplications($event)">
+      </div>
+    </div>
+    <div class="p-2">
+      <table mat-table [dataSource]="pagedAppData" class="comp-table w-100">
+        <!-- Software Name -->
+        <ng-container matColumnDef="softwareName">
+          <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
+          <td mat-cell *matCellDef="let app" class="col-4">
+            <div class="d-flex align-items-center gap-1">
+              <i class="bi bi-circle-fill" style="color: #3DDC84; font-size: 5px;" *ngIf="app.runningProcessIds?.length > 0" matTooltip="Running Process IDs: {{app.runningProcessIds.join(', ')}}"></i>
+              <span>{{app.softwareName}}</span>
+              <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning" matTooltip="Unresolved application">shield_question</span>
+              <span *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0" class="text-danger" matTooltip="Contains vulnerabilities">
+                ({{app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount}})
+                <i class="fa-solid fa-triangle-exclamation text-danger"></i>
+              </span>
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Software Version -->
+        <ng-container matColumnDef="softwareVersion">
+          <th class="text-secondary fw-bolder text-center" mat-header-cell *matHeaderCellDef>Version</th>
+          <td class="text-center" mat-cell *matCellDef="let app">{{app.softwareVersion}}</td>
+        </ng-container>
+
+        <!-- Vendor -->
+        <ng-container matColumnDef="vendor">
+          <th class="text-secondary fw-bolder text-center" mat-header-cell *matHeaderCellDef>Vendor</th>
+          <td class="text-center" mat-cell *matCellDef="let app">{{app.vendor}}</td>
+        </ng-container>
+
+        <!-- Action -->
+        <ng-container matColumnDef="action">
+          <th class="text-secondary fw-bolder text-center" mat-header-cell *matHeaderCellDef>Action</th>
+          <td class="text-center" mat-cell *matCellDef="let app">
+            <i *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
+               class="fa-solid fa-info-circle text-primary cursor-pointer"
+               matTooltip="View Vulnerability Details"
+               (click)="viewVulnerabilities(app)"></i>
+          </td>
+        </ng-container>
+
+        <!-- Table Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"
+            [ngClass]="{
+              'vulnerable-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount + row.mediumVulnerabilityCount + row.lowVulnerabilityCount > 0,
+              'unresolved-row': !row.resolved,
+              'normal-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount + row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved
+            }"></tr>
+      </table>
+      <div *ngIf="!pagedAppData.length" class="text-center p-2">No data found</div>
+    </div>
+
+    <!-- Pagination -->
+    <div *ngIf="pagedAppData.length > 0" class="p-2 d-flex justify-content-end">
+      <div class="d-flex gap-2 align-items-center">
+        <mat-select class="border rounded page-size-width p-2" [(ngModel)]="recordIndex" (ngModelChange)="getPage($event)">
+          <mat-option *ngFor="let record of totalRecords" [value]="record">{{record}}</mat-option>
+        </mat-select>
+        <mat-select class="border rounded page-size-width p-2" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+          <mat-option *ngFor="let size of pageSizes" [value]="size">{{size}}</mat-option>
+        </mat-select>
+        <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn p-2">
+          <mat-icon class="material-symbols-outlined fs-5">arrow_back_ios</mat-icon>
+        </button>
+        <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn p-2">
+          <mat-icon class="material-symbols-outlined fs-5">arrow_forward_ios</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
