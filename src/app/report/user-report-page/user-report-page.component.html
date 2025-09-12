@@ -72,7 +72,7 @@
               <i class="bi bi-circle-fill" style="color: #3DDC84; font-size: 5px;" *ngIf="app.runningProcessIds?.length > 0" matTooltip="Running Process IDs: {{app.runningProcessIds.join(', ')}}"></i>
               <span>{{app.softwareName}}</span>
               <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning" matTooltip="Unresolved application">shield_question</span>
-              <span *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0" class="text-danger" matTooltip="Contains vulnerabilities">
+              <span *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0" class="text-danger cursor-pointer"[matTooltip]="'Contains vulnerabilities Tap to View'" (click)="viewVulnerabilities(app)">
                 ({{app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount}})
                 <i class="fa-solid fa-triangle-exclamation text-danger"></i>
               </span>
@@ -90,17 +90,6 @@
         <ng-container matColumnDef="vendor">
           <th class="text-secondary fw-bolder text-center" mat-header-cell *matHeaderCellDef>Vendor</th>
           <td class="text-center" mat-cell *matCellDef="let app">{{app.vendor}}</td>
-        </ng-container>
-
-        <!-- Action -->
-        <ng-container matColumnDef="action">
-          <th class="text-secondary fw-bolder text-center" mat-header-cell *matHeaderCellDef>Action</th>
-          <td class="text-center" mat-cell *matCellDef="let app">
-            <i *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
-               class="fa-solid fa-info-circle text-primary cursor-pointer"
-               matTooltip="View Vulnerability Details"
-               (click)="viewVulnerabilities(app)"></i>
-          </td>
         </ng-container>
 
         <!-- Table Rows -->

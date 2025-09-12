@@ -1,6 +1,6 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -12,7 +12,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 import { HttpClient } from '@angular/common/http';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
-import { DUMMY_COMPUTER_DATA } from '../../core/data/Dummy-data';
+// import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
 @Component({
   selector: 'app-user-report-page',
@@ -30,7 +30,7 @@ import { DUMMY_COMPUTER_DATA } from '../../core/data/Dummy-data';
   templateUrl: './user-report-page.component.html',
   styleUrls: ['./user-report-page.component.css']
 })
-export class UserReportPageComponent implements AfterViewInit {
+export class UserReportPageComponent implements OnInit {
   @ViewChild('appChart') appChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('severityChart') severityChart!: ElementRef<HTMLCanvasElement>;
 
@@ -41,6 +41,7 @@ export class UserReportPageComponent implements AfterViewInit {
   pagedAppData: ApplicationDetails[] = [];
   filteredAppData: ApplicationDetails[] = [];
   allApplications: ApplicationDetails[] = [];
+  computerUuid: string = '';
 
   // Top box fields
   machineName = 'Unknown';
@@ -51,7 +52,7 @@ export class UserReportPageComponent implements AfterViewInit {
   loggedInUserName = 'Unknown';
 
   // Table properties
-  displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor', 'action'];
+  displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
   pageIndex = 0;
   pageSize = 5;
   pageSizes: number[] = [5, 10, 25];
@@ -65,30 +66,51 @@ export class UserReportPageComponent implements AfterViewInit {
     private http: HttpClient,
     private toastService: ToastService,
     private cdRef: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private route: ActivatedRoute
+
   ) {
     Chart.register(DoughnutController, ArcElement, Tooltip, Legend, BarController, BarElement);
   }
-
-  ngAfterViewInit(): void {
-    // Load dummy data
-    this.computer = DUMMY_COMPUTER_DATA[0] || null;
-    if (this.computer) {
-      this.machineName = this.computer.machineName || 'Unknown';
-      this.macAddress = this.computer.macAddress || '00:00:00:00:00:00';
-      this.ipAddress = this.computer.ipAddress || '0.0.0.0';
-      this.serialNumber = this.computer.serialNumber || 'Unknown';
-      this.loggedInUserEmail = this.computer.loggedInUserEmail || 'Unknown@example.com';
-      this.loggedInUserName = this.computer.loggedInUserName || 'Unknown';
-      this.appData = this.computer.applicationDetails || [];
-      this.allApplications = this.appData;
-    }
-    this.updatePagedData(0);
-    this.drawAppChart();
-    this.drawSeverityChart();
-    this.cdRef.detectChanges();
+ngOnInit(): void {
+    // Get computerUuid from route params
+    this.route.params.subscribe(params => {
+      this.computerUuid = params['computerUuid'];
+      if (!this.computerUuid) {
+        this.toastService.showErrorToast('No computer UUID provided in the URL.');
+        return; 
+      }
+      this.fetchComputerDetails();
+    });
   }
-
+ 
+fetchComputerDetails(): void {
+    const url = ApiEndPoints.getComputerByUuid + this.computerUuid;
+    this.http.get<ComputerDetails>(url).subscribe({
+      next: (data) => {
+        this.computer = data;
+        this.machineName = data.machineName || 'Unknown';
+        this.macAddress = data.macAddress || '00:00:00:00:00:00';
+        this.ipAddress = data.ipAddress || '0.0.0.0';
+        this.serialNumber = data.serialNumber || 'Unknown';
+        this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown@example.com';
+        this.loggedInUserName = data.loggedInUserName || 'Unknown';
+        this.appData = data.applicationDetails || [];
+        this.allApplications = this.appData;
+        this.updatePagedData(0);
+        this.drawAppChart();
+        this.drawSeverityChart();
+        this.cdRef.detectChanges();
+        this.toastService.showSuccessToast('Computer details fetched successfully!');
+      },
+      error: (err) => {
+        this.toastService.showErrorToast('Failed to fetch computer details. Check the UUID or backend.');
+        console.error(err);
+        // Optional: Fallback to dummy data for UI testing
+        // this.loadDummyData();
+      }
+    });
+  }
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) {
       console.error('appChart element not found');
@@ -171,8 +193,10 @@ export class UserReportPageComponent implements AfterViewInit {
               text: 'Severity',
               color: '#000000'
             },
-            ticks: { color: '#000000' },
-            grid: { color: '#ccc' }
+            ticks: { color: '#000000' },  
+             grid: {
+               display: false // ✅ This hides the vertical grid lines
+                   }
           },
           y: {
             min: 0,
@@ -185,7 +209,7 @@ export class UserReportPageComponent implements AfterViewInit {
               text: 'Number of Vulnerabilities',
               color: '#000000'
             },
-            grid: { color: '#ccc' }
+            grid: { display: false}
           }
         },
         plugins: {

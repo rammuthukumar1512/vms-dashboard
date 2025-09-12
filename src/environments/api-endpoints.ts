@@ -6,5 +6,6 @@ export const ApiEndPoints = {
   addHintUrl: `${environments.baseUrl}${environments.addHintUrl}`,
   unresolvedAppsUrl: `${environments.baseUrl}${environments.unresolvedAppsUrl}` ,
   searchVulnerabilityUrl: `${environments.baseUrl}${environments.searchVulnerabilityUrl}`,
-  sendNotificationToAllComputers: `${environments.baseUrl}${environments.sendNotificationToAllComputers}`
+  sendNotificationToAllComputers: `${environments.baseUrl}${environments.sendNotificationToAllComputers}`,
+  getComputerByUuid: `${environments.baseUrl}api/getComputer/`
 }
