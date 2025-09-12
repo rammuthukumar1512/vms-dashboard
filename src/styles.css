@@ -21,8 +21,7 @@ body, button, input, textarea, mat-card, mat-toolbar {
   font-weight: 400 !important;
 }
 
-html, body { height: 100%; margin: 0;
-  overflow: hidden; }
+html, body { height: 100%; margin: 0; }
 /* body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; } */
 .cursor-pointer {
     cursor: pointer;

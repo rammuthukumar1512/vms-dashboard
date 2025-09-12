@@ -13,10 +13,12 @@ import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BarController, Chart, LinearScale } from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
-import { Subject, takeUntil } from 'rxjs';
+import { filter, Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
 import * as bootstrap from 'bootstrap';
+import { ApplicationResolveService } from '../../core/services/application-resolve.service';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 // Register Chart.js components
 
 @Component({
@@ -39,13 +41,13 @@ import * as bootstrap from 'bootstrap';
 export class ApplicationDashboardComponent implements AfterViewInit {
     private destroy$ = new Subject<void>();
 
-  @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
-  @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
+ @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
+ @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
  @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>; // Add template reference
 
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
-  lastResolvedApp: Partial<ApplicationDetails> | null = null;
+  lastResolvedApp: ApplicationDetails | null = null;
   computer: ComputerDetails | null = null;
   
   appData: ApplicationDetails[] = [];
@@ -73,9 +75,11 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   pagedAppData: any[] = [];
   filteredAppData: any[] = [];
   allApplications: any[] = []; // or whatever type it holds
-
+  lastShowedApp: ApplicationDetails | null = null;
   searchValue: string = ''; // make sure this is kept updated by your search input
   dialogRef!: MatDialogRef<any>; // Add dialog reference
+  previousUrl: string | null = null;
+  currentUrl: string | null = null;
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -83,7 +87,7 @@ constructor(
   private http: HttpClient,
   private cdRef: ChangeDetectorRef,
   private toastService: ToastService,
-
+  private applicationResolveService: ApplicationResolveService, private router: Router
 ) {}
 
 ngOnInit(): void {
@@ -134,8 +138,15 @@ ngOnInit(): void {
         }, 0);
       }
     });
-}
 
+     this.previousUrl = this.applicationResolveService.getPreviousUrl();
+     console.log(this.previousUrl)
+     this.lastResolvedApp = this.applicationResolveService.getLastShowedApp();
+     if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
+         this.showVulnerabilities(this.lastResolvedApp);
+     }
+
+}
 
   ngAfterViewInit(): void {
   const lastResolvedApp = localStorage.getItem('lastResolvedApp');
@@ -455,8 +466,7 @@ resetFilters(): void {
   this.start = initialIndex * this.pageSize;
   this.end = this.start + this.pageSize;
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
-    console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
-
+  console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
 }
 
   nextPage(): void {
@@ -496,7 +506,10 @@ resetFilters(): void {
 
   showVulnerabilities(app: ApplicationDetails): void {
   console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
-  this.dialog.open(VulnerabilityDialogComponent, {
+  if(!this.lastShowedApp) {
+  this.applicationResolveService.setLastShowedApp(app);
+  }
+  this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
     panelClass: 'vuln-dialog-panel',
     data: {
       softwareName: app.softwareName,
