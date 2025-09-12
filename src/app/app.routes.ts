@@ -17,7 +17,7 @@ export const routes: Routes = [
     ]            
 
     },
-    {path: 'user-report', loadComponent: () => import('./report/user-report-page/user-report-page.component').then(m => m.UserReportPageComponent)},
+    { path: 'user-report/:computerUuid', loadComponent: () => import('./report/user-report-page/user-report-page.component').then(m => m.UserReportPageComponent) },
     { path: 'not-found', loadComponent: () => import('./not-found/not-found.component').then(m => m.NotFoundComponent) },
     {path: '**', redirectTo: 'not-found'},
     

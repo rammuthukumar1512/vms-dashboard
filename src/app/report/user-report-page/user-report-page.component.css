@@ -1,7 +1,6 @@
 .user-report-container {
   min-height: 100vh;
   padding: 16px;
-  overflow-y: auto; /* allow vertical scrolling */
 
 }
 
@@ -25,7 +24,7 @@
 .comp-table th,
 .comp-table td {
   padding: 8px;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .comp-table thead tr > th {
