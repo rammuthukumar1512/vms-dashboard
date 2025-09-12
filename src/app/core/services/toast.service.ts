@@ -26,14 +26,14 @@ export class ToastService {
         </span>
       </div>
       <div class="col-10">
-      <div style="background-color: ${type === 'success' ? 'rgb(184, 226, 188)' : 'rgb(238, 187, 187)'};" class="toast-header border-0">
+      <div style="background-color: ${type === 'success' ? 'rgb(184, 226, 188)' : 'rgb(238, 187, 187)'};" class="toast-header px-1 py-1 border-0">
         <strong style="color: ${type === 'success' ? 'rgba(3, 68, 3, 1)' : '#dc3545'};" class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
         <button style="background-color: ${type === 'success' ? 'rgb(184, 226, 188)' : 'rgb(238, 187, 187)'};border: none;outline: none;padding: 0;" type="button" class="btn ${type === 'success' ? 'text-success' : 'text-danger'};" data-bs-dismiss="toast">
         <span class="material-symbols-outlined">
         close
         </span></button>
       </div>
-      <div style="color: ${type === 'success' ? 'rgb(1, 97, 1)' : '#dc3545'};" class="toast-body py-1">
+      <div style="color: ${type === 'success' ? 'rgb(1, 97, 1)' : '#dc3545'};" class="toast-body ps-1 pt-0 pb-0 pe-0">
         <p class="fnw-medium">${message}</p>
       </div>
       </div>
