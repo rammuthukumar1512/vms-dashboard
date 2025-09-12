@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../core/services/toast.service';
 import { ApplicationResolveService } from '../core/services/application-resolve.service';
+import { Router } from '@angular/router';
 
 
 interface UnresolvedApplication {
@@ -56,7 +57,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private dialog: MatDialog,
     private toastService: ToastService,
-    private applicationResolveService: ApplicationResolveService // Added service
+    private applicationResolveService: ApplicationResolveService, private router: Router // Added service
 
   ) {}
 
@@ -70,6 +71,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
           this.applicationResolveService.clearResolveData(); // Clear data after opening dialog
         }
       });
+      this.applicationResolveService.setPreviousUrl(this.router.url);
   }
 
   fetchUnresolvedApplications(): void {
