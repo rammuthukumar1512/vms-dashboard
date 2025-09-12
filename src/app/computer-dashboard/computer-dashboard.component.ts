@@ -102,7 +102,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     }
   }
 
-  private fetchSecurityData(): void {
+  public fetchSecurityData(): void {
     const headers = new HttpHeaders({
     'Accept': 'application/json'
     });
