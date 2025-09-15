@@ -56,10 +56,15 @@ mat-sidenav-content {
   background-color: white !important;
   padding: 0 !important;
   box-shadow: none !important;
+  animation: toast ease !important;
 }
 .mat-mdc-snack-bar-label,.mdc-snackbar__label {
   padding: 0 !important;
   box-shadow: none !important;
+  animation: toast ease !important;
+}
+.mat-mdc-snackbar-surface {
+  animation: toast 5.3s ease !important;
 }
 .inner-toast {
   animation: toast ease !important;
@@ -71,6 +76,18 @@ mat-sidenav-content {
 
 .word-break {
   word-break: break-all;
+}
+.toast-container {
+  position: fixed !important;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+.toast-animate {
+  animation: toast 5.3s;
+}
+.toast-animate:hover {
+  animation-play-state: paused;
 }
 
 @keyframes toast {
