@@ -20,7 +20,7 @@
     class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right"
     *ngIf="computer && computer.vulnerableSoftwareCount > 0">
     <div class="label d-flex">Last Sync:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
-    <button (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn">
+    <button (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn p-1">
       Notify User
     </button>
   </div>
@@ -123,7 +123,7 @@
 </div>
 
 
-      <div class="overflow-auto mt-3" style="max-height: 300px;">
+      <div class="overflow-auto mt-3" style="max-height: 305px;">
         <table mat-table [dataSource]="pagedAppData" class="comp-table w-100">
 
           <!-- Software Name -->

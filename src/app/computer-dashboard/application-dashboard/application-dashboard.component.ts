@@ -140,7 +140,6 @@ ngOnInit(): void {
     });
 
      this.previousUrl = this.applicationResolveService.getPreviousUrl();
-     console.log(this.previousUrl)
      this.lastResolvedApp = this.applicationResolveService.getLastShowedApp();
      if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
          this.showVulnerabilities(this.lastResolvedApp);
@@ -525,6 +524,11 @@ resetFilters(): void {
       uuid: app.uuid,
       softwareVersion: app.softwareVersion,
       vendor: app.vendor
+    }
+  });
+  this.dialogRef.afterClosed().subscribe(() => {
+    if(this.router.url?.match('computer-overview')) {
+    this.applicationResolveService.setSelectedVulnerabilitySeverity(null);
     }
   });
 }
