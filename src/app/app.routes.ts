@@ -17,6 +17,8 @@ export const routes: Routes = [
     ]            
 
     },
+    { path: 'vulnerability-metrics-user-report/:type/:cveId', loadComponent: () => import('./computer-dashboard/vulnerability-metrics/vulnerability-metrics.component').then(m=> m.VulnerabilityMetricsComponent) },
+
     { path: 'user-report/:computerUuid', loadComponent: () => import('./report/user-report-page/user-report-page.component').then(m => m.UserReportPageComponent) },
     { path: 'not-found', loadComponent: () => import('./not-found/not-found.component').then(m => m.NotFoundComponent) },
     {path: '**', redirectTo: 'not-found'},

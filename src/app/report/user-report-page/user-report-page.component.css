@@ -1,30 +1,92 @@
 .user-report-container {
   min-height: 100vh;
   padding: 16px;
-
+  display: flex;
+  flex-direction: column;
 }
 
 .top-box {
   margin-bottom: 16px;
 }
 
-.chart-section {
-  margin-bottom: 16px;
+.chart-section .p-3 {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 2rem;
+}
+
+.chart-card {
+  background: rgb(252, 251, 251);
+  border: 1px solid #bdbaba;
+  border-radius: 8px;
+  padding: 1.2rem;
+  width: 30%;
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+.chart-title {
+  font-size: 1rem;
+  font-weight: 500;
+  /* color: #495057; */
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.chart-card-app {
+  background: rgb(252, 251, 251);
+  border: 1px solid #bdbaba;
+  border-radius: 8px;
+  padding: 1rem;
+  width: 100%;
+  height: 70%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.table-chart-section {
+  /* display: flex;
+  height: 50vh !important;
+  gap: 16px;
+  flex: 1; */
+  display: flex;
+  gap: 16px;
 }
 
 .table-section {
+  width: 65%;
   margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
 
+.severity-section {
+  width: 35%;
+  margin-bottom: 16px;
+}
+
+.table-container {
+  height: 52vh;
+  /* overflow: auto; */
+  flex-grow: 1;
+  overflow-y: auto;
+  max-height: 640px;
 }
 
 .comp-table {
   width: 100%;
+  table-layout: fixed
 }
-
 .comp-table th,
 .comp-table td {
   padding: 8px;
-  /* text-align: center; */
 }
 
 .comp-table thead tr > th {
@@ -40,22 +102,17 @@
   background-color: #eee;
 }
 
-.comp-table tr.vulnerable-row {
-  border: 1px solid #f86db3;
-}
-
-.comp-table tr.vulnerable-row:hover {
+ tr.vulnerable-row:hover {
   background-color: #fdd3e7;
   box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
 }
 
-.comp-table tr.unresolved-row:hover {
+ tr.unresolved-row:hover {
   background-color: #fff3cd;
 }
 
-.comp-table tr.normal-row:hover {
+ tr.normal-row:hover {
   background-color: #dad7d7;
-  cursor: pointer;
 }
 
 .chart {
@@ -66,6 +123,9 @@
 .label {
   font-weight: bold;
   color: #6c757d;
+  box-shadow: 2px 2px 4px rgba(158, 137, 139, 0.5);
+  border-radius: 6px;
+  padding: 3px 6px;
 }
 
 .value {
@@ -84,6 +144,13 @@
   outline: none;
   width: 200px;
 }
+
+.pagination{
+  align-items: center;
+   margin-top: auto;
+  padding: 12px 16px;
+}
+
 
 .page-custom-btn {
   background-color: #007bff;
@@ -105,6 +172,94 @@ mat-slide-toggle {
   --mdc-switch-selected-handle-color: #ffffff;
 }
 
+.no-vulnerabilities {
+  height: 250px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #6c757d;
+}
+
+
+.severity-critical {
+  background-color: #F26419;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+.severity-high {
+  background-color: #F6AE2D;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+.severity-medium {
+  background-color: #86BBD8;
+  color: black;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+.severity-low {
+  background-color: #33658A;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 3px;
+}
+
+
+.text-ellipsis {
+  display: inline-block;
+  max-width: 250px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+.vuln-header {
+  padding: 4px;
+}
+.vuln-table-container {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Style for the active sort/filter icon */
+.bi.active {
+  color: #007bff; /* Bootstrap primary color or any highlight color */
+  font-weight: bold;
+  transition: color 0.2s ease;
+}
+
+/* Optional: Add a subtle background or border */
+.bi.active:hover {
+  color: #0056b3;
+  background-color: rgba(0, 123, 255, 0.1);
+  border-radius: 4px;
+}
+
+/* Cursor style for clarity */
+.bi {
+  cursor: pointer;
+}
+
+/* Tooltip support */
+/* [matTooltip] {
+  cursor: help;
+} */
+
+/* Severity level styles */
+.severity-critical, .severity-high, .severity-medium, .severity-low {
+  color: #ffffff; /* Bootstrap danger */
+  /* font-weight: bold; */
+}
+
+
+
+
 @media (max-width: 768px) {
   .top-box .row {
     flex-direction: column;
@@ -119,12 +274,32 @@ mat-slide-toggle {
     width: 150px;
   }
 
-  .chart-section .row {
+  .chart-section .p-3 {
     flex-direction: column;
   }
 
-  .chart-section .col-6 {
+  .chart-card {
     width: 100%;
     margin-bottom: 16px;
   }
+
+  .table-chart-section {
+    flex-direction: column;
+  }
+
+  .table-section {
+    width: 100%;
+  }
+
+  .severity-section {
+    width: 100%;
+  }
 }
+
+/* .table-section {
+  width: 65%;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+} */
+
