@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, ViewChild, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -9,7 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 import { Chart, DoughnutController, ArcElement, Tooltip, Legend, BarController, BarElement } from 'chart.js';
 import { ToastService } from '../../core/services/toast.service';
-import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
+import { ApplicationDetails, ComputerDetails,Vulnerability } from '../../models/computer.model';
 import { HttpClient } from '@angular/common/http';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
 // import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
@@ -30,19 +30,27 @@ import { ApiEndPoints } from '../../../environments/api-endpoints';
   templateUrl: './user-report-page.component.html',
   styleUrls: ['./user-report-page.component.css']
 })
-export class UserReportPageComponent implements OnInit {
+export class UserReportPageComponent implements OnInit, AfterViewInit {
+
   @ViewChild('appChart') appChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('severityChart') severityChart!: ElementRef<HTMLCanvasElement>;
+  // @ViewChild('appSeverityChart') appSeverityChart!: ElementRef<HTMLCanvasElement>;
 
   computer: ComputerDetails | null = null;
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
+  // appSeverityChartInstance: Chart<'bar'> | undefined;
   appData: ApplicationDetails[] = [];
   pagedAppData: ApplicationDetails[] = [];
   filteredAppData: ApplicationDetails[] = [];
   allApplications: ApplicationDetails[] = [];
   computerUuid: string = '';
+  selectedApp: ApplicationDetails | null = null;
+  filteredVulnerabilities: Vulnerability[] = [];
+  vulnDisplayedColumns: string[] = ['cveId', 'severity'] ;
 
+
+ severitySort: 'default' | 'asc' | 'desc' = 'default';
   // Top box fields
   machineName = 'Unknown';
   macAddress = '00:00:00:00:00:00';
@@ -53,12 +61,13 @@ export class UserReportPageComponent implements OnInit {
 
   // Table properties
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
-  pageIndex = 0;
-  pageSize = 5;
-  pageSizes: number[] = [5, 10, 25];
-  totalPages = 0;
-  totalRecords: number[] = [];
-  recordIndex = 1;
+recordIndex: number = 1;
+pageIndex: number = 0;
+pageSize: number = 5;
+currentPageSize: number = this.pageSize;
+totalPages: number = 0;
+totalRecords: number[] = [];
+pageSizes: number[] = [];
   searchValue = '';
   showVulnerableOnly = false;
 
@@ -72,6 +81,7 @@ export class UserReportPageComponent implements OnInit {
   ) {
     Chart.register(DoughnutController, ArcElement, Tooltip, Legend, BarController, BarElement);
   }
+  
 ngOnInit(): void {
     // Get computerUuid from route params
     this.route.params.subscribe(params => {
@@ -83,7 +93,17 @@ ngOnInit(): void {
       this.fetchComputerDetails();
     });
   }
- 
+// ngAfterViewChecked(): void {
+//   if (this.selectedApp && !this.appSeverityChartInstance) {
+//     this.drawSelectedAppSeverityChart();
+//   }
+// }
+ngAfterViewInit(): void {
+  this.drawAppChart();
+  this.drawSeverityChart();
+    this.cdRef.detectChanges();
+
+}
 fetchComputerDetails(): void {
     const url = ApiEndPoints.getComputerByUuid + this.computerUuid;
     this.http.get<ComputerDetails>(url).subscribe({
@@ -132,7 +152,7 @@ fetchComputerDetails(): void {
     this.appChartInstance = new Chart(ctx, {
       type: 'doughnut',
       data: {
-        labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : [''],
+        labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : [""],
         datasets: [{
           data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1, 1],
           backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
@@ -141,16 +161,64 @@ fetchComputerDetails(): void {
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         cutout: '50%',
+        scales: {
+          x: {
+            position: 'top', 
+            beginAtZero: false,
+            title: {
+              display: true,
+              // text: 'Score'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          },
+          y: {
+            title: {
+              display: true,
+              // text: 'Applications'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              display: false
+            },
+            border: {
+              display: false
+            }
+          }
+        },
         plugins: {
           legend: { display: isDataFetched, position: 'bottom' },
           tooltip: {
             callbacks: {
-              label: (context) => isDataFetched ? `${context.label}: ${context.parsed} applications` : 'No Data'
+              label: (context) => { 
+                return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : 'No Data';
+              }
             }
-          }
+          },
+           datalabels: {
+          formatter: (value, context) => {
+            const data = context.chart.data.datasets[0].data as number[];
+            const total = data.reduce((sum, val) => sum + val, 0);
+            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            else return '';
+            
+          },
+          color: '#ffffff',
+          font: { weight: 'bold', size: 12 }
+        }
         }
       }
     });
@@ -180,20 +248,22 @@ fetchComputerDetails(): void {
         datasets: [{
           label: 'Vulnerability Count',
           data: [criticalCount, highCount, mediumCount, lowCount],
-          backgroundColor: ['#dc3545', '#ff6b6b', '#ffc107', '#28a745'],
-          borderRadius: 4
+         backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],
+          borderRadius: 3,
+          barPercentage:0.9
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio:false,
         scales: {
           x: {
             title: {
               display: true,
-              text: 'Severity',
-              color: '#000000'
+              text: 'Severity Type',
+              color: '#4f4c4cff'
             },
-            ticks: { color: '#000000' },  
+            ticks: { color: '#4f4c4cff' },  
              grid: {
                display: false // ✅ This hides the vertical grid lines
                    }
@@ -202,13 +272,13 @@ fetchComputerDetails(): void {
             min: 0,
             ticks: {
               stepSize: 1,
-              color: '#000000'
+              color: '#716767ff'
             },
             title: {
               display: true,
               text: 'Number of Vulnerabilities',
-              color: '#000000'
-            },
+              color: '#4f4c4cff'
+            },grace: '10%',
             grid: { display: false}
           }
         },
@@ -218,25 +288,161 @@ fetchComputerDetails(): void {
             callbacks: {
               label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities`
             }
+          },
+          datalabels:{
+            anchor: 'end',
+            align: 'end'
           }
         }
       }
     });
   }
 
-  updatePagedData(initialIndex: number): void {
-    this.filteredAppData = this.getFilteredApps();
-    const totalItems = this.filteredAppData.length;
-    this.totalPages = Math.ceil(totalItems / this.pageSize);
-    this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-    this.pageSizes = totalItems >= 25 ? [5, 10, 25] : totalItems >= 10 ? [5, 10] : [5];
-    this.pageIndex = initialIndex;
-    this.recordIndex = initialIndex + 1;
-    const start = initialIndex * this.pageSize;
-    const end = start + this.pageSize;
-    this.pagedAppData = this.filteredAppData.slice(start, end);
+//   drawSelectedAppSeverityChart(): void {
+//   // Ensure we have a selected app
+//   if (
+//     !this.selectedApp ||
+//     (this.selectedApp.criticalVulnerabilityCount +
+//       this.selectedApp.highVulnerabilityCount +
+//       this.selectedApp.mediumVulnerabilityCount +
+//       this.selectedApp.lowVulnerabilityCount === 0)
+//   ) {
+//     if (this.appSeverityChartInstance) {
+//       this.appSeverityChartInstance.destroy();
+//       this.appSeverityChartInstance = undefined;
+//     }
+//     return; // No vulnerabilities → chart not needed
+//   }
+
+//   // Ensure canvas is ready
+//   const canvas = this.appSeverityChart?.nativeElement;
+//   if (!canvas) {
+//     console.warn('appSeverityChart canvas not available yet');
+//     return;
+//   }
+
+//   const ctx = canvas.getContext('2d');
+//   if (!ctx) {
+//     console.error('Canvas context not available');
+//     return;
+//   }
+
+//   // Destroy previous instance to avoid overlap
+//   if (this.appSeverityChartInstance) {
+//     this.appSeverityChartInstance.destroy();
+//   }
+
+//   // Create new chart
+//   this.appSeverityChartInstance = new Chart(ctx, {
+//     type: 'bar',
+//     data: {
+//       labels: ['Critical', 'High', 'Medium', 'Low'],
+//       datasets: [
+//         {
+//           label: 'Vulnerability Count',
+//           data: [
+//             this.selectedApp.criticalVulnerabilityCount,
+//             this.selectedApp.highVulnerabilityCount,
+//             this.selectedApp.mediumVulnerabilityCount,
+//             this.selectedApp.lowVulnerabilityCount,
+//           ],
+//           backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],
+//           borderRadius: 4,
+//         },
+//       ],
+//     },
+//     options: {
+//       responsive: true,
+//       maintainAspectRatio: false,
+//       scales: {
+//         x: {
+//           title: {
+//             display: true,
+//             text: 'Severity',
+//             color: '#000',
+//           },
+//           ticks: { color: '#000' },
+//           grid: { display: false },
+//         },
+//         y: {
+//           beginAtZero: true,
+//           ticks: {
+//             stepSize: 1,
+//             color: '#000',
+//           },
+//           title: {
+//             display: true,
+//             text: 'Number of Vulnerabilities',
+//             color: '#000',
+//           },
+//           grid: { display: false },
+//         },
+//       },
+//       plugins: {
+//         legend: { display: false },
+//         tooltip: {
+//           callbacks: {
+//             label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities`,
+//           },
+//         },
+//       },
+//     },
+//   });
+// }
+
+
+updatePagedData(initialIndex: number): void {
+  this.filteredAppData = this.getFilteredApps();
+  const len = this.filteredAppData.length;
+  this.totalPages = Math.ceil(len / this.pageSize);
+  this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+  this.pageSizes = len >= 100 ? [5, 10, 25, 50, 100] :
+                   len >= 50 ? [5, 10, 25, 50] :
+                   len >= 25 ? [5, 10, 25] :
+                   len >= 10 ? [5, 10] :
+                   len >= 0 ? [5] : [0];
+  this.pageIndex = initialIndex;
+  this.recordIndex = this.pageIndex + 1;
+  const start = this.pageIndex * this.pageSize;
+  const end = start + this.pageSize;
+  this.pagedAppData = this.filteredAppData.slice(start, end);
+}
+
+  toggleSeveritySort(): void {
+  // Cycle through sort states: default -> asc -> desc -> default
+  if (this.severitySort === 'default') {
+    this.severitySort = 'asc';
+  } else if (this.severitySort === 'asc') {
+    this.severitySort = 'desc';
+  } else {
+    this.severitySort = 'default';
   }
 
+  // Sort vulnerabilities based on severity
+  if (this.severitySort !== 'default' && this.selectedApp?.vulnerabilities) {
+    this.filteredVulnerabilities = [...this.selectedApp.vulnerabilities].sort((a, b) => {
+      const severityOrder: { [key: string]: number } = {
+        critical: 4,
+        high: 3,
+        medium: 2,
+        low: 1
+      };
+      const aSeverity = severityOrder[a.severity.toLowerCase()] || 0;
+      const bSeverity = severityOrder[b.severity.toLowerCase()] || 0;
+
+      return this.severitySort === 'asc'
+        ? aSeverity - bSeverity
+        : bSeverity - aSeverity;
+    });
+  } else {
+    // Reset to original order when default
+    this.filteredVulnerabilities = this.selectedApp?.vulnerabilities
+      ? [...this.selectedApp.vulnerabilities]
+      : [];
+  }
+
+  this.cdRef.detectChanges(); // Trigger change detection
+}
   getFilteredApps(): ApplicationDetails[] {
     let data = this.allApplications;
     if (this.showVulnerableOnly) {
@@ -261,34 +467,38 @@ fetchComputerDetails(): void {
     this.updatePagedData(0);
   }
 
-  nextPage(): void {
-    if (this.pageIndex < this.totalPages - 1) {
-      this.pageIndex++;
-      this.recordIndex = this.pageIndex + 1;
-      this.updatePagedData(this.pageIndex);
-    }
-  }
-
-  previousPage(): void {
-    if (this.pageIndex > 0) {
-      this.pageIndex--;
-      this.recordIndex = this.pageIndex + 1;
-      this.updatePagedData(this.pageIndex);
-    }
-  }
-
-  onPageSizeChange(event: number): void {
-    this.pageSize = event;
-    this.pageIndex = 0;
-    this.recordIndex = 1;
-    this.updatePagedData(this.pageIndex);
-  }
-
   getPage(page: number): void {
-    this.pageIndex = page - 1;
-    this.recordIndex = page;
+  this.pageIndex = page - 1;
+  this.recordIndex = page;
+  this.updatePagedData(this.pageIndex);
+}
+
+nextPage(): void {
+  if (this.pageIndex < this.totalPages - 1) {
+    this.pageIndex++;
+    this.recordIndex = this.pageIndex + 1;
     this.updatePagedData(this.pageIndex);
   }
+}
+
+previousPage(): void {
+  if (this.pageIndex > 0) {
+    this.pageIndex--;
+    this.recordIndex = this.pageIndex + 1;
+    this.updatePagedData(this.pageIndex);
+  }
+}
+
+onPageSizeChange(event: number): void {
+  this.pageSize = event;
+  const pages = Math.ceil(this.filteredAppData.length / this.pageSize);
+  this.totalPages = pages;
+  this.totalRecords = Array.from({ length: pages }, (_, i) => i + 1);
+  this.pageIndex = 0;
+  this.recordIndex = this.pageIndex + 1;
+  this.updatePagedData(this.pageIndex);
+}
+
 
   searchApplications(event: Event): void {
     this.searchValue = (event.target as HTMLInputElement).value.toLowerCase();
@@ -297,9 +507,22 @@ fetchComputerDetails(): void {
   }
 
   viewVulnerabilities(app: ApplicationDetails): void {
-    if (app.vulnerabilities && app.vulnerabilities.length > 0) {
-      const cveId = app.vulnerabilities[0].cveId;
-      this.router.navigate([`/vulnerability-metrics/cve/${cveId}`]);
-    }
+    this.viewSelectedVulnerableApplication(app);
   }
+
+// viewSelectedVulnerableApplication(app: ApplicationDetails): void {
+//   this.selectedApp = app;
+//   this.cdRef.detectChanges(); 
+//   setTimeout(() => this.drawSelectedAppSeverityChart(), 0);
+// }
+viewSelectedVulnerableApplication(app: ApplicationDetails): void {
+    this.selectedApp = app;
+    this.filteredVulnerabilities = app.vulnerabilities || [];
+    this.cdRef.detectChanges();
+  }
+
+showVulnerabilityMetrics(cveId: string): void {
+    this.router.navigate([`/vulnerability-metrics-user-report/cve/${cveId}`]);
+  }
+
 }
