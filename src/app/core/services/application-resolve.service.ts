@@ -17,6 +17,8 @@ export class ApplicationResolveService {
   resolveData$: Observable<ApplicationResolveData | null> = this.resolveDataSubject.asObservable();
   private lastShowedApp: ApplicationDetails | null= null;
   private previousUrl: string | null = null;
+  private selectedVulnerabilityIndex: number = 0;
+  private selectedVulnerabilitySeverity: string | null = null;
 
   setResolveData(data: ApplicationResolveData | null): void {
     this.resolveDataSubject.next(data);
@@ -40,5 +42,21 @@ export class ApplicationResolveService {
 
   getPreviousUrl(): string | null {
     return this.previousUrl;
+  }
+
+  setSelectedVulnerabilityIndex(index: number) {
+    this.selectedVulnerabilityIndex = index;
+  }
+
+  getSelectedVulnerabilityIndex(): number {
+    return this.selectedVulnerabilityIndex;
+  }
+  
+  setSelectedVulnerabilitySeverity(severity: string | null) {
+    this.selectedVulnerabilitySeverity = severity;
+  }
+
+  getSelectedVulnerabilitySeverity(): string | null {
+    return this.selectedVulnerabilitySeverity;
   }
 }
