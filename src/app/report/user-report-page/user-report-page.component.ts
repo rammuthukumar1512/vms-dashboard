@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -25,7 +26,8 @@ import { ApiEndPoints } from '../../../environments/api-endpoints';
     MatTooltipModule,
     MatIconModule,
     MatSlideToggleModule,
-    FormsModule
+    FormsModule,
+    MatToolbarModule
   ],
   templateUrl: './user-report-page.component.html',
   styleUrls: ['./user-report-page.component.css']

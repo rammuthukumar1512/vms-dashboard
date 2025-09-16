@@ -1,3 +1,28 @@
+/* Vulnerability monitoring system */
+.sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 9999;
+}
+
+.p-0 {
+  padding: 0 !important;
+}
+
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+}
+
+.w-100 {
+  width: 100%;
+}
+.dash-heading-text{
+  color: #228bc8;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+/* End of the header */
 .user-report-container {
   /* min-height: 100vh; */
   padding: 16px;
