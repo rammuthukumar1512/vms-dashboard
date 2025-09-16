@@ -458,6 +458,10 @@ resetFilters(): void {
                    totalItems >= 25  ? [5, 10, 25] :
                    totalItems >= 10  ? [5, 10] :
                    totalItems > 0    ? [5] : [0];
+                   // Ensure selected pageSize is within the available sizes
+  if (!this.pageSizes.includes(this.pageSize)) {
+    this.pageSize = this.pageSizes.length > 0 ? this.pageSizes[0] : 5;
+  }
 
   this.totalPages = Math.ceil(totalItems / this.pageSize);
   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);

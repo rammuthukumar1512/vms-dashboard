@@ -140,7 +140,6 @@ searchApplications(event: Event): void {
   }
   this.updatePagedData(this.initialIndex);
 }
-
 updatePagedData(initialIndex: number): void {
   let filteredApps = this.unresolvedApps;
   if (this.searchValue) {
@@ -153,31 +152,39 @@ updatePagedData(initialIndex: number): void {
 
   const totalItems = filteredApps.length;
 
-  // Dynamically set pageSizes to match ApplicationDashboardComponent logic
-if (totalItems >= 100) {
-  this.pageSizes = [5, 10, 25, 50, 100];
-} else if (totalItems >= 50) {
-  this.pageSizes = [5, 10, 25, 50];
-} else if (totalItems >= 25) {
-  this.pageSizes = [5, 10, 25];
-} else if (totalItems >= 10) {
-  this.pageSizes = [5, 10];
+  // Dynamically set pageSizes based on total items
+  if (totalItems >= 100) {
+    this.pageSizes = [5, 10, 25, 50, 100];
+  } else if (totalItems >= 50) {
+    this.pageSizes = [5, 10, 25, 50];
+  } else if (totalItems >= 25) {
+    this.pageSizes = [5, 10, 25];
+  } else if (totalItems >= 10) {
+    this.pageSizes = [5, 10];
   } else if (totalItems > 0) {
-    this.pageSizes = [5]; // Minimum page size is 5, adjust if totalItems < 5
-} else {
+    this.pageSizes = [5];
+  } else {
     this.pageSizes = [];
-}
+  }
 
-  // Adjust pageSize if it exceeds totalItems after filtering
+  // Ensure selected pageSize is within the available sizes
+  if (!this.pageSizes.includes(this.pageSize)) {
+    this.pageSize = this.pageSizes.length > 0 ? this.pageSizes[0] : 5;
+  }
 
-
+  // Reset pagination if pageIndex is out of range
   this.totalPages = Math.ceil(totalItems / this.pageSize);
+  if (this.pageIndex >= this.totalPages) {
+    this.pageIndex = 0;
+    this.recordIndex = 1;
+  }
+
   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
 
-  this.start = initialIndex * this.pageSize;
+  this.start = this.pageIndex * this.pageSize;
   this.end = this.start + this.pageSize;
   this.pagedApps = filteredApps.slice(this.start, this.end);
-}
+} 
 
   nextPage(): void {
     if (this.pageIndex < this.totalPages - 1) {
