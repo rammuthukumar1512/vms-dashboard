@@ -243,9 +243,14 @@ mat-slide-toggle {
   text-overflow: ellipsis;
   vertical-align: bottom;
 }
+.vuln-severity-heading {
+  margin-top: 5px;
+  margin-bottom: 7px;
+  /* font-size: 1.5rem; */
+}
 
 .vuln-header {
-  padding: 4px;
+  padding: 0px;
 }
 .vuln-table-container {
   max-height: 300px;

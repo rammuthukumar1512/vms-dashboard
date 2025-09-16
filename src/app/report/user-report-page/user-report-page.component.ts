@@ -125,13 +125,19 @@ fetchComputerDetails(): void {
         this.cdRef.detectChanges();
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
-      error: (err) => {
-        this.toastService.showErrorToast('Failed to fetch computer details. Check the UUID or backend.');
-        console.error(err);
-        // Optional: Fallback to dummy data for UI testing
-        // this.loadDummyData();
+    error: (err) => {
+      if (err.status === 0) {
+        this.toastService.showErrorToast(
+          'Unable to connect to the server. Please check your network or try again later.'
+        );
+      } else if (err.status === 404) {
+        this.toastService.showErrorToast('Computer with the specified UUID was not found.');
+      } else {
+        this.toastService.showErrorToast('An unexpected error occurred. Please try again later.');
       }
-    });
+      console.error(err);
+    }
+  });
   }
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) {
@@ -280,7 +286,7 @@ fetchComputerDetails(): void {
               display: true,
               text: 'Number of Vulnerabilities',
               color: '#4f4c4cff'
-            },grace: '10%',
+            },grace: '20%',
             grid: { display: false}
           }
         },
