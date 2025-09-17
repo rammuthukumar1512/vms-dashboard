@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { ApiEndPoints } from '../../environments/api-endpoints';
@@ -13,7 +13,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { firstValueFrom, Subject, Subscription, takeUntil, timeout, timer } from 'rxjs';
+import { firstValueFrom, Subject, Subscription, takeUntil, timer } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
@@ -305,7 +305,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
     // Fixed leader line lengths
     const lineLength = 20;   // radial outwards
-    const horizLength = 40;  // horizontal offset
+    const horizLength = 30;  // horizontal offset
 
     // First segment: radial outward
     const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
@@ -488,7 +488,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const len = this.finalComputerDetails.length;
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
-    console.log(this.selectedComputerId)
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
         if(this.selectedComputerId === computer.id) computer.selected = true
         else computer.selected = false

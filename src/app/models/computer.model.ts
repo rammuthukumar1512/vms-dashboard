@@ -24,7 +24,7 @@ export interface ApplicationDetails {
   mediumVulnerabilityCount: number;
   lowVulnerabilityCount: number;
   vulnerabilities: Vulnerability[];
-  cpeName?: string;        // <-- Add this
+  cpeName?: string;
   resolved?: boolean;   
 }
 
