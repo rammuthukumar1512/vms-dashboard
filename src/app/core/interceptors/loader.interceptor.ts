@@ -1,18 +1,28 @@
 import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent } from '@angular/common/http';
-import { Observable, finalize } from 'rxjs';
+import { Observable, catchError, finalize, throwError, timeout } from 'rxjs';
 import { LoaderService } from '../services/loader.service'; 
+import { ToastService } from '../services/toast.service';
 
 @Injectable()
 export class LoaderInterceptor implements HttpInterceptor {
 
-  constructor(private loaderService: LoaderService) {}
+  constructor(private loaderService: LoaderService, private toastService: ToastService) {}
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     this.loaderService.show();
-    console.log('Loader shown');
 
     return next.handle(req).pipe(
+      timeout(120000),
+      catchError((error) => {
+        if(error.name === 'TimeoutError') {
+        this.toastService.showErrorToast('Request timed out. Please try again.');
+        this.loaderService.hide();
+        return throwError(()=> error);
+        } else {
+          return throwError(()=> error);
+        }
+      }),
       finalize(() => this.loaderService.hide())
     );
   }

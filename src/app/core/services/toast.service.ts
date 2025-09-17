@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { MatSnackBarConfig, MatSnackBar } from '@angular/material/snack-bar';
 import { Toast } from 'bootstrap';
-import { SuccessToastComponent } from '../../shared/components/success-toast/success-toast.component';
-import { ErrorToastComponent } from '../../shared/components/error-toast/error-toast.component';
+// import { SuccessToastComponent } from '../../shared/components/success-toast/success-toast.component';
+// import { ErrorToastComponent } from '../../shared/components/error-toast/error-toast.component';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class ToastService {
       <div class="col-10">
       <div style="background-color: ${type === 'success' ? 'rgb(184, 226, 188)' : 'rgb(238, 187, 187)'};" class="toast-header px-1 py-1 border-0">
         <strong style="color: ${type === 'success' ? 'rgba(3, 68, 3, 1)' : '#dc3545'};" class="me-auto">${type === 'success' ? 'Success' : 'Error'}</strong>
-        <button style="background-color: ${type === 'success' ? 'rgb(184, 226, 188)' : 'rgb(238, 187, 187)'};border: none;outline: none;padding: 0;" type="button" class="btn btn-close me-2 ${type === 'success' ? 'text-success' : 'text-danger'};" data-bs-dismiss="toast">
+        <button style="background-color: ${type === 'success' ? 'rgb(184, 226, 188)' : 'rgb(238, 187, 187)'};border: none;outline: none;padding: 0;" type="button" class="btn btn-close p-1 rounded-circle me-2 mt-2  ${type === 'success' ? 'text-success' : 'text-danger'};" data-bs-dismiss="toast">
         </button>
       </div>
       <div style="color: ${type === 'success' ? 'rgb(1, 97, 1)' : '#dc3545'};" class="toast-body ps-1 pt-0 pb-0 pe-0">

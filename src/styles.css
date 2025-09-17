@@ -84,7 +84,7 @@ mat-sidenav-content {
   overflow: hidden;
 }
 .toast-animate {
-  animation: toast 5.3s;
+  animation: toast 5.3s ease;
 }
 .toast-animate:hover {
   animation-play-state: paused;

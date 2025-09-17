@@ -84,7 +84,6 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
             softwareName: app.softwareName,
             softwareVersion: app.softwareVersion,
             vendorName: app.vendorName || app.vendorName
-
           }));
           this.updatePagedData(this.initialIndex);
         },
