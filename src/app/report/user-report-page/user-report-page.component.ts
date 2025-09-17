@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
+import { MatToolbarModule } from '@angular/material/toolbar';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -12,6 +13,9 @@ import { ToastService } from '../../core/services/toast.service';
 import { ApplicationDetails, ComputerDetails,Vulnerability } from '../../models/computer.model';
 import { HttpClient } from '@angular/common/http';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
+import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';  // add if not imported
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 // import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
 @Component({
@@ -25,12 +29,14 @@ import { ApiEndPoints } from '../../../environments/api-endpoints';
     MatTooltipModule,
     MatIconModule,
     MatSlideToggleModule,
-    FormsModule
+    FormsModule,
+    MatToolbarModule
   ],
   templateUrl: './user-report-page.component.html',
   styleUrls: ['./user-report-page.component.css']
 })
 export class UserReportPageComponent implements OnInit, AfterViewInit {
+   private destroy$ = new Subject<void>();
 
   @ViewChild('appChart') appChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('severityChart') severityChart!: ElementRef<HTMLCanvasElement>;
@@ -58,18 +64,23 @@ export class UserReportPageComponent implements OnInit, AfterViewInit {
   serialNumber = 'Unknown';
   loggedInUserEmail = 'Unknown@example.com';
   loggedInUserName = 'Unknown';
+  createdAt = '';
+  updatedAt = '';
 
   // Table properties
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 recordIndex: number = 1;
 pageIndex: number = 0;
 pageSize: number = 5;
+start = 0;
+end = 0;
 currentPageSize: number = this.pageSize;
 totalPages: number = 0;
 totalRecords: number[] = [];
 pageSizes: number[] = [];
   searchValue = '';
   showVulnerableOnly = false;
+
 
   constructor(
     private http: HttpClient,
@@ -104,6 +115,33 @@ ngAfterViewInit(): void {
     this.cdRef.detectChanges();
 
 }
+
+public fetchSecurityData(): void {
+  const headers = new HttpHeaders({
+    'Accept': 'application/json'
+  });
+
+  this.http.get<any>(ApiEndPoints.unique_url, { headers, observe: 'response' })
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (response: HttpResponse<any>) => {
+        console.log('Sync response:', response.body);
+        if (!response.body) {
+          console.log('No content');
+          // Optional: handle no content, e.g., show a toast or UI update
+        } else {
+          // this.toastService.showSuccessToast('Sync successful!');
+          // If you want to update your UI with new data, add that here
+          // For example, refresh computer details or other data:
+          this.fetchComputerDetails();
+        }
+      },
+      error: (error: HttpErrorResponse) => {
+        console.error('HTTP Error:', error.status, error.message);
+        this.toastService.showErrorToast('Sync failed. Please try again.');
+      }
+    });
+}
 fetchComputerDetails(): void {
     const url = ApiEndPoints.getComputerByUuid + this.computerUuid;
     this.http.get<ComputerDetails>(url).subscribe({
@@ -123,13 +161,19 @@ fetchComputerDetails(): void {
         this.cdRef.detectChanges();
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
-      error: (err) => {
-        this.toastService.showErrorToast('Failed to fetch computer details. Check the UUID or backend.');
-        console.error(err);
-        // Optional: Fallback to dummy data for UI testing
-        // this.loadDummyData();
+    error: (err) => {
+      if (err.status === 0) {
+        this.toastService.showErrorToast(
+          'Unable to connect to the server. Please check your network or try again later.'
+        );
+      } else if (err.status === 404) {
+        this.toastService.showErrorToast('Computer with the specified UUID was not found.');
+      } else {
+        this.toastService.showErrorToast('An unexpected error occurred. Please try again later.');
       }
-    });
+      console.error(err);
+    }
+  });
   }
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) {
@@ -278,7 +322,7 @@ fetchComputerDetails(): void {
               display: true,
               text: 'Number of Vulnerabilities',
               color: '#4f4c4cff'
-            },grace: '10%',
+            },grace: '20%',
             grid: { display: false}
           }
         },
@@ -391,24 +435,43 @@ fetchComputerDetails(): void {
 // }
 
 
-updatePagedData(initialIndex: number): void {
-  this.filteredAppData = this.getFilteredApps();
-  const len = this.filteredAppData.length;
-  this.totalPages = Math.ceil(len / this.pageSize);
-  this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
-  this.pageSizes = len >= 100 ? [5, 10, 25, 50, 100] :
-                   len >= 50 ? [5, 10, 25, 50] :
-                   len >= 25 ? [5, 10, 25] :
-                   len >= 10 ? [5, 10] :
-                   len >= 0 ? [5] : [0];
-  this.pageIndex = initialIndex;
-  this.recordIndex = this.pageIndex + 1;
-  const start = this.pageIndex * this.pageSize;
-  const end = start + this.pageSize;
-  this.pagedAppData = this.filteredAppData.slice(start, end);
-}
 
-  toggleSeveritySort(): void {
+  updatePagedData(initialIndex: number): void {
+  this.filteredAppData = this.getFilteredApps();
+
+  if (this.searchValue) {
+    const keyword = this.searchValue.toLowerCase();
+    this.filteredAppData = this.filteredAppData.filter(app =>
+      app.softwareName?.toLowerCase().includes(keyword) ||
+      app.softwareVersion?.toLowerCase().includes(keyword) ||
+      app.vendor?.toLowerCase().includes(keyword)
+    );
+  }
+
+  const totalItems = this.filteredAppData.length;
+  console.log('Filtered apps count:', totalItems);  // <--- check this
+
+  // Dynamically set page sizes
+  this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
+                   totalItems >= 50  ? [5, 10, 25, 50] :
+                   totalItems >= 25  ? [5, 10, 25] :
+                   totalItems >= 10  ? [5, 10] :
+                   totalItems > 0    ? [5] : [0];
+                   // Ensure selected pageSize is within the available sizes
+  if (!this.pageSizes.includes(this.pageSize)) {
+    this.pageSize = this.pageSizes.length > 0 ? this.pageSizes[0] : 5;
+  }
+
+  this.totalPages = Math.ceil(totalItems / this.pageSize);
+  this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
+
+  this.start = initialIndex * this.pageSize;
+  this.end = this.start + this.pageSize;
+  this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
+  console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
+}
+  
+toggleSeveritySort(): void {
   // Cycle through sort states: default -> asc -> desc -> default
   if (this.severitySort === 'default') {
     this.severitySort = 'asc';
@@ -467,6 +530,23 @@ updatePagedData(initialIndex: number): void {
     this.updatePagedData(0);
   }
 
+  getLastSyncDate(): string {
+  const lastSync = this.computer?.updatedAt ?? this.computer?.createdAt;
+  if (!lastSync) return 'N/A';
+
+  const date = new Date(lastSync);
+
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months are zero-based
+  const year = date.getFullYear();
+
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+
+  return `${day}-${month}-${year} ${hours}:${minutes}`;
+}
+
+
   getPage(page: number): void {
   this.pageIndex = page - 1;
   this.recordIndex = page;
@@ -524,5 +604,10 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
 showVulnerabilityMetrics(cveId: string): void {
     this.router.navigate([`/vulnerability-metrics-user-report/cve/${cveId}`]);
   }
+
+ngOnDestroy(): void {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
 
 }
