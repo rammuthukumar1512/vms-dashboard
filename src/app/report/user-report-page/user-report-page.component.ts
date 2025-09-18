@@ -469,6 +469,10 @@ fetchComputerDetails(): void {
   this.end = this.start + this.pageSize;
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
   console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
+  if (!this.selectedApp && this.pagedAppData.length > 0) {
+    this.viewSelectedVulnerableApplication(this.pagedAppData[0]);
+  }
+  this.cdRef.detectChanges();
 }
   
 toggleSeveritySort(): void {
@@ -542,8 +546,9 @@ toggleSeveritySort(): void {
 
   const hours = date.getHours().toString().padStart(2, '0');
   const minutes = date.getMinutes().toString().padStart(2, '0');
+  const seconds = date.getSeconds().toString().padStart(2, '0');
 
-  return `${day}-${month}-${year} ${hours}:${minutes}`;
+  return `${day}-${month}-${year} | ${hours}:${minutes}:${seconds}`;
 }
 
 
@@ -598,11 +603,18 @@ onPageSizeChange(event: number): void {
 viewSelectedVulnerableApplication(app: ApplicationDetails): void {
     this.selectedApp = app;
     this.filteredVulnerabilities = app.vulnerabilities || [];
+     const severitySection = document.querySelector('.severity-section');
+    if (severitySection) {
+      severitySection.classList.add('blink');
+      setTimeout(() => {
+        severitySection.classList.remove('blink');
+      }, 1000);
+    }
     this.cdRef.detectChanges();
   }
 
 showVulnerabilityMetrics(cveId: string): void {
-    this.router.navigate([`/vulnerability-metrics-user-report/cve/${cveId}`]);
+    this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
   }
 
 ngOnDestroy(): void {
