@@ -334,3 +334,10 @@ mat-slide-toggle {
   flex-grow: 1;
 } */
 
+.wrap-with-icons {
+  display: inline;              /* Treat everything as inline text */
+  white-space: normal;          /* Allow wrapping */
+  word-break: break-word;       /* Wrap inside words if needed */
+  line-height: 1.5;
+}
+
