@@ -136,9 +136,9 @@
   background-color: #fff3cd;
 }
 
- tr.normal-row:hover {
+ /* tr.normal-row:hover {
   background-color: #dad7d7;
-}
+} */
 
 .chart {
   height: 200px;
@@ -327,6 +327,19 @@ mat-slide-toggle {
   }
 }
 
+.selected-row {
+  background-color: lightgrey !important;
+}
+
+.blink {
+  animation: blink 0.5s;
+}
+
+@keyframes blink {
+  0% { opacity: 0; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
 /* .table-section {
   width: 65%;
   display: flex;

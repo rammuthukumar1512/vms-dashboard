@@ -225,70 +225,91 @@ this.updatePagedData(this.pageIndex);
   const isDataFetched = this.appData.length > 0;
   const vulnerableCount = this.vulnerableSoftwareCount;
   const nonVulnerableCount = this.appData.length - vulnerableCount;
-  const vulnerablePercentage = (vulnerableCount / this.appData.length) * 100;
-  const nonVulnerablePercentage = (nonVulnerableCount / this.appData.length) * 100; 
-  const leaderLinePlugin = {
-    id: 'leaderLinePlugin',
+
+const leaderLinePlugin = {
+  id: 'leaderLinePlugin',
+
   afterDatasetDraw(chart: any) {
-  const { ctx, chartArea: { top, bottom, left, right } } = chart;
-  const meta = chart.getDatasetMeta(0);
-  const centerX = (left + right) / 2;
-  const centerY = (top + bottom) / 2;
+    const {
+      ctx,
+      chartArea: { top, bottom, left, right },
+    } = chart;
 
-  meta.data.forEach((arc: any, index: number) => {
-    let angle = (arc.startAngle + arc.endAngle) / 2;
-    const radius = arc.outerRadius;
+    const meta = chart.getDatasetMeta(0);
+    const centerX = (left + right) / 2;
+    const centerY = (top + bottom) / 2;
 
-   if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
-    else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
-    else if (index === 0 && (vulnerablePercentage >= 30 && vulnerablePercentage < 40)) angle -= 0.5;
-    else if (index === 0 && (vulnerablePercentage >= 40 && vulnerablePercentage < 50)) angle -= 0.7;
-    else if (index === 0 && (vulnerablePercentage >= 50 && vulnerablePercentage < 100)) angle = 0.7;
-    else if (index === 0 && (vulnerablePercentage == 100)) angle -= 0.7;
-    else if (index === 0 && (vulnerablePercentage == 0)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20)) angle -= 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40)) angle -= 0.1;
-    else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
-    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
+    const data = chart.data.datasets[0].data;
+    const total = data[0] + data[1];
+    const vulnerablePercentage = (data[0] / total) * 100;
+    const nonVulnerablePercentage = (data[1] / total) * 100;
 
-    // Start point: slice edge
-    const x = centerX + Math.cos(angle) * radius;
-    const y = centerY + Math.sin(angle) * radius;
+    meta.data.forEach((arc: any, index: number) => {
+      const value = data[index];
+      if (value === 0) return; // Skip zero values
 
-    // Fixed leader line length
-    const FIXED_LINE_LENGTH = 20; // distance out from slice
-    const HORIZONTAL_OFFSET = 40; // horizontal length
+      let angle = (arc.startAngle + arc.endAngle) / 2;
+      const radius = arc.outerRadius;
 
-    const lineEndX = centerX + Math.cos(angle) * (radius + FIXED_LINE_LENGTH);
-    const lineEndY = centerY + Math.sin(angle) * (radius + FIXED_LINE_LENGTH);
+      // Angle adjustments
+      if (index === 0) {
+        if (vulnerablePercentage > 10 && vulnerablePercentage <= 20) angle += 0.3;
+        else if (vulnerablePercentage >= 20 && vulnerablePercentage < 30) angle += 0.2;
+        else if (vulnerablePercentage >= 30 && vulnerablePercentage < 40) angle -= 0.5;
+        else if (vulnerablePercentage >= 40 && vulnerablePercentage < 50) angle -= 0.7;
+        else if (vulnerablePercentage >= 50 && vulnerablePercentage < 100) angle = 0.7;
+        else if (vulnerablePercentage === 100) angle -= 0.7;
+        else if (vulnerablePercentage === 0) angle += 0.3;
+      } else if (index === 1) {
+        if (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20) angle -= 0.3;
+        else if (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40) angle -= 0.1;
+        else if (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50) angle += 0.3;
+        else if (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70) angle -= 0.3;
+        else if (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90) angle += 0.3;
+        else if (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100) angle += 0.6;
+        else if (nonVulnerablePercentage === 100) angle += 0.3;
+        else if (nonVulnerablePercentage === 0) angle -= 0.3;
+      }
 
-    // fixed horizontal/vertical leader extension
-    const labelX = lineEndX + (Math.cos(angle) > 0 ? HORIZONTAL_OFFSET : -HORIZONTAL_OFFSET);
-    const labelY = lineEndY; // keep aligned horizontally
+      // Leader line start at arc edge
+      const startX = centerX + Math.cos(angle) * radius;
+      const startY = centerY + Math.sin(angle) * radius;
 
-    // Draw line
-    ctx.beginPath();
-    ctx.moveTo(x, y);
-    ctx.lineTo(lineEndX, lineEndY);
-    ctx.lineTo(labelX, labelY);
-    ctx.strokeStyle = 'gray';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([7, 3]);
-    ctx.stroke();
+      const lineLength = 20;
+      const horizOffset = 30;
 
-    // Label text
-    const value = chart.data.datasets[0].data[index];
-    ctx.font = '12px sans-serif';
-    ctx.fillStyle = '#333';
-    ctx.fillText(value, labelX, labelY);
-  });
-}
+      const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
+      const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
 
-  };
+      let labelX: number;
+      let labelY: number;
+      const isRightSide = Math.cos(angle) >= 0;
+
+      labelX = lineEndX + (isRightSide ? horizOffset : -horizOffset);
+      labelY = lineEndY;
+
+      // Draw dashed leader line
+      ctx.beginPath();
+      ctx.moveTo(startX, startY);
+      ctx.lineTo(lineEndX, lineEndY);
+      ctx.lineTo(labelX, labelY);
+      ctx.strokeStyle = 'gray';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([7, 3]);
+      ctx.stroke();
+      ctx.setLineDash([]); // Reset dash for other elements
+
+      // Draw value label
+      const chartWidth = right - left;
+      ctx.font = `${Math.max(10, chartWidth * 0.03)}px sans-serif`;
+      ctx.fillStyle = '#333';
+      ctx.textAlign = isRightSide ? 'left' : 'right';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(value, labelX, labelY);
+    });
+  }
+};
+
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
