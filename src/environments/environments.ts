@@ -6,6 +6,7 @@ export const environments = {
   addHintUrl: 'api/hint/addHint',
   unresolvedAppsUrl: 'api/applications/unresolved' ,
   searchVulnerabilityUrl: 'api/search/vulnerability',
-  sendNotificationToAllComputers: 'api/sendNotifications'
+  sendNotificationToAllComputers: 'api/sendNotifications',
+  getComputerByUUid:'api/getComputer/'
 
 };

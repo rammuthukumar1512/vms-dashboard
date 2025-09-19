@@ -179,10 +179,10 @@
           <mat-select class="border rounded page-size-width p-2" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
             <mat-option *ngFor="let size of pageSizes" [value]="size">{{size}}</mat-option>
           </mat-select>
-          <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn p-2">
+          <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
             <mat-icon class="material-symbols-outlined fs-5">arrow_back_ios</mat-icon>
           </button>
-          <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn p-2">
+          <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
             <mat-icon class="material-symbols-outlined fs-5">arrow_forward_ios</mat-icon>
           </button>
         </div>

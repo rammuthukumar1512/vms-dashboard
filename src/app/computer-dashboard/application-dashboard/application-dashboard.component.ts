@@ -100,7 +100,7 @@ ngOnInit(): void {
         this.loggedInUserName = data.loggedInUserName || 'Unknown';
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
-        this.lastRefresh = data.lastRefresh.split("T").join(" ") || null;
+        this.lastRefresh = data.lastRefresh.split("T").join(" | ") || null;
         if (data?.appData && Array.isArray(data.appData)) {
      const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
             const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
