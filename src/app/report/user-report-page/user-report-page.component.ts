@@ -16,6 +16,8 @@ import { ApiEndPoints } from '../../../environments/api-endpoints';
 import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';  // add if not imported
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { ApplicationResolveService } from '../../core/services/application-resolve.service';
+
 // import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
 @Component({
@@ -87,7 +89,8 @@ pageSizes: number[] = [];
     private toastService: ToastService,
     private cdRef: ChangeDetectorRef,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private applicationResolveService: ApplicationResolveService
 
   ) {
     Chart.register(DoughnutController, ArcElement, Tooltip, Legend, BarController, BarElement);
@@ -101,9 +104,11 @@ ngOnInit(): void {
         this.toastService.showErrorToast('No computer UUID provided in the URL.');
         return; 
       }
+      this.applicationResolveService.setComputerUuid(this.computerUuid); // Store computerUuid
       this.fetchComputerDetails();
     });
   }
+
 // ngAfterViewChecked(): void {
 //   if (this.selectedApp && !this.appSeverityChartInstance) {
 //     this.drawSelectedAppSeverityChart();
@@ -158,6 +163,7 @@ fetchComputerDetails(): void {
         this.updatePagedData(0);
         this.drawAppChart();
         this.drawSeverityChart();
+        this.restoreSelectedApp();
         this.cdRef.detectChanges();
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
@@ -175,6 +181,23 @@ fetchComputerDetails(): void {
     }
   });
   }
+
+  private restoreSelectedApp(): void {
+  this.route.queryParams.subscribe(queryParams => {
+    const selectedAppName = queryParams['selectedApp'];
+    if (selectedAppName && this.appData.length > 0) {
+      const appToSelect = this.appData.find(app => app.softwareName === selectedAppName);
+      if (appToSelect) {
+        this.viewSelectedVulnerableApplication(appToSelect);
+        return;
+      }
+    }
+    // Select first app by default if no valid query param or no match
+    if (this.pagedAppData.length > 0 && !this.selectedApp) {
+      this.viewSelectedVulnerableApplication(this.pagedAppData[0]);
+    }
+  });
+}
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) {
       console.error('appChart element not found');
@@ -469,9 +492,6 @@ fetchComputerDetails(): void {
   this.end = this.start + this.pageSize;
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
   console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
-  if (!this.selectedApp && this.pagedAppData.length > 0) {
-    this.viewSelectedVulnerableApplication(this.pagedAppData[0]);
-  }
   this.cdRef.detectChanges();
 }
   
@@ -614,7 +634,9 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
   }
 
 showVulnerabilityMetrics(cveId: string): void {
-    this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
+    // this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
+  const queryParams = this.selectedApp ? { selectedApp: this.selectedApp.softwareName } : {};
+  this.router.navigate([`/vulnerability/metrics/user/report/cve/${cveId}`], { queryParams, state: { computerUuid: this.computerUuid } });
   }
 
 ngOnDestroy(): void {

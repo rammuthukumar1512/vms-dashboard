@@ -17,6 +17,7 @@ export class ApplicationResolveService {
   resolveData$: Observable<ApplicationResolveData | null> = this.resolveDataSubject.asObservable();
   private lastShowedApp: ApplicationDetails | null= null;
   private previousUrl: string | null = null;
+  private computerUuid: string | null = null;
   private selectedVulnerabilityIndex: number = 0;
   private selectedVulnerabilitySeverity: string | null = null;
 
@@ -46,6 +47,13 @@ export class ApplicationResolveService {
 
   setSelectedVulnerabilityIndex(index: number) {
     this.selectedVulnerabilityIndex = index;
+  }
+  setComputerUuid(uuid: string): void {
+    this.computerUuid = uuid;
+  }
+
+  getComputerUuid(): string | null {
+    return this.computerUuid;
   }
 
   getSelectedVulnerabilityIndex(): number {
