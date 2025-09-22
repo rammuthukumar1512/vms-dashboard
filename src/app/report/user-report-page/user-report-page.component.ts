@@ -17,6 +17,7 @@ import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/ht
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
+import { ReportState } from '../../core/services/application-resolve.service'; // Adjust path if needed
 
 // import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
@@ -163,7 +164,7 @@ fetchComputerDetails(): void {
         this.updatePagedData(0);
         this.drawAppChart();
         this.drawSeverityChart();
-        this.restoreSelectedApp();
+        this.restoreStateAndSelect();
         this.cdRef.detectChanges();
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
@@ -182,22 +183,44 @@ fetchComputerDetails(): void {
   });
   }
 
-  private restoreSelectedApp(): void {
-  this.route.queryParams.subscribe(queryParams => {
-    const selectedAppName = queryParams['selectedApp'];
-    if (selectedAppName && this.appData.length > 0) {
-      const appToSelect = this.appData.find(app => app.softwareName === selectedAppName);
-      if (appToSelect) {
-        this.viewSelectedVulnerableApplication(appToSelect);
-        return;
+  // Add this new method to the class (this handles restoring state and selecting the app)
+private restoreStateAndSelect(): void {
+  const storedState = this.applicationResolveService.getReportState();
+  const selectedAppName = this.route.snapshot.queryParams['selectedApp'];
+  let restored = false;
+
+  if (storedState) {
+    this.pageSize = storedState.pageSize;
+    this.searchValue = storedState.searchValue;
+    this.showVulnerableOnly = storedState.showVulnerableOnly;
+    this.applicationResolveService.clearReportState();
+    this.updatePagedData(0); // Compute filteredAppData with restored filters
+
+    if (selectedAppName) {
+      const appIndex = this.filteredAppData.findIndex(app => app.softwareName === selectedAppName);
+      if (appIndex !== -1) {
+        const newPageIndex = Math.floor(appIndex / this.pageSize);
+        this.pageIndex = newPageIndex;
+        this.recordIndex = newPageIndex + 1;
+        this.updatePagedData(newPageIndex);
+        const appToSelect = this.pagedAppData.find(app => app.softwareName === selectedAppName);
+        if (appToSelect) {
+          this.viewSelectedVulnerableApplication(appToSelect);
+          restored = true;
+        }
       }
     }
-    // Select first app by default if no valid query param or no match
-    if (this.pagedAppData.length > 0 && !this.selectedApp) {
+  } else {
+    this.updatePagedData(0); // Default pagination
+  }
+
+  if (!restored) {
+    if (this.pagedAppData.length > 0) {
       this.viewSelectedVulnerableApplication(this.pagedAppData[0]);
     }
-  });
+  }
 }
+
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) {
       console.error('appChart element not found');
@@ -364,100 +387,6 @@ fetchComputerDetails(): void {
       }
     });
   }
-
-//   drawSelectedAppSeverityChart(): void {
-//   // Ensure we have a selected app
-//   if (
-//     !this.selectedApp ||
-//     (this.selectedApp.criticalVulnerabilityCount +
-//       this.selectedApp.highVulnerabilityCount +
-//       this.selectedApp.mediumVulnerabilityCount +
-//       this.selectedApp.lowVulnerabilityCount === 0)
-//   ) {
-//     if (this.appSeverityChartInstance) {
-//       this.appSeverityChartInstance.destroy();
-//       this.appSeverityChartInstance = undefined;
-//     }
-//     return; // No vulnerabilities → chart not needed
-//   }
-
-//   // Ensure canvas is ready
-//   const canvas = this.appSeverityChart?.nativeElement;
-//   if (!canvas) {
-//     console.warn('appSeverityChart canvas not available yet');
-//     return;
-//   }
-
-//   const ctx = canvas.getContext('2d');
-//   if (!ctx) {
-//     console.error('Canvas context not available');
-//     return;
-//   }
-
-//   // Destroy previous instance to avoid overlap
-//   if (this.appSeverityChartInstance) {
-//     this.appSeverityChartInstance.destroy();
-//   }
-
-//   // Create new chart
-//   this.appSeverityChartInstance = new Chart(ctx, {
-//     type: 'bar',
-//     data: {
-//       labels: ['Critical', 'High', 'Medium', 'Low'],
-//       datasets: [
-//         {
-//           label: 'Vulnerability Count',
-//           data: [
-//             this.selectedApp.criticalVulnerabilityCount,
-//             this.selectedApp.highVulnerabilityCount,
-//             this.selectedApp.mediumVulnerabilityCount,
-//             this.selectedApp.lowVulnerabilityCount,
-//           ],
-//           backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],
-//           borderRadius: 4,
-//         },
-//       ],
-//     },
-//     options: {
-//       responsive: true,
-//       maintainAspectRatio: false,
-//       scales: {
-//         x: {
-//           title: {
-//             display: true,
-//             text: 'Severity',
-//             color: '#000',
-//           },
-//           ticks: { color: '#000' },
-//           grid: { display: false },
-//         },
-//         y: {
-//           beginAtZero: true,
-//           ticks: {
-//             stepSize: 1,
-//             color: '#000',
-//           },
-//           title: {
-//             display: true,
-//             text: 'Number of Vulnerabilities',
-//             color: '#000',
-//           },
-//           grid: { display: false },
-//         },
-//       },
-//       plugins: {
-//         legend: { display: false },
-//         tooltip: {
-//           callbacks: {
-//             label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities`,
-//           },
-//         },
-//       },
-//     },
-//   });
-// }
-
-
 
   updatePagedData(initialIndex: number): void {
   this.filteredAppData = this.getFilteredApps();
@@ -634,6 +563,11 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
   }
 
 showVulnerabilityMetrics(cveId: string): void {
+  this.applicationResolveService.setReportState({
+  pageSize: this.pageSize,
+  searchValue: this.searchValue,
+  showVulnerableOnly: this.showVulnerableOnly
+});
     // this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
   const queryParams = this.selectedApp ? { selectedApp: this.selectedApp.softwareName } : {};
   this.router.navigate([`/vulnerability/metrics/user/report/cve/${cveId}`], { queryParams, state: { computerUuid: this.computerUuid } });

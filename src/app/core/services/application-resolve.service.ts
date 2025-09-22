@@ -7,7 +7,14 @@ export interface ApplicationResolveData {
   softwareName: string;
   softwareVersion: string;
   vendorName: string;
+  
 }
+export interface ReportState {
+  pageSize: number;
+  searchValue: string;
+  showVulnerableOnly: boolean;
+}
+
 
 @Injectable({
   providedIn: 'root'
@@ -21,6 +28,21 @@ export class ApplicationResolveService {
   private selectedVulnerabilityIndex: number = 0;
   private selectedVulnerabilitySeverity: string | null = null;
 
+  // Update application-resolve.service.ts with the following additions (add these properties and methods)
+
+private reportState: ReportState | null = null;
+
+setReportState(state: ReportState): void {
+  this.reportState = state;
+}
+
+getReportState(): ReportState | null {
+  return this.reportState;
+}
+
+clearReportState(): void {
+  this.reportState = null;
+}
   setResolveData(data: ApplicationResolveData | null): void {
     this.resolveDataSubject.next(data);
   }
