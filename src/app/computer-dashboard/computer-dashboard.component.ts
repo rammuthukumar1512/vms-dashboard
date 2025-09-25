@@ -529,7 +529,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     });
       this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
-             this.toastService.showSuccessToast(response.Status);
+             this.toastService.showSuccessToast(response.message);
         }, error: (error)=>{
              this.toastService.showErrorToast('Send Notification Failed');
         }

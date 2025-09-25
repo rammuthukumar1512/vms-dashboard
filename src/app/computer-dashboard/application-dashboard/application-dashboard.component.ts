@@ -447,7 +447,6 @@ getFilteredApps(): ApplicationDetails[] {
     (app.vendor || '').toLowerCase().includes(keyword)
   );
   }
-
   return data;
 }
 
@@ -579,8 +578,7 @@ sendNotificationToComputer(computerUuid: string) {
 
   this.http.get<any>(url, { headers }).subscribe({
     next: (response) => {
-
-      this.toastService.showSuccessToast(`Mail sent successfully `);
+      this.toastService.showSuccessToast(response.message);
     },
     error: (error) => {
       // const errorMessage = error.error?.message || error.message || 'Failed to send notification. Please try again.';

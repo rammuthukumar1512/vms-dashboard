@@ -62,7 +62,7 @@ export class ToastService {
       hiddenToast?.classList.add('toast-hide');
       setTimeout(()=>{
         hiddenToast?.remove();
-      },200)
+      },200);
       // bsToast.hide();
   }));
   }
