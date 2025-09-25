@@ -9,12 +9,6 @@ export interface ApplicationResolveData {
   vendorName: string;
   
 }
-export interface ReportState {
-  pageSize: number;
-  searchValue: string;
-  showVulnerableOnly: boolean;
-}
-
 
 @Injectable({
   providedIn: 'root'
@@ -25,24 +19,13 @@ export class ApplicationResolveService {
   private lastShowedApp: ApplicationDetails | null= null;
   private previousUrl: string | null = null;
   private computerUuid: string | null = null;
-  private selectedVulnerabilityIndex: number = 0;
-  private selectedVulnerabilitySeverity: string | null = null;
+  
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 
-private reportState: ReportState | null = null;
 
-setReportState(state: ReportState): void {
-  this.reportState = state;
-}
 
-getReportState(): ReportState | null {
-  return this.reportState;
-}
 
-clearReportState(): void {
-  this.reportState = null;
-}
   setResolveData(data: ApplicationResolveData | null): void {
     this.resolveDataSubject.next(data);
   }
@@ -67,9 +50,7 @@ clearReportState(): void {
     return this.previousUrl;
   }
 
-  setSelectedVulnerabilityIndex(index: number) {
-    this.selectedVulnerabilityIndex = index;
-  }
+
   setComputerUuid(uuid: string): void {
     this.computerUuid = uuid;
   }
@@ -78,15 +59,5 @@ clearReportState(): void {
     return this.computerUuid;
   }
 
-  getSelectedVulnerabilityIndex(): number {
-    return this.selectedVulnerabilityIndex;
-  }
-  
-  setSelectedVulnerabilitySeverity(severity: string | null) {
-    this.selectedVulnerabilitySeverity = severity;
-  }
 
-  getSelectedVulnerabilitySeverity(): string | null {
-    return this.selectedVulnerabilitySeverity;
-  }
 }

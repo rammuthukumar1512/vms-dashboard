@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, ViewChild, OnInit, AfterViewInit } from '@angular/core';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
@@ -17,7 +18,8 @@ import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/ht
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
-import { ReportState } from '../../core/services/application-resolve.service'; // Adjust path if needed
+import { VulnerabilityService } from '../../core/services/vulnerabilityService';
+import { ReportState } from '../../core/services/vulnerabilityService'; // Adjust path if needed
 
 // import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
@@ -33,7 +35,8 @@ import { ReportState } from '../../core/services/application-resolve.service'; /
     MatIconModule,
     MatSlideToggleModule,
     FormsModule,
-    MatToolbarModule
+    MatToolbarModule,
+    MatCardModule
   ],
   templateUrl: './user-report-page.component.html',
   styleUrls: ['./user-report-page.component.css']
@@ -49,6 +52,7 @@ export class UserReportPageComponent implements OnInit, AfterViewInit {
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
   // appSeverityChartInstance: Chart<'bar'> | undefined;
+  vulnerableCount: number = 0; // Add this property
   appData: ApplicationDetails[] = [];
   pagedAppData: ApplicationDetails[] = [];
   filteredAppData: ApplicationDetails[] = [];
@@ -91,7 +95,8 @@ pageSizes: number[] = [];
     private cdRef: ChangeDetectorRef,
     private router: Router,
     private route: ActivatedRoute,
-    private applicationResolveService: ApplicationResolveService
+    private applicationResolveService: ApplicationResolveService,
+    private vulnerabilityService: VulnerabilityService
 
   ) {
     Chart.register(DoughnutController, ArcElement, Tooltip, Legend, BarController, BarElement);
@@ -185,7 +190,7 @@ fetchComputerDetails(): void {
 
   // Add this new method to the class (this handles restoring state and selecting the app)
 private restoreStateAndSelect(): void {
-  const storedState = this.applicationResolveService.getReportState();
+  const storedState = this.vulnerabilityService.getReportState();
   const selectedAppName = this.route.snapshot.queryParams['selectedApp'];
   let restored = false;
 
@@ -193,7 +198,7 @@ private restoreStateAndSelect(): void {
     this.pageSize = storedState.pageSize;
     this.searchValue = storedState.searchValue;
     this.showVulnerableOnly = storedState.showVulnerableOnly;
-    this.applicationResolveService.clearReportState();
+    this.vulnerabilityService.clearReportState();
     this.updatePagedData(0); // Compute filteredAppData with restored filters
 
     if (selectedAppName) {
@@ -233,10 +238,10 @@ private restoreStateAndSelect(): void {
     }
     if (this.appChartInstance) this.appChartInstance.destroy();
 
-    const vulnerableCount = this.appData.filter(app => 
+     this.vulnerableCount = this.appData.filter(app => 
       app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0
     ).length;
-    const nonVulnerableCount = this.appData.length - vulnerableCount;
+    const nonVulnerableCount = this.appData.length - this.vulnerableCount;
     const isDataFetched = this.appData.length > 0;
 
     this.appChartInstance = new Chart(ctx, {
@@ -244,7 +249,7 @@ private restoreStateAndSelect(): void {
       data: {
         labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : [""],
         datasets: [{
-          data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1, 1],
+          data: isDataFetched ? [this.vulnerableCount, nonVulnerableCount] : [1, 1],
           backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
           borderColor: ['#ffffff', '#ffffff'],
           borderWidth: 0
@@ -563,7 +568,7 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
   }
 
 showVulnerabilityMetrics(cveId: string): void {
-  this.applicationResolveService.setReportState({
+  this.vulnerabilityService.setReportState({
   pageSize: this.pageSize,
   searchValue: this.searchValue,
   showVulnerableOnly: this.showVulnerableOnly
