@@ -116,6 +116,9 @@
 .notify-btn {
   padding: 0 7px;
 }
+.center-border {
+  border-left: 2px solid rgb(248, 243, 243);
+}
 @media (max-width: 768px) {
   .section-card {
     flex: 1 1 100%;

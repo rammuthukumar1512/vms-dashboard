@@ -72,9 +72,6 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
       this.isMiniSidenav = !this.isMiniSidenav;
 }
 
-public onMouseEnter() {
-     this.hoverState = "expand";
-}
 public onMouseLeave() {
    if(!this.isMobile) {
      this.hoverState = "collapse";
