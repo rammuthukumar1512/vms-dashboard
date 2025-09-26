@@ -1,6 +1,6 @@
 export const environments = {
   production: false,
-  baseUrl: "http://localhost:8080/",
+  baseUrl: "http://localhost:8081/",
   unique_url: 'api/getDashboardMetrics',
   likelyCpeUrl: 'api/hint/likelyCpeNames',
   addHintUrl: 'api/hint/addHint',
