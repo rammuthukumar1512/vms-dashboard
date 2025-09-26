@@ -490,6 +490,8 @@ resetFilters(): void {
 
   this.start = initialIndex * this.pageSize;
   this.end = this.start + this.pageSize;
+  this.pageIndex = initialIndex;
+  this.recordIndex = this.pageIndex + 1;
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
   console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
 }
