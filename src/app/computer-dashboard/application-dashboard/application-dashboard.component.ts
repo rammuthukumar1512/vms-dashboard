@@ -18,6 +18,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
 import * as bootstrap from 'bootstrap';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
+import { VulnerabilityService } from '../../core/services/vulnerabilityService';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 // Register Chart.js components
 
@@ -87,7 +88,8 @@ constructor(
   private http: HttpClient,
   private cdRef: ChangeDetectorRef,
   private toastService: ToastService,
-  private applicationResolveService: ApplicationResolveService, private router: Router
+  private applicationResolveService: ApplicationResolveService, 
+  private vulnerabilityService: VulnerabilityService, private router: Router
 ) {}
 
 ngOnInit(): void {
@@ -275,8 +277,8 @@ const leaderLinePlugin = {
       const startX = centerX + Math.cos(angle) * radius;
       const startY = centerY + Math.sin(angle) * radius;
 
-      const lineLength = 20;
-      const horizOffset = 30;
+      const lineLength = 25;
+      const horizOffset = 10;
 
       const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
       const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
@@ -552,7 +554,7 @@ resetFilters(): void {
   });
   this.dialogRef.afterClosed().subscribe(() => {
     if(this.router.url?.match('computer-overview')) {
-    this.applicationResolveService.setSelectedVulnerabilitySeverity(null);
+    this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
     }
   });
 }

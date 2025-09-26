@@ -74,16 +74,44 @@
       </div>
     </div>
   </div> -->
-  <div class="d-flex justify-content-evenly align-items-center gap-3">
+<div class="d-flex justify-content-evenly align-items-center gap-3 chart-section">
   <!-- Application Chart Card -->
   <div class="chart-card flex-column">
     <h5 class="chart-title text-secondary">Applications Distribution</h5>
     <canvas #appChart></canvas>
   </div>
 
+  <!-- New Metrics Card -->
+  <mat-card class="metrics-card">
+          <p class="text-secondary chart-title-computer">Computer Distribution</p>
+    <mat-card-content class="metrics-content">
+      <div class="metric-item">
+        <mat-icon class="material-symbols-outlined metric-icon" style="color: #228bc8;">apps</mat-icon>
+        <div class="metric-text">
+          <span class="metric-label">Total Applications</span>
+          <span class="metric-value">{{ appData.length }}</span>
+        </div>
+      </div>
+      <div class="metric-item">
+        <mat-icon class="material-symbols-outlined metric-icon" style="color: #33658A;">check_circle</mat-icon>
+        <div class="metric-text">
+          <span class="metric-label">Non-Vulnerable</span>
+          <span class="metric-value">{{ appData.length - vulnerableCount}}</span>
+        </div>
+      </div>
+      <div class="metric-item">
+        <mat-icon class="material-symbols-outlined metric-icon" style="color: #F26419;">warning</mat-icon>
+        <div class="metric-text">
+          <span class="metric-label">Vulnerable</span>
+          <span class="metric-value">{{ vulnerableCount }}</span>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
   <!-- Severity Chart Card -->
   <div class="chart-card flex-column">
-    <h5 class="chart-title text-secondary">Severity Distribution</h5>
+    <h5 class="chart-title text-secondary">Severities Distribution</h5>
     <canvas #severityChart></canvas>
   </div>
 </div>
@@ -94,8 +122,11 @@
     <!-- Table -->
     <div class="table-section bg-light border rounded-3">
       <div class="p-2 bg-gray-shade rounded-top-3 d-flex justify-content-between align-items-center">
-        <h2 class="text-secondary m-2">Applications</h2>
-        <div class="d-flex align-items-center gap-2">
+<h2 class="text-secondary m-2">
+  <span *ngIf="!showVulnerableOnly">Applications ({{allApplications.length}})</span>
+  <span *ngIf="showVulnerableOnly">Vulnerable Applications ({{filteredAppData.length}})</span>
+</h2>        
+<div class="d-flex align-items-center gap-2">
           <mat-slide-toggle [checked]="showVulnerableOnly" (change)="toggleVulnerableOnly()" color="warn" matTooltip="Toggle to show only vulnerable applications"></mat-slide-toggle>
           <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" [(ngModel)]="searchValue" (keyup)="searchApplications($event)">
         </div>

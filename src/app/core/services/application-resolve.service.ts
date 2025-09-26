@@ -7,6 +7,7 @@ export interface ApplicationResolveData {
   softwareName: string;
   softwareVersion: string;
   vendorName: string;
+  
 }
 
 @Injectable({
@@ -18,8 +19,12 @@ export class ApplicationResolveService {
   private lastShowedApp: ApplicationDetails | null= null;
   private previousUrl: string | null = null;
   private computerUuid: string | null = null;
-  private selectedVulnerabilityIndex: number = 0;
-  private selectedVulnerabilitySeverity: string | null = null;
+  
+
+  // Update application-resolve.service.ts with the following additions (add these properties and methods)
+
+
+
 
   setResolveData(data: ApplicationResolveData | null): void {
     this.resolveDataSubject.next(data);
@@ -45,9 +50,7 @@ export class ApplicationResolveService {
     return this.previousUrl;
   }
 
-  setSelectedVulnerabilityIndex(index: number) {
-    this.selectedVulnerabilityIndex = index;
-  }
+
   setComputerUuid(uuid: string): void {
     this.computerUuid = uuid;
   }
@@ -56,15 +59,5 @@ export class ApplicationResolveService {
     return this.computerUuid;
   }
 
-  getSelectedVulnerabilityIndex(): number {
-    return this.selectedVulnerabilityIndex;
-  }
-  
-  setSelectedVulnerabilitySeverity(severity: string | null) {
-    this.selectedVulnerabilitySeverity = severity;
-  }
 
-  getSelectedVulnerabilitySeverity(): string | null {
-    return this.selectedVulnerabilitySeverity;
-  }
 }
