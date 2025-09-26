@@ -113,12 +113,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       )
       .subscribe({
         next: (response: HttpResponse<any>) => {
-          console.log(response)
       if (response === null) {
         console.log('No content');
         this.handleNoContent();
       } else {
-        console.log(response)
         this.handleSuccessResponse(response);
       }
     },
@@ -486,6 +484,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.start = initialIndex * this.pageSize;
     this.end = this.start + this.pageSize;
     const len = this.finalComputerDetails.length;
+    this.pageIndex = initialIndex;
+    this.recordIndex = this.pageIndex + 1;
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
@@ -513,10 +513,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
          this.updatePagedData(this.initialIndex);
      } else {
       this.finalComputerDetails = this.computerDetails.filter(computer => {
-        return computer.ipAddress.includes(searchValue) || computer.machineName.toLocaleLowerCase().includes(searchValue)
-        || computer.loggedInUserName.toLocaleLowerCase().includes(searchValue)
+        return computer.macAddress?.toLocaleLowerCase().includes(searchValue) || computer.machineName?.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
       });
      }
+     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
 
