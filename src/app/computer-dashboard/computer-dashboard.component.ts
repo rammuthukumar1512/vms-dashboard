@@ -196,7 +196,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         borderColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],    
         borderWidth: 0,
         borderRadius: 3,
-        barPercentage: 1,
+        barPercentage: 1
       }]
     },
     options: {
@@ -212,6 +212,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             display: true,
             text: 'Application Count'
           },
+          ticks: {
+            stepSize: 1,
+            callback: function(value) {
+            if (Number.isInteger(value)) {
+              return value;
+            }
+            return null;
+            }
+            },
           grace: "20%"
         },
         x: {
@@ -279,6 +288,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     meta.data.forEach((arc: any, index: number) => {
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
+    const chartValue = chart.data.datasets[0].data[index];
+
+    //Skip if this slice has 0 chartValue
+    if (!chartValue || chartValue === 0) return;
 
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
@@ -410,8 +423,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             formatter: (value, context) => {
               const data = context.chart.data.datasets[0].data as number[];
               const total = data.reduce((sum, val) => sum + val, 0);
-              const percentage = total ? ((value / total) * 100).toFixed(0) : '0';
-              if(isDataFetched) {return percentage + '%';}
+              const percentage = total ? ((value / total) * 100).toFixed(0) : '';
+              if(isDataFetched) {return +percentage > 0 ? percentage + '%' : '';}
               else {return ''}
             },
             color: '#ffffff',
