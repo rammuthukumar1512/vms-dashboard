@@ -8,11 +8,11 @@
   <div class="col-7 rounded-left">
     <div class="info-row d-flex flex-wrap gap-2 p-2">
       <div class="label">Machine Name:</div>
-      <div class="value" matTooltip="{{machineName}}">{{ machineName }}</div>
+      <div><span class="value" matTooltip="{{machineName}}">{{ machineName }}</span></div>
     </div>
     <div class="info-row d-flex flex-wrap gap-2 p-2">
       <div class="label">LoggedIn User:</div>
-      <div class="value" matTooltip="{{loggedInUserName}}">{{ loggedInUserName }}</div>
+      <div><span class="value" matTooltip="{{loggedInUserName}}">{{ loggedInUserName }}</span></div>
     </div>
   </div>
 
@@ -188,7 +188,8 @@
                           row.mediumVulnerabilityCount + row.lowVulnerabilityCount > 0,
                           'unresolved-row': !row.resolved,
         'normal-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
-                      row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved
+                      row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved,
+                      'selected-row': selectedApp && row.uuid === selectedApp.uuid
       }"
     ></tr>
         </table>
