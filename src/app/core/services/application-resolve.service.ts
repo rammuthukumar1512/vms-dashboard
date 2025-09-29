@@ -10,6 +10,12 @@ export interface ApplicationResolveData {
   
 }
 
+export interface DashboardState {
+  pageIndex?: number;
+  recordIndex?: number;
+  selectedAppUuid?: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -19,12 +25,20 @@ export class ApplicationResolveService {
   private lastShowedApp: ApplicationDetails | null= null;
   private previousUrl: string | null = null;
   private computerUuid: string | null = null;
+  private dashboardState: DashboardState | null = null;
   
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 
 
+// Add new methods
+setDashboardState(state: DashboardState): void {
+  this.dashboardState = state;
+}
 
+getDashboardState(): DashboardState | null {
+  return this.dashboardState;
+}
 
   setResolveData(data: ApplicationResolveData | null): void {
     this.resolveDataSubject.next(data);

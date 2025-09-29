@@ -19,7 +19,7 @@ import { ApiEndPoints } from '../../../environments/api-endpoints';
 import * as bootstrap from 'bootstrap';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
 import { VulnerabilityService } from '../../core/services/vulnerabilityService';
-import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router ,ActivatedRoute} from '@angular/router';
 // Register Chart.js components
 
 @Component({
@@ -52,7 +52,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   computer: ComputerDetails | null = null;
   
   appData: ApplicationDetails[] = [];
-
+selectedApp: ApplicationDetails | null = null;
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
   loggedInUserName = 'Unknown';
@@ -88,6 +88,7 @@ constructor(
   private http: HttpClient,
   private cdRef: ChangeDetectorRef,
   private toastService: ToastService,
+  private route: ActivatedRoute,// Add ActivatedRoute
   private applicationResolveService: ApplicationResolveService, 
   private vulnerabilityService: VulnerabilityService, private router: Router
 ) {}
@@ -122,7 +123,7 @@ ngOnInit(): void {
           this.machineName = 'Unknown';
           this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         }
-
+      this.restoreState();
         this.updatePagedData(this.initialIndex);
         this.cdRef.detectChanges();
 
@@ -195,6 +196,7 @@ ngOnInit(): void {
 this.pageSize = 5;
 this.pageIndex = 0;
 this.recordIndex = 1;
+  this.selectedApp = null; // Clear selected app on refresh
 this.updatePagedData(this.pageIndex);
 
     const appData = {
@@ -540,11 +542,45 @@ resetFilters(): void {
     this.updatePagedData(this.initialIndex);
   }
 
-  showVulnerabilities(app: ApplicationDetails): void {
-  console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
-  if(!this.lastShowedApp) {
+//   showVulnerabilities(app: ApplicationDetails): void {
+//   console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
+//   if(!this.lastShowedApp) {
+//   this.applicationResolveService.setLastShowedApp(app);
+//   }
+//   this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
+//     panelClass: 'vuln-dialog-panel',
+//     data: {
+//       softwareName: app.softwareName,
+//       vulnerabilities: app.vulnerabilities || [],
+//       severityCounts: {
+//         critical: app.criticalVulnerabilityCount,
+//         high: app.highVulnerabilityCount,
+//         medium: app.mediumVulnerabilityCount,
+//         low: app.lowVulnerabilityCount
+//       },
+//       cpeName: app.cpeName,
+//       resolved: app.resolved,
+//       uuid: app.uuid,
+//       softwareVersion: app.softwareVersion,
+//       vendor: app.vendor
+//     }
+//   });
+//   this.dialogRef.afterClosed().subscribe(() => {
+//     if(this.router.url?.match('computer-overview')) {
+//     this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
+//     }
+//   });
+// }
+
+showVulnerabilities(app: ApplicationDetails): void {
+  this.selectedApp = app;
   this.applicationResolveService.setLastShowedApp(app);
-  }
+  this.applicationResolveService.setDashboardState({
+    pageIndex: this.pageIndex,
+    recordIndex: this.recordIndex,
+    selectedAppUuid: app.uuid
+  });
+  console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
   this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
     panelClass: 'vuln-dialog-panel',
     data: {
@@ -564,8 +600,8 @@ resetFilters(): void {
     }
   });
   this.dialogRef.afterClosed().subscribe(() => {
-    if(this.router.url?.match('computer-overview')) {
-    this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
+    if (this.router.url?.match('computer-overview')) {
+      this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
     }
   });
 }
@@ -609,6 +645,43 @@ public setProcessIdTooltip(processIds: any, maxLength: number) {
    remainIds = totalIds - maxLength;
    }
    return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'Running Process IDs:\n' + tooltipText : 'Application is currently not running'
+}
+// restoreState(): void {
+//   const savedState = this.applicationResolveService.getDashboardState();
+//   if (savedState) {
+//     this.pageIndex = savedState.pageIndex || 0;
+//     this.recordIndex = savedState.recordIndex || 1;
+//     if (savedState.selectedAppUuid) {
+//       this.selectedApp = this.appData.find(app => app.uuid === savedState.selectedAppUuid) || null;
+//     }
+//   }
+// }
+restoreState(): void {
+  const savedState = this.applicationResolveService.getDashboardState();
+  const selectedAppUuid = this.route.snapshot.queryParams['selectedApp'];
+  if (selectedAppUuid && this.appData.length > 0) {
+    const selectedAppIndex = this.getFilteredApps().findIndex(app => app.uuid === selectedAppUuid);
+    if (selectedAppIndex !== -1) {
+      this.selectedApp = this.getFilteredApps()[selectedAppIndex];
+      this.pageIndex = Math.floor(selectedAppIndex / this.pageSize);
+      this.recordIndex = this.pageIndex + 1;
+      this.applicationResolveService.setDashboardState({
+        pageIndex: this.pageIndex,
+        recordIndex: this.recordIndex,
+        selectedAppUuid: selectedAppUuid
+      });
+    } else {
+      this.selectedApp = null;
+      this.pageIndex = 0;
+      this.recordIndex = 1;
+    }
+  } else if (savedState) {
+    this.pageIndex = savedState.pageIndex || 0;
+    this.recordIndex = savedState.recordIndex || 1;
+    if (savedState.selectedAppUuid) {
+      this.selectedApp = this.appData.find(app => app.uuid === savedState.selectedAppUuid) || null;
+    }
+  }
 }
    
 }

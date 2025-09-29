@@ -7,6 +7,10 @@
   color: #47a2fc;
   /* min-width: 200px; */
 }
+/* Add to existing CSS */
+.selected-row {
+  background-color: #e0e0e0 !important;
+}
 
 .comp-table {
   overflow-x: auto;
