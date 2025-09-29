@@ -458,7 +458,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
         if(this.selectedComputerId === computer?.id) computer.selected = true
         else computer.selected = false
-        return computer
+        return computer;
      });
     }
    }

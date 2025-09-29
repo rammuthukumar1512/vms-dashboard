@@ -13,7 +13,7 @@ export class LoaderInterceptor implements HttpInterceptor {
     this.loaderService.show();
 
     return next.handle(req).pipe(
-      timeout(120000),
+      timeout(180000),
       catchError((error) => {
         if(error.name === 'TimeoutError') {
         this.toastService.showErrorToast('Request timed out. Please try again.');
