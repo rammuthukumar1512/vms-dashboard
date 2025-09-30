@@ -396,7 +396,6 @@ drawSeverityChart(): void {
   }
   if (this.severityChartInstance) this.severityChartInstance.destroy();
 
-  console.log('Severity counts:', this.severityCounts); // Debug log
   this.severityChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -416,7 +415,7 @@ drawSeverityChart(): void {
                 x: { grid: { display: false }, title: { display: true, text: 'Severity Type' } } },
       plugins: {
         legend: { display: false },
-        tooltip: { callbacks: { label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities` } },
+        tooltip: { callbacks: { title: () => "Severity", label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities` } },
         datalabels: { color: 'gray', anchor: 'end', align: 'end', font: { weight: 'bold', size: 10 }, formatter: (value) => value }
       }
     }
