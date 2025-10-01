@@ -258,7 +258,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         },
         tooltip: {
           callbacks: {
-            label: function (context) {
+            title: () => "Severity", label: function (context) {
               return `${context.label}: ${context.parsed.y} applications`;
             }
           }

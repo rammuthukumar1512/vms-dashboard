@@ -21,8 +21,8 @@
   </div>
 </mat-toolbar>
 
-<div class="container-fluid parent-container">
-<div class="container-fluid user-report-container">
+<div class="container-fluid  pb-2 ">
+<div class="container-fluid border rounded-2 border-body-tertiary mt-2 pt-4">
   <!-- Top Box -->
   <div class="top-box bg-light border rounded-3 mb-3">
     <div class="bg-gray-shade  rounded-top-3">
@@ -32,29 +32,29 @@
       <div class="row">
         <div class="col-4 d-flex gap-2 align-items-center">
           <span class="label">Machine Name:</span>
-          <span class="value" matTooltip="{{machineName}}">{{machineName}}</span>
+         <span class="value"><span matTooltipPosition="right" matTooltip="{{machineName}}">{{machineName}}</span></span>
         </div>
         <div class="col-4 d-flex gap-2 align-items-center">
           <span class="label">MAC Address:</span>
-          <span class="value" matTooltip="{{macAddress}}">{{macAddress}}</span>
+          <span class="value"><span  matTooltipPosition="right"  matTooltip="{{macAddress}}">{{macAddress}}</span></span>
         </div>
         <div class="col-4 d-flex gap-2 align-items-center">
           <span class="label">IP Address:</span>
-          <span class="value" matTooltip="{{ipAddress}}">{{ipAddress}}</span>
+          <span class="value"><span  matTooltipPosition="right" matTooltip="{{ipAddress}}">{{ipAddress}}</span></span>
         </div>
       </div>
       <div class="row mt-2">
         <div class="col-4 d-flex gap-2 align-items-center">
           <span class="label">Serial Number:</span>
-          <span class="value" matTooltip="{{serialNumber}}">{{serialNumber}}</span>
+          <span class="value"><span  matTooltipPosition="right"  matTooltip="{{serialNumber}}">{{serialNumber}}</span></span>
         </div>
         <div class="col-4 d-flex gap-2 align-items-center">
           <span class="label">Email:</span>
-          <span class="value" matTooltip="{{loggedInUserEmail}}">{{loggedInUserEmail}}</span>
+          <span class="value" ><span  matTooltipPosition="below" matTooltip="{{loggedInUserEmail}}">{{loggedInUserEmail}}</span></span>
         </div>
         <div class="col-4 d-flex gap-2 align-items-center">
           <span class="label">Logged-in User:</span>
-          <span class="value" matTooltip="{{loggedInUserName}}">{{loggedInUserName}}</span>
+          <span class="value"><span  matTooltipPosition="below"  matTooltip="{{loggedInUserName}}">{{loggedInUserName}}</span></span>
         </div>
       </div>
     </div>

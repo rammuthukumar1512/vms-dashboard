@@ -23,17 +23,6 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
 }
 /* End of the header */
-.user-report-container {
-  /* min-height: 100vh; */
-  border: 1px solid #e2e0e0;
-  padding: 10px 10px 16px 10px; /* Add bottom padding */
-  box-sizing: border-box;
-  margin: 12px ;
-  display: flex;
-  flex-direction: column;
-  overflow-x: hidden; /* Prevents scroll */
-
-}
 
 .top-box {
   margin-bottom: 16px;
