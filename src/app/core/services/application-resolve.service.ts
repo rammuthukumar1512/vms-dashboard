@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SecurityContext } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApplicationDetails } from '../../models/computer.model';
+import { ApplicationDetails, ComputerDetails, SecurityReport } from '../../models/computer.model';
 
 export interface ApplicationResolveData {
   uuid: string;
@@ -26,7 +26,19 @@ export class ApplicationResolveService {
   private previousUrl: string | null = null;
   private computerUuid: string | null = null;
   private dashboardState: DashboardState | null = null;
-  
+  private computerDashPageIndex: number = 0;
+  private computerDashPageSize: number = 0;
+  private applicationDashPageIndex: number = 0;
+  private applicationDashPageSize: number = 0;
+  private securityReport: SecurityReport = {totalComputers: 0,
+    totalCriticalVulnerableApplications: 0,
+    totalHighVulnerableApplications: 0,
+    totalMediumVulnerableApplications: 0,
+    totalLowVulnerableApplications: 0,
+    vulnerableComputers: 0,
+    computerDetails: []};
+  private selectedComputerId: number = 1;
+  private selectedAppUuid: string | null = null;
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 
@@ -64,7 +76,6 @@ getDashboardState(): DashboardState | null {
     return this.previousUrl;
   }
 
-
   setComputerUuid(uuid: string): void {
     this.computerUuid = uuid;
   }
@@ -73,5 +84,49 @@ getDashboardState(): DashboardState | null {
     return this.computerUuid;
   }
 
+  setComputerDashPageIndex(index:number):void {
+    this.computerDashPageIndex = index;
+  }
+  getComputerDashPageIndex() {
+    return this.computerDashPageIndex;
+  }
+  setComputerDashPageSize(size:number):void {
+    this.computerDashPageSize = size;
+  }
+  getComputerDashPageSize() {
+    return this.computerDashPageSize;
+  }
+  setApplicationDashPageIndex(index:number):void {
+    this.applicationDashPageIndex = index;
+  }
+  getApplicationDashPageIndex() {
+    return this.applicationDashPageIndex;
+  }
+  setApplicationDashPageSize(size:number):void {
+    this.applicationDashPageSize = size;
+  }
+  getApplicationDashPageSize() {
+    return this.applicationDashPageSize;
+  }
 
+  setSecurityReport(securityReport:SecurityReport): void {
+     this.securityReport = securityReport;
+  }
+
+  getSecurityReport() {
+     return this.securityReport;
+  }
+
+  setSelectedComputerId(id: number): void {
+    this.selectedComputerId = id;
+  }
+  getSelectedComputerId() {
+    return this.selectedComputerId;
+  }
+  setSelectedAppUuid(id: string): void {
+    this.selectedAppUuid = id;
+  }
+  getSelectedAppUuid() {
+    return this.selectedAppUuid;
+  }
 }

@@ -52,7 +52,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   computer: ComputerDetails | null = null;
   
   appData: ApplicationDetails[] = [];
-selectedApp: ApplicationDetails | null = null;
+  selectedApp: ApplicationDetails | null = null;
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
   loggedInUserName = 'Unknown';
@@ -81,6 +81,7 @@ selectedApp: ApplicationDetails | null = null;
   dialogRef!: MatDialogRef<any>; // Add dialog reference
   previousUrl: string | null = null;
   currentUrl: string | null = null;
+  selectedAppUuid: string | null = null;
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -144,10 +145,10 @@ ngOnInit(): void {
 
      this.previousUrl = this.applicationResolveService.getPreviousUrl();
      this.lastResolvedApp = this.applicationResolveService.getLastShowedApp();
+     this.selectedAppUuid = this.applicationResolveService.getSelectedAppUuid();
      if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
          this.showVulnerabilities(this.lastResolvedApp);
      }
-
 }
 
   ngAfterViewInit(): void {
@@ -371,7 +372,8 @@ const leaderLinePlugin = {
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            const percentage = total ? ((value / total) * 100).toFixed(0) : '';
+            if(isDataFetched) {return +percentage > 0 ? percentage + '%' : '';}
             else return '';
             
           },
@@ -411,7 +413,15 @@ drawSeverityChart(): void {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      scales: { y: { beginAtZero: true, grid: { display: false }, title: { display: true, text: 'Vulnerability Count' },  grace: '20%' },
+      scales: { y: { beginAtZero: true, grid: { display: false }, title: { display: true, text: 'Vulnerability Count' },  grace: '20%', ticks: {
+            stepSize: 1,
+            callback: function(value) {
+            if (Number.isInteger(value)) {
+              return value;
+            }
+            return null;
+            }
+            }, },
                 x: { grid: { display: false }, title: { display: true, text: 'Severity Type' } } },
       plugins: {
         legend: { display: false },
@@ -563,6 +573,7 @@ resetFilters(): void {
 // }
 
 showVulnerabilities(app: ApplicationDetails): void {
+  console.log(app)
   this.selectedApp = app;
   this.applicationResolveService.setLastShowedApp(app);
   this.applicationResolveService.setDashboardState({
@@ -570,6 +581,8 @@ showVulnerabilities(app: ApplicationDetails): void {
     recordIndex: this.recordIndex,
     selectedAppUuid: app.uuid
   });
+  this.selectedAppUuid = app.uuid;
+  this.applicationResolveService.setSelectedAppUuid(this.selectedAppUuid);
   console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
   this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
     panelClass: 'vuln-dialog-panel',

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { ApiEndPoints } from '../../environments/api-endpoints';
@@ -13,10 +13,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { firstValueFrom, Subject, Subscription, takeUntil, timer } from 'rxjs';
+import { firstValueFrom, Subject, Subscription, takeUntil, timeout, timer } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
+import { ApplicationResolveService } from '../core/services/application-resolve.service';
 
 @Component({
   selector: 'app-computer-dashboard',
@@ -62,6 +63,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   start:number = 0;
   end:number = 0;
   toDay: String = new Date().toLocaleDateString();
+  previousUrl: String | null = null;
   currentTime: Date = new Date();
   timeSubscription?: Subscription;
   private destroy$ = new Subject<void>();
@@ -73,11 +75,27 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>;
 
   constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService,
-    private dialog: MatDialog
+    private dialog: MatDialog, private applicationResolveService: ApplicationResolveService,private cdRef: ChangeDetectorRef
   ) {};
 
   ngOnInit(): void {
-    this.fetchSecurityData();
+    this.previousUrl = this.applicationResolveService.getPreviousUrl();
+    if(!this.previousUrl?.match('vulnerability-metrics')) this.fetchSecurityData();
+    else {
+      this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+      this.pageSize = this.applicationResolveService.getComputerDashPageSize();
+      this.securityData = this.applicationResolveService.getSecurityReport();
+      this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
+      this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
+      this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
+      this.finalComputerDetails = this.computerDetails;
+      this.totalComputers = this.finalComputerDetails.length;
+      this.updatePagedData(this.initialIndex);
+      setTimeout(()=>{
+         this.drawVulnBasedComputerChart();
+         this.drawSeverityBasedComputerChart();
+      },0);
+    }
     let now = new Date();
     let initialDelay = (60 - now.getSeconds()) * 1000;
     this.timeSubscription = timer(initialDelay, 60000).subscribe(()=>{
@@ -85,8 +103,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     });
   }
   ngAfterViewInit(): void {
-    this.drawVulnBasedComputerChart();
-    this.drawSeverityBasedComputerChart();
+    // this.drawVulnBasedComputerChart();
+    // this.drawSeverityBasedComputerChart();
   }
 
   ngOnDestroy(): void {
@@ -134,6 +152,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   private handleSuccessResponse(data: any): void {
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
+    this.applicationResolveService.setSecurityReport(this.securityData);
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
     this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
     this.finalComputerDetails = this.computerDetails;
@@ -196,7 +215,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         borderColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],    
         borderWidth: 0,
         borderRadius: 3,
-        barPercentage: 1,
+        barPercentage: 1
       }]
     },
     options: {
@@ -212,6 +231,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             display: true,
             text: 'Application Count'
           },
+          ticks: {
+            stepSize: 1,
+            callback: function(value) {
+            if (Number.isInteger(value)) {
+              return value;
+            }
+            return null;
+            }
+            },
           grace: "20%"
         },
         x: {
@@ -251,7 +279,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       
     }
   });
-
+     this.cdRef.detectChanges();
   }
 
   public drawVulnBasedComputerChart(): void {
@@ -279,6 +307,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     meta.data.forEach((arc: any, index: number) => {
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
+    const chartValue = chart.data.datasets[0].data[index];
+
+    //Skip if this slice has 0 chartValue
+    if (!chartValue || chartValue === 0) return;
 
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
@@ -410,8 +442,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             formatter: (value, context) => {
               const data = context.chart.data.datasets[0].data as number[];
               const total = data.reduce((sum, val) => sum + val, 0);
-              const percentage = total ? ((value / total) * 100).toFixed(0) : '0';
-              if(isDataFetched) {return percentage + '%';}
+              const percentage = total ? ((value / total) * 100).toFixed(0) : '';
+              if(isDataFetched) {return +percentage > 0 ? percentage + '%' : '';}
               else {return ''}
             },
             color: '#ffffff',
@@ -427,7 +459,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   public sendAppData(data: ComputerDetails | null, computerId: number): void {
+     this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
+     this.applicationResolveService.setComputerDashPageSize(this.pageSize);
+     console.log(this.pageSize,"ppppppppppp")
      this.selectedComputerId = computerId;
+     this.applicationResolveService.setSelectedComputerId(this.selectedComputerId);
      this.applicationDashboardComponent['resetFilters']();
      const appData = { machineName: data?.machineName || 'Unknown',
       loggedInUserName: data?.loggedInUserName || 'Unknown', loggedInUserEmail: data?.loggedInUserEmail,
@@ -452,6 +488,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   public nextPage(): void {
     if(this.pageIndex >= 0 && this.pageIndex < this.totalPages && this.pageIndex !== this.totalPages - 1) {
     this.pageIndex++;
+    this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
+    this.applicationResolveService.setComputerDashPageSize(this.pageSize);
     this.recordIndex = this.pageIndex + 1;
     this.start = this.pageIndex * this.pageSize;
     this.end = this.start + this.pageSize;
@@ -466,6 +504,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     if(this.pageIndex > 0) {
       this.pageIndex--;
       console.log(this.pageIndex)
+      this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
+      this.applicationResolveService.setComputerDashPageSize(this.pageSize);
       this.recordIndex = this.pageIndex + 1;
       this.start = this.pageIndex * this.pageSize;
       this.end = this.start + this.pageSize;
@@ -478,6 +518,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
   
   public updatePagedData(initialIndex:number): void {
+    console.log(this.finalComputerDetails,"cccccccc")
+    console.log(this.pageSize,"jkhkjhhkjhkkkkkkkkkkkk")
     let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
     this.totalPages = pages;
     this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
@@ -485,7 +527,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.end = this.start + this.pageSize;
     const len = this.finalComputerDetails.length;
     this.pageIndex = initialIndex;
-    this.recordIndex = this.pageIndex + 1;
+    this.recordIndex = this.pageIndex + 1;  
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
@@ -495,12 +537,14 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      });
    }
 
-  public onPageSizeChange(event: number): void {
-   this.pageSize = event;
+  public onPageSizeChange(size: number): void {
+   this.pageSize = size;
+   this.applicationResolveService.setComputerDashPageSize(this.pageSize);
    let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
    this.totalPages = pages;
    this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
    this.pageIndex = 0;
+   this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
    this.recordIndex = this.pageIndex + 1;
    this.updatePagedData(this.pageIndex);
    }
