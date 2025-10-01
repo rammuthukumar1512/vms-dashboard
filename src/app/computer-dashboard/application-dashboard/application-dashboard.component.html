@@ -189,7 +189,7 @@
                           'unresolved-row': !row.resolved,
         'normal-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
                       row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved,
-                      'selected-row': selectedApp && row.uuid === selectedApp.uuid
+        'selected-row': row.uuid === selectedAppUuid              
       }"
     ></tr>
         </table>

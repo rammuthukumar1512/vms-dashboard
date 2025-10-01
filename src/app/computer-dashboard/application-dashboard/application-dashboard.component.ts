@@ -52,7 +52,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   computer: ComputerDetails | null = null;
   
   appData: ApplicationDetails[] = [];
-selectedApp: ApplicationDetails | null = null;
+  selectedApp: ApplicationDetails | null = null;
   vulnerableSoftwareCount = 0;
   machineName = 'Unknown';
   loggedInUserName = 'Unknown';
@@ -81,6 +81,7 @@ selectedApp: ApplicationDetails | null = null;
   dialogRef!: MatDialogRef<any>; // Add dialog reference
   previousUrl: string | null = null;
   currentUrl: string | null = null;
+  selectedAppUuid: string | null = null;
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -144,10 +145,10 @@ ngOnInit(): void {
 
      this.previousUrl = this.applicationResolveService.getPreviousUrl();
      this.lastResolvedApp = this.applicationResolveService.getLastShowedApp();
+     this.selectedAppUuid = this.applicationResolveService.getSelectedAppUuid();
      if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
          this.showVulnerabilities(this.lastResolvedApp);
      }
-
 }
 
   ngAfterViewInit(): void {
@@ -573,6 +574,7 @@ resetFilters(): void {
 // }
 
 showVulnerabilities(app: ApplicationDetails): void {
+  console.log(app)
   this.selectedApp = app;
   this.applicationResolveService.setLastShowedApp(app);
   this.applicationResolveService.setDashboardState({
@@ -580,6 +582,8 @@ showVulnerabilities(app: ApplicationDetails): void {
     recordIndex: this.recordIndex,
     selectedAppUuid: app.uuid
   });
+  this.selectedAppUuid = app.uuid;
+  this.applicationResolveService.setSelectedAppUuid(this.selectedAppUuid);
   console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
   this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
     panelClass: 'vuln-dialog-panel',
