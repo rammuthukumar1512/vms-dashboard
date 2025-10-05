@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -45,6 +45,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
  @ViewChild('appChart') appChart: ElementRef<HTMLCanvasElement> | undefined;
  @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
  @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>; // Add template reference
+ @ViewChildren('applicationTableRow', { read: ElementRef }) applicationTableRows!: QueryList<ElementRef>;
 
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
@@ -82,6 +83,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   previousUrl: string | null = null;
   currentUrl: string | null = null;
   selectedAppUuid: string | null = null;
+  selectedApplicationIndex:number = 0;
 
 constructor(
   private sharedDataService: SharedDataService,
@@ -146,10 +148,12 @@ ngOnInit(): void {
      this.previousUrl = this.applicationResolveService.getPreviousUrl();
      this.lastResolvedApp = this.applicationResolveService.getLastShowedApp();
      this.selectedAppUuid = this.applicationResolveService.getSelectedAppUuid();
-     this.applicationResolveService.getApplicationDashPageIndex();
-     this.applicationResolveService.getApplicationDashPageSize();
+     this.initialIndex = this.applicationResolveService.getApplicationDashPageIndex();
+     this.pageSize = this.applicationResolveService.getApplicationDashPageSize();
+     this.selectedApplicationIndex = this.applicationResolveService.getSelectedApplicationIndex();
      if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
-         this.showVulnerabilities(this.lastResolvedApp);
+         this.showVulnerabilities(this.lastResolvedApp, this.selectedApplicationIndex);
+         this.updatePagedData(this.initialIndex);
      }
 }
 
@@ -159,7 +163,7 @@ ngOnInit(): void {
     const appData = JSON.parse(lastResolvedApp);
     const app = this.appData.find(a => a.softwareName === appData.softwareName && a.uuid === appData.uuid);
     if (app) {
-      this.showVulnerabilities(app);
+      this.showVulnerabilities(app, this.selectedApplicationIndex);
       localStorage.removeItem('lastResolvedApp');
     }
    const tooltipTriggerList = Array.from(
@@ -169,7 +173,14 @@ ngOnInit(): void {
       new bootstrap.Tooltip(el);
     });
   }
-
+  
+  if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
+    if (this.applicationTableRows && this.applicationTableRows.length > 0) {
+      const selectedRow = this.applicationTableRows.toArray()[this.selectedApplicationIndex]?.nativeElement;
+      console.log(selectedRow, "selectedRow")
+      selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
+    }
+  }
 // Restore page state
   const savedState = JSON.parse(localStorage.getItem('currentDashboardState') || '{}');
   if (savedState.pageIndex) {
@@ -574,11 +585,12 @@ resetFilters(): void {
 //   });
 // }
 
-showVulnerabilities(app: ApplicationDetails): void {
+showVulnerabilities(app: ApplicationDetails, index: number): void {
   console.log(app)
   this.selectedApp = app;
   this.applicationResolveService.setApplicationDashPageIndex(this.pageIndex);
   this.applicationResolveService.setApplicationDashPageSize(this.pageSize);
+  this.applicationResolveService.setSelectedApplicationIndex(index);
   this.applicationResolveService.setLastShowedApp(app);
   this.selectedAppUuid = app.uuid;
   this.applicationResolveService.setSelectedAppUuid(this.selectedAppUuid);
@@ -604,6 +616,7 @@ showVulnerabilities(app: ApplicationDetails): void {
   this.dialogRef.afterClosed().subscribe(() => {
     if (this.router.url?.match('computer-overview')) {
       this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
+      this.vulnerabilityService.setSelectedVulnerabilityIndex(-1);
     }
   });
 }

@@ -178,10 +178,10 @@
 
           <!-- Table Rows -->
            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr
+    <tr #applicationTableRow
       mat-row
-      *matRowDef="let row; columns: displayedColumns"
-      (click)="showVulnerabilities(row)"
+      *matRowDef="let row;let i = index; columns: displayedColumns"
+      (click)="showVulnerabilities(row,i)"
       class="cursor-pointer"
       [ngClass]="{
         'vulnerable-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
