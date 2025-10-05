@@ -39,6 +39,7 @@ export class ApplicationResolveService {
     computerDetails: []};
   private selectedComputerId: number = 1;
   private selectedAppUuid: string | null = null;
+  private selectedApplicationIndex: number = 0;
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 
@@ -128,5 +129,11 @@ getDashboardState(): DashboardState | null {
   }
   getSelectedAppUuid() {
     return this.selectedAppUuid;
+  }
+  setSelectedApplicationIndex(number: number): void {
+    this.selectedApplicationIndex = number;
+  }
+  getSelectedApplicationIndex() {
+    return this.selectedApplicationIndex;
   }
 }
