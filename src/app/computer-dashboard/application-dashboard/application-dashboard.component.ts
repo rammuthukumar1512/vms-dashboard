@@ -146,6 +146,8 @@ ngOnInit(): void {
      this.previousUrl = this.applicationResolveService.getPreviousUrl();
      this.lastResolvedApp = this.applicationResolveService.getLastShowedApp();
      this.selectedAppUuid = this.applicationResolveService.getSelectedAppUuid();
+     this.applicationResolveService.getApplicationDashPageIndex();
+     this.applicationResolveService.getApplicationDashPageSize();
      if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
          this.showVulnerabilities(this.lastResolvedApp);
      }
@@ -576,12 +578,9 @@ resetFilters(): void {
 showVulnerabilities(app: ApplicationDetails): void {
   console.log(app)
   this.selectedApp = app;
+  this.applicationResolveService.setApplicationDashPageIndex(this.pageIndex);
+  this.applicationResolveService.setApplicationDashPageSize(this.pageSize);
   this.applicationResolveService.setLastShowedApp(app);
-  this.applicationResolveService.setDashboardState({
-    pageIndex: this.pageIndex,
-    recordIndex: this.recordIndex,
-    selectedAppUuid: app.uuid
-  });
   this.selectedAppUuid = app.uuid;
   this.applicationResolveService.setSelectedAppUuid(this.selectedAppUuid);
   console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
