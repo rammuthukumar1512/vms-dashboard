@@ -115,6 +115,13 @@ ngOnInit(): void {
           });
 
           this.appData = sortedData;
+          
+const savedFilter = this.applicationResolveService.getSeverityFilter();
+if (savedFilter) {
+  this.severityFilter = savedFilter;
+  this.activeFilter = savedFilter;
+  this.updatePagedData(0);
+}
           this.allApplications = sortedData;
           this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
           this.calculateSeverityCounts();
@@ -448,6 +455,7 @@ drawSeverityChart(): void {
   filterBySeverity(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
     this.severityFilter = severity;
     this.activeFilter = severity; // Set the active filter
+      this.applicationResolveService.setSeverityFilter(severity); // <-- Save it
     this.updatePagedData(0);
   }
 getFilteredApps(): ApplicationDetails[] {
