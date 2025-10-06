@@ -158,7 +158,8 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  color: #0d6efd;
+  /* color: #0d6efd; */
+    color: #0e7dad;
   flex: 1;
 }
 
@@ -222,14 +223,14 @@ mat-slide-toggle {
 }
 
 .severity-medium {
-  background-color: #86BBD8;
+  background-color: #33658A;
   color: black;
   padding: 6px 12px;
   border-radius: 3px;
 }
 
-.severity-low {
-  background-color: #33658A;
+.severity-low {  
+  background-color: #86BBD8;
   color: white;
   padding: 6px 12px;
   border-radius: 3px;
@@ -396,14 +397,14 @@ mat-slide-toggle {
 
 .metric-label {
   font-size: 0.9rem;
-  color: #6c757d;
+  color:#68696a;
   font-weight: 500;
 }
 
 .metric-value {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #0d6efd;
+  color: #0e7dad;
 }
 
 /* Responsive Design */

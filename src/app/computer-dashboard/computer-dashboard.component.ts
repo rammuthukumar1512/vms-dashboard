@@ -211,8 +211,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       datasets: [{
         label: 'Computer Count',
         data: [criticalVulnerableApplications, highVulnerableApplications, mediumVulnerableApplications, lowVulnerableApplications],
-        backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],   
-        borderColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],    
+        backgroundColor: ['#F26419', '#F6AE2D', '#33658A', '#86BBD8'],   
+        borderColor: ['#F26419', '#F6AE2D', '#33658A' ,'#86BBD8'],    
         borderWidth: 0,
         borderRadius: 3,
         barPercentage: 1
@@ -430,7 +430,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             position: 'bottom'
           },
           tooltip: {
-            callbacks: {
+            callbacks: { title: () => "Risk Status",
               label: function (context) {
                 const label = context.label || '';
                 const value = context.parsed || 0;
