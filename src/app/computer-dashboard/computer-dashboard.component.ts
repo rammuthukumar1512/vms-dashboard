@@ -68,6 +68,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   timeSubscription?: Subscription;
   private destroy$ = new Subject<void>();
   dialogRef!: MatDialogRef<any>;
+  syncComputerData: boolean = false;
 
   @ViewChild('computerInfo') computerInfo: ElementRef<HTMLElement> | undefined;
   @ViewChild('compTableParent') compTableParent: ElementRef<HTMLElement> | undefined;
@@ -103,8 +104,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     });
   }
   ngAfterViewInit(): void {
-    // this.drawVulnBasedComputerChart();
-    // this.drawSeverityBasedComputerChart();
+    if(!this.computerChartInstance) this.drawVulnBasedComputerChart();
+    if(!this.severityChartInstance) this.drawSeverityBasedComputerChart();
   }
 
   ngOnDestroy(): void {
@@ -157,7 +158,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
     this.finalComputerDetails = this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
-    this.sendAppData(this.computerDetails[0] ?? null, 1);
+    if(this.syncComputerData) {
+       const selectedComputer = this.computerDetails.find((value, index) =>{
+          return this.selectedComputerId == value.id
+       });
+       this.sendAppData(selectedComputer ?? null, this.selectedComputerId);
+    } else {
+       this.sendAppData(this.computerDetails[0] ?? null, 1);
+       this.syncComputerData = false;
+    }
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
@@ -189,6 +198,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           this.finalComputerDetails = this.computerDetails;
           this.updatePagedData(this.initialIndex);
      }
+  }
+
+  public syncSecurityData() {
+      this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+      this.syncComputerData = true;
+      this.fetchSecurityData();
   }
 
   public drawSeverityBasedComputerChart() {
@@ -461,7 +476,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   public sendAppData(data: ComputerDetails | null, computerId: number): void {
      this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
      this.applicationResolveService.setComputerDashPageSize(this.pageSize);
-     console.log(this.pageSize,"ppppppppppp")
      this.selectedComputerId = computerId;
      this.applicationResolveService.setSelectedComputerId(this.selectedComputerId);
      this.applicationDashboardComponent['resetFilters']();
@@ -480,6 +494,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   public getPage(page: number): void {
     this.recordIndex = page - 1;
     this.pageIndex = this.recordIndex;
+    this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
     this.start = this.recordIndex * this.pageSize;
     this.end = this.start + this.pageSize;
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end);
