@@ -15,7 +15,7 @@
           </div>
           <div class="col-4 d-flex flex-column justify-content-center align-items-center"><span class="text-center">System Inventory</span></div>
           <div class="col-4 d-flex justify-content-end align-items-center pe-3">
-            <button class="btn btn-primary d-flex align-items-center p-1" (click)="fetchSecurityData()"><span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span> <span>Sync Now</span> </button>
+            <button class="btn btn-primary d-flex align-items-center p-1" (click)="syncSecurityData()"><span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span> <span>Sync Now</span> </button>
           </div>
           </div>
           
@@ -82,7 +82,7 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <tr class="cursor-pointer" [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id)">
+                      <tr class="cursor-pointer" [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id, i)">
                       <td class="text-secondary word-break">{{computer.macAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                       <td class="word-break">{{computer.machineName}}</td>
                       <td class="word-break">{{computer.loggedInUserName}}</td>
