@@ -42,6 +42,16 @@ export class ApplicationResolveService {
   private selectedApplicationIndex: number = 0;
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
+// application-resolve.service.ts
+private severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;
+
+setSeverityFilter(filter: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
+  this.severityFilter = filter;
+}
+
+getSeverityFilter(): 'Critical' | 'High' | 'Medium' | 'Low' | null {
+  return this.severityFilter;
+}
 
 
 // Add new methods
