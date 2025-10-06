@@ -114,12 +114,12 @@ td {
 
 /* Buttons for severity (no change) */
 .custom-low:hover, .custom-low:focus {
-  background-color: #33658A !important;
+  background-color: #86BBD8 !important;
   color: white !important;
 }
 
 .custom-medium:hover, .custom-medium:focus {
-  background-color: #86BBD8 !important;
+  background-color: #33658A !important;
   color: white !important;
 }
 
@@ -168,12 +168,12 @@ td {
 }
 
 .active-medium {
-  background-color: #86BBD8 !important;
+  background-color: #33658A !important;
   color: white !important;
 }
 
-.active-low {
-  background-color: #33658A !important;
+.active-low { 
+  background-color: #86BBD8 !important; 
   color: white !important;
 }
 

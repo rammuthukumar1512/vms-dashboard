@@ -367,7 +367,7 @@ const leaderLinePlugin = {
         },
       plugins: {
         legend: { display: isDataFetched ? true : false, position: 'bottom' },
-        tooltip: { callbacks: { label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
+        tooltip: { callbacks: { title: () => "Risk Status", label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
         datalabels: {
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
@@ -405,7 +405,7 @@ drawSeverityChart(): void {
       datasets: [{
         label: 'Vulnerability Count',
         data: [this.severityCounts.critical, this.severityCounts.high, this.severityCounts.medium, this.severityCounts.low],
-        backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],
+        backgroundColor: ['#F26419', '#F6AE2D', '#33658A', '#86BBD8'],
         borderRadius: 3,
         barPercentage: 0.9
       }]

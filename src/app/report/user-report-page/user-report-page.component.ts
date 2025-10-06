@@ -297,7 +297,7 @@ private restoreStateAndSelect(): void {
         plugins: {
           legend: { display: isDataFetched, position: 'bottom' },
           tooltip: {
-            callbacks: {
+            callbacks: {  title: () => "Risk Status",
               label: (context) => { 
                 return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : 'No Data';
               }
@@ -343,7 +343,7 @@ private restoreStateAndSelect(): void {
         datasets: [{
           label: 'Vulnerability Count',
           data: [criticalCount, highCount, mediumCount, lowCount],
-         backgroundColor: ['#F26419', '#F6AE2D', '#86BBD8', '#33658A'],
+         backgroundColor: ['#F26419', '#F6AE2D','#33658A','#86BBD8'],
           borderRadius: 3,
           barPercentage:0.9
         }]
@@ -380,7 +380,7 @@ private restoreStateAndSelect(): void {
         plugins: {
           legend: { display: false },
           tooltip: {
-            callbacks: {
+            callbacks: {  title: () => "Severity",
               label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities`
             }
           },
