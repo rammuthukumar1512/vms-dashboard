@@ -173,9 +173,9 @@ export class LikelyCpeDialogComponent {
       if (result) {
         const body = {
           uuid: this.data.uuid,
-          softwareName: this.data.softwareName.replace(/\s+/g, '').toLowerCase(),
+          softwareName: this.data.softwareName,
           softwareVersion: this.data.softwareVersion,
-          vendorName: this.data.vendor.replace(/\s+/g, '').toLowerCase()
+          vendorName: this.data.vendor
         };
 
         this.http.post(
