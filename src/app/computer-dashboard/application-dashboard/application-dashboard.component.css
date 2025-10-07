@@ -1,13 +1,10 @@
-/* Existing styles (no change here) */
 .chart {
   height: 230px;
   margin: auto;
   padding: 8px 0;
   border-radius: 12px;
   color: #47a2fc;
-  /* min-width: 200px; */
 }
-/* Add to existing CSS */
 .selected-row {
   background-color: #e0e0e0 !important;
 }
@@ -96,10 +93,6 @@ td {
   font-size: 1.25rem;
 }
 
-/* .machine {
-  color: rgb(245, 114, 104);
-  text-overflow: ellipsis;
-} */
 
 .machine {
   color: rgb(245, 114, 104);
@@ -107,12 +100,11 @@ td {
   white-space: nowrap;
   overflow: hidden;
   display: inline-block;
-  max-width: 150px; /* or a fixed width like width: 150px */
+  max-width: 150px; 
   vertical-align: middle;
 }
 
 
-/* Buttons for severity (no change) */
 .custom-low:hover, .custom-low:focus {
   background-color: #86BBD8 !important;
   color: white !important;
@@ -148,7 +140,6 @@ td {
   height: 44px !important;
 }
 
-/* Base styles for all severity buttons (no change) */
 .severity-btn {
   border: 1px solid #ccc;
   color: black;
@@ -156,7 +147,6 @@ td {
   transition: background-color 0.2s, color 0.2s;
 }
 
-/* ACTIVE Styles (no change) */
 .active-critical {
   background-color: #F26419 !important;
   color: white !important;
@@ -217,16 +207,13 @@ td {
 
 .headerDetails {
   width: 400px;
-  /* background-color: #007bff; */
 }
 
 
-/* General pagination spacing (add small space between buttons) */
 .col-7 {
-  gap: 5px; /* Small space between all pagination elements */
+  gap: 5px; 
 }
 
-/* No change needed for bg-blue-theme; it's not used in the provided code */
 .bg-blue-theme {
   background-color: #3366ffe7;
 }
@@ -258,7 +245,7 @@ td {
 @media (max-width: 767px) {
   .notify-button-container {
     width: 100%;
-    justify-content: flex-start; /* Align to left under info on mobile */
+    justify-content: flex-start; 
     margin: 10px 0 0 10px;
   }
 
@@ -271,11 +258,11 @@ td {
     margin-bottom: 7px;
   }
   
-  /* No change needed for pagination container; add gap for buttons */
+  
   .col-7 {
-    gap: 10px; /* Add small space between pagination elements */
-    flex-wrap: nowrap; /* Allow wrapping if needed on very small screens */
-    justify-content: center; /* Center pagination on mobile */
+    gap: 10px; 
+    flex-wrap: nowrap; 
+    justify-content: center;
   }
 
   .page-size-width{

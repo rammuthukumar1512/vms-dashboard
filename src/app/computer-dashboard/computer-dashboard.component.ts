@@ -132,14 +132,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       .subscribe({
         next: (response: HttpResponse<any>) => {
       if (response === null) {
-        console.log('No content');
         this.handleNoContent();
       } else {
         this.handleSuccessResponse(response);
       }
     },
     error: (error: HttpErrorResponse) => {
-      console.error('HTTP Error:', error.status, error.message);
       this.handleErrorResponse(error);
     }
       });
@@ -165,7 +163,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleErrorResponse(error: any): void {
-    console.error('Error fetching security data:', error);
     if (error.status === 0) {
       this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
@@ -461,7 +458,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   public sendAppData(data: ComputerDetails | null, computerId: number): void {
      this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
      this.applicationResolveService.setComputerDashPageSize(this.pageSize);
-     console.log(this.pageSize,"ppppppppppp")
      this.selectedComputerId = computerId;
      this.applicationResolveService.setSelectedComputerId(this.selectedComputerId);
      this.applicationDashboardComponent['resetFilters']();
@@ -503,7 +499,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   public previousPage(): void {
     if(this.pageIndex > 0) {
       this.pageIndex--;
-      console.log(this.pageIndex)
       this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
       this.applicationResolveService.setComputerDashPageSize(this.pageSize);
       this.recordIndex = this.pageIndex + 1;
@@ -518,8 +513,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
   
   public updatePagedData(initialIndex:number): void {
-    console.log(this.finalComputerDetails,"cccccccc")
-    console.log(this.pageSize,"jkhkjhhkjhkkkkkkkkkkkk")
     let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
     this.totalPages = pages;
     this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
@@ -561,7 +554,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
       });
      }
-     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
 
@@ -575,7 +567,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showSuccessToast(response.message);
-        }, error: (error)=>{
+        }, error: ()=>{
              this.toastService.showErrorToast('Send Notification Failed');
         }
       })

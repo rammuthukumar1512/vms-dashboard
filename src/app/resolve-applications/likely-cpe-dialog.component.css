@@ -64,20 +64,15 @@ p{
 }
 
 
-/* Ensure the add button always appears styled properly */
 button[mat-raised-button] {
   background-color: #1976d2; /* Default Material primary color */
   color: white;
 }
 
-/* Optional: make sure hover works */
 button[mat-raised-button]:hover {
   background-color: #155a9c;
 
 }
-/* @media screen and (max-width: 768px) {
-  
-} */
 
 
 .cpe-row {
