@@ -1,6 +1,6 @@
-import { Injectable, SecurityContext } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApplicationDetails, ComputerDetails, SecurityReport } from '../../models/computer.model';
+import { ApplicationDetails, SecurityReport } from '../../models/computer.model';
 
 export interface ApplicationResolveData {
   uuid: string;

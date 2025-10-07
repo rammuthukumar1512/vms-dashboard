@@ -133,14 +133,12 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       .subscribe({
         next: (response: HttpResponse<any>) => {
       if (response === null) {
-        console.log('No content');
         this.handleNoContent();
       } else {
         this.handleSuccessResponse(response);
       }
     },
     error: (error: HttpErrorResponse) => {
-      console.error('HTTP Error:', error.status, error.message);
       this.handleErrorResponse(error);
     }
       });
@@ -174,7 +172,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleErrorResponse(error: any): void {
-    console.error('Error fetching security data:', error);
     if (error.status === 0) {
       this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
@@ -573,7 +570,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
       });
      }
-     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
 
@@ -587,7 +583,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showSuccessToast(response.message);
-        }, error: (error)=>{
+        }, error: ()=>{
              this.toastService.showErrorToast('Send Notification Failed');
         }
       })

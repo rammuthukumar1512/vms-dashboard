@@ -133,11 +133,9 @@ export class LikelyCpeDialogComponent {
     ).subscribe({
       next: (response) => {
         this.likelyCpeNames = Array.isArray(response) ? response : [];
-        console.log('Fetched likely CPEs:', this.likelyCpeNames);
         this.cpeLoadingComplete = true;
       },
-      error: (error) => {
-        console.error('Error fetching likely CPE names:', error);
+      error: (_error) => {
         this.toastService.showErrorToast('No Likely CPEs Found');
         this.likelyCpeNames = [];
         this.cpeLoadingComplete = true;
@@ -184,8 +182,7 @@ export class LikelyCpeDialogComponent {
           next: () => {
             this.dialogRef.close({ cpeName: normalizedCpeName });
           },
-          error: (error) => {
-            console.error('Error adding CPE name:', error);
+          error: (_error) => {
             this.toastService.showErrorToast('Failed to add CPE Name');
           }
         });
