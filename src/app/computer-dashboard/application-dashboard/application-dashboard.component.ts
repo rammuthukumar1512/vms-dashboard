@@ -94,6 +94,46 @@ constructor(
   private applicationResolveService: ApplicationResolveService, 
   private vulnerabilityService: VulnerabilityService, private router: Router
 ) {}
+public resetApplicationData(): void {
+  // Clear all dashboard state
+  this.appData = [];
+  this.filteredAppData = [];
+  this.pagedAppData = [];
+  this.allApplications = [];
+  this.selectedApp = null;
+  this.vulnerableSoftwareCount = 0;
+  this.machineName = 'Unknown';
+  this.loggedInUserName = 'Unknown';
+  this.loggedInUserEmail = 'Unknown';
+  this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+  this.activeFilter = null;
+  this.severityFilter = null;
+  this.totalPages = 0;
+  this.totalRecords = [];
+  this.pageIndex = 0;
+  this.recordIndex = 1;
+  this.pageSizes = [0];
+  this.start = 0;
+  this.end = 0;
+  this.searchValue = '';
+
+  // Destroy charts safely
+  if (this.appChartInstance) {
+    this.appChartInstance.destroy();
+    this.appChartInstance = undefined;
+  }
+  if (this.severityChartInstance) {
+    this.severityChartInstance.destroy();
+    this.severityChartInstance = undefined;
+  }
+
+  // Redraw empty charts to show "No Data"
+  setTimeout(() => {
+    this.drawAppChart();
+    this.drawSeverityChart();
+    this.cdRef.detectChanges();
+  }, 0);
+}
 
 ngOnInit(): void {
   this.sharedDataService.currentData$
@@ -206,9 +246,11 @@ if (savedFilter) {
 
   public sendAppData(data: ComputerDetails | null , _computerId: number): void {
       // this.selectedComputerId = computerId;
+        if (!data) {
+    this.resetApplicationData();
+    return;
+  }
   this.computer = data;
-
-  // // Reset filters in Application Dashboard
 this.pageSize = 5;
 this.pageIndex = 0;
 this.recordIndex = 1;
