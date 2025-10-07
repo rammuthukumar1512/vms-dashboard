@@ -12,7 +12,9 @@ import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Chart } from 'chart.js';
+import { Chart } from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
+import { Subject, takeUntil } from 'rxjs';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
@@ -112,6 +114,13 @@ ngOnInit(): void {
           });
 
           this.appData = sortedData;
+          
+const savedFilter = this.applicationResolveService.getSeverityFilter();
+if (savedFilter) {
+  this.severityFilter = savedFilter;
+  this.activeFilter = savedFilter;
+  this.updatePagedData(0);
+}
           this.allApplications = sortedData;
           this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
           this.calculateSeverityCounts();
@@ -438,6 +447,7 @@ drawSeverityChart(): void {
   filterBySeverity(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
     this.severityFilter = severity;
     this.activeFilter = severity; // Set the active filter
+      this.applicationResolveService.setSeverityFilter(severity); // <-- Save it
     this.updatePagedData(0);
   }
 getFilteredApps(): ApplicationDetails[] {
