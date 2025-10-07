@@ -518,7 +518,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   public previousPage(): void {
     if(this.pageIndex > 0) {
       this.pageIndex--;
-      console.log(this.pageIndex)
       this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
       this.applicationResolveService.setComputerDashPageSize(this.pageSize);
       this.recordIndex = this.pageIndex + 1;
@@ -533,8 +532,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
   
   public updatePagedData(initialIndex:number): void {
-    console.log(this.finalComputerDetails,"cccccccc")
-    console.log(this.pageSize,"jkhkjhhkjhkkkkkkkkkkkk")
     let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
     this.totalPages = pages;
     this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
