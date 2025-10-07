@@ -11,15 +11,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BarController, Chart, LinearScale } from 'chart.js';
+import { Chart } from 'chart.js';
  import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
-import { filter, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
 import * as bootstrap from 'bootstrap';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
 import { VulnerabilityService } from '../../core/services/vulnerabilityService';
-import { NavigationEnd, NavigationStart, Router ,ActivatedRoute} from '@angular/router';
+import { Router ,ActivatedRoute} from '@angular/router';
 // Register Chart.js components
 
 @Component({
@@ -184,7 +184,6 @@ if (savedFilter) {
   if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
     if (this.applicationTableRows && this.applicationTableRows.length > 0) {
       const selectedRow = this.applicationTableRows.toArray()[this.selectedApplicationIndex]?.nativeElement;
-      console.log(selectedRow, "selectedRow")
       selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
     }
   }
@@ -525,7 +524,6 @@ resetFilters(): void {
   this.pageIndex = initialIndex;
   this.recordIndex = this.pageIndex + 1;
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
-  console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
 }
 
   nextPage(): void {
@@ -602,7 +600,6 @@ showVulnerabilities(app: ApplicationDetails, index: number): void {
   this.applicationResolveService.setLastShowedApp(app);
   this.selectedAppUuid = app.uuid;
   this.applicationResolveService.setSelectedAppUuid(this.selectedAppUuid);
-  console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
   this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
     panelClass: 'vuln-dialog-panel',
     data: {
