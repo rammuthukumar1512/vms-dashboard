@@ -121,8 +121,8 @@ public fetchSecurityData(): void {
   const headers = new HttpHeaders({
     'Accept': 'application/json'
   });
-
-  this.http.get<any>(ApiEndPoints.unique_url, { headers, observe: 'response' })
+  const url = ApiEndPoints.getComputerByUuid + this.computerUuid;
+  this.http.get<any>(url, { headers, observe: 'response' })
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: HttpResponse<any>) => {
@@ -157,6 +157,8 @@ fetchComputerDetails(): void {
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
     error: (err) => {
+        this.clearComputerData();
+
       if (err.status === 0) {
         this.toastService.showErrorToast(
           'Unable to connect to the server. Please check your network or try again later.'
@@ -169,6 +171,37 @@ fetchComputerDetails(): void {
     }
   });
   }
+private clearComputerData(): void {
+  this.computer = null;
+   // Reset top box fields
+  this.machineName = 'Unknown';
+  this.macAddress = '00:00:00:00:00:00';
+  this.ipAddress = '0.0.0.0';
+  this.serialNumber = 'Unknown';
+  this.loggedInUserEmail = 'Unknown@example.com';
+  this.loggedInUserName = 'Unknown';
+  this.createdAt = '';
+  this.updatedAt = '';
+  this.appData = [];
+  this.allApplications = [];
+  this.filteredAppData = [];
+  this.pagedAppData = [];
+  this.filteredVulnerabilities = [];
+  this.selectedApp = null;
+  this.vulnerableCount = 0;
+
+  // Clear charts if rendered
+  if (this.appChartInstance) {
+    this.appChartInstance.destroy();
+    this.appChartInstance = undefined;
+  }
+  if (this.severityChartInstance) {
+    this.severityChartInstance.destroy();
+    this.severityChartInstance = undefined;
+  }
+
+  this.cdRef.detectChanges();
+}
 
   // Add this new method to the class (this handles restoring state and selecting the app)
 private restoreStateAndSelect(): void {
@@ -285,11 +318,14 @@ private restoreStateAndSelect(): void {
           },
            datalabels: {
           formatter: (value, context) => {
+            if(value>0){
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
-            else return '';
-            
+            return total > 0 ? ((value / total) * 100).toFixed(0) + '%' : '';
+            // if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            // else return '';
+          }
+          return '';
           },
           color: '#ffffff',
           font: { weight: 'bold', size: 12 }

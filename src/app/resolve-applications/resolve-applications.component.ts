@@ -113,12 +113,15 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
       if (result && result.cpeName) {
         this.unresolvedApps = this.unresolvedApps.filter(a => a.uuid !== app.uuid);
         this.updatePagedData(this.pageIndex);
-        this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
       this.http.get(ApiEndPoints.unique_url).subscribe({
         next: () => {
+       this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
+
         },
         error: (_error) => {
+          this.toastService.showErrorToast('Unable to update application state. Please try again.');
         }
+      
         });
       }
     });
