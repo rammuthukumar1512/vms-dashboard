@@ -1,11 +1,12 @@
-import { environments } from "./environments";
+import { environment } from "./environment.development";
+import { environmentUrls } from "./environment";
 
 export const ApiEndPoints = {
-  unique_url: `${environments.baseUrl}${environments.unique_url}`,
-  likelyCpeUrl: `${environments.baseUrl}${environments.likelyCpeUrl}`,
-  addHintUrl: `${environments.baseUrl}${environments.addHintUrl}`,
-  unresolvedAppsUrl: `${environments.baseUrl}${environments.unresolvedAppsUrl}` ,
-  searchVulnerabilityUrl: `${environments.baseUrl}${environments.searchVulnerabilityUrl}`,
-  sendNotificationToAllComputers: `${environments.baseUrl}${environments.sendNotificationToAllComputers}`,
-  getComputerByUuid: `${environments.baseUrl}${environments.getComputerByUUid}`,
+  unique_url: `${environment.baseUrl}${environmentUrls.unique_url}`,
+  likelyCpeUrl: `${environment.baseUrl}${environmentUrls.likelyCpeUrl}`,
+  addHintUrl: `${environment.baseUrl}${environmentUrls.addHintUrl}`,
+  unresolvedAppsUrl: `${environment.baseUrl}${environmentUrls.unresolvedAppsUrl}` ,
+  searchVulnerabilityUrl: `${environment.baseUrl}${environmentUrls.searchVulnerabilityUrl}`,
+  sendNotificationToAllComputers: `${environment.baseUrl}${environmentUrls.sendNotificationToAllComputers}`,
+  getComputerByUuid: `${environment.baseUrl}${environmentUrls.getComputerByUUid}`,
 }
