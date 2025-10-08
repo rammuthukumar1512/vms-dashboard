@@ -116,6 +116,7 @@ public resetApplicationData(): void {
   this.start = 0;
   this.end = 0;
   this.searchValue = '';
+  this.lastRefresh = 'N/A'
 
   // Destroy charts safely
   if (this.appChartInstance) {

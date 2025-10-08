@@ -382,6 +382,16 @@ mat-slide-toggle {
   align-items: center;
   gap: 0.5rem;
 }
+.no-data-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* adjust to your chart height */
+  color: #888888;
+  font-size: 1rem;
+  font-weight: bold;
+
+}
 
 .metric-icon {
   font-size: 24px;
