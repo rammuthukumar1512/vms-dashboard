@@ -19,6 +19,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
 import { VulnerabilityService } from '../../core/services/vulnerabilityService';
+import { ReportState } from '../../core/services/vulnerabilityService'; // Adjust path if needed
+
+// import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
 @Component({
   selector: 'app-user-report-page',
@@ -43,10 +46,12 @@ export class UserReportPageComponent implements OnInit, AfterViewInit {
 
   @ViewChild('appChart') appChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('severityChart') severityChart!: ElementRef<HTMLCanvasElement>;
+  // @ViewChild('appSeverityChart') appSeverityChart!: ElementRef<HTMLCanvasElement>;
 
   computer: ComputerDetails | null = null;
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
+  // appSeverityChartInstance: Chart<'bar'> | undefined;
   vulnerableCount: number = 0; // Add this property
   appData: ApplicationDetails[] = [];
   pagedAppData: ApplicationDetails[] = [];
@@ -110,6 +115,11 @@ ngOnInit(): void {
     });
   }
 
+// ngAfterViewChecked(): void {
+//   if (this.selectedApp && !this.appSeverityChartInstance) {
+//     this.drawSelectedAppSeverityChart();
+//   }
+// }
 ngAfterViewInit(): void {
   this.drawAppChart();
   this.drawSeverityChart();
@@ -121,17 +131,24 @@ public fetchSecurityData(): void {
   const headers = new HttpHeaders({
     'Accept': 'application/json'
   });
-  const url = ApiEndPoints.getComputerByUuid + this.computerUuid;
-  this.http.get<any>(url, { headers, observe: 'response' })
+
+  this.http.get<any>(ApiEndPoints.unique_url, { headers, observe: 'response' })
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (response: HttpResponse<any>) => {
+        console.log('Sync response:', response.body);
         if (!response.body) {
+          console.log('No content');
+          // Optional: handle no content, e.g., show a toast or UI update
         } else {
+          // this.toastService.showSuccessToast('Sync successful!');
+          // If you want to update your UI with new data, add that here
+          // For example, refresh computer details or other data:
           this.fetchComputerDetails();
         }
       },
-      error: (_error: HttpErrorResponse) => {
+      error: (error: HttpErrorResponse) => {
+        console.error('HTTP Error:', error.status, error.message);
         this.toastService.showErrorToast('Sync failed. Please try again.');
       }
     });
@@ -157,8 +174,6 @@ fetchComputerDetails(): void {
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
     error: (err) => {
-        this.clearComputerData();
-
       if (err.status === 0) {
         this.toastService.showErrorToast(
           'Unable to connect to the server. Please check your network or try again later.'
@@ -168,40 +183,10 @@ fetchComputerDetails(): void {
       } else {
         this.toastService.showErrorToast('An unexpected error occurred. Please try again later.');
       }
+      console.error(err);
     }
   });
   }
-private clearComputerData(): void {
-  this.computer = null;
-   // Reset top box fields
-  this.machineName = 'Unknown';
-  this.macAddress = '00:00:00:00:00:00';
-  this.ipAddress = '0.0.0.0';
-  this.serialNumber = 'Unknown';
-  this.loggedInUserEmail = 'Unknown@example.com';
-  this.loggedInUserName = 'Unknown';
-  this.createdAt = '';
-  this.updatedAt = '';
-  this.appData = [];
-  this.allApplications = [];
-  this.filteredAppData = [];
-  this.pagedAppData = [];
-  this.filteredVulnerabilities = [];
-  this.selectedApp = null;
-  this.vulnerableCount = 0;
-
-  // Clear charts if rendered
-  if (this.appChartInstance) {
-    this.appChartInstance.destroy();
-    this.appChartInstance = undefined;
-  }
-  if (this.severityChartInstance) {
-    this.severityChartInstance.destroy();
-    this.severityChartInstance = undefined;
-  }
-
-  this.cdRef.detectChanges();
-}
 
   // Add this new method to the class (this handles restoring state and selecting the app)
 private restoreStateAndSelect(): void {
@@ -243,10 +228,12 @@ private restoreStateAndSelect(): void {
 
   drawAppChart(): void {
     if (!this.appChart?.nativeElement) {
+      console.error('appChart element not found');
       return;
     }
     const ctx = this.appChart.nativeElement.getContext('2d');
     if (!ctx) {
+      console.error('Canvas context not available');
       return;
     }
     if (this.appChartInstance) this.appChartInstance.destroy();
@@ -318,14 +305,11 @@ private restoreStateAndSelect(): void {
           },
            datalabels: {
           formatter: (value, context) => {
-            if(value>0){
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
-            return total > 0 ? ((value / total) * 100).toFixed(0) + '%' : '';
-            // if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
-            // else return '';
-          }
-          return '';
+            if(isDataFetched) return total ? ((value / total) * 100).toFixed(0) + '%' : '0%';
+            else return '';
+            
           },
           color: '#ffffff',
           font: { weight: 'bold', size: 12 }
@@ -337,10 +321,12 @@ private restoreStateAndSelect(): void {
 
   drawSeverityChart(): void {
     if (!this.severityChart?.nativeElement) {
+      console.error('severityChart element not found');
       return;
     }
     const ctx = this.severityChart.nativeElement.getContext('2d');
     if (!ctx) {
+      console.error('Canvas context not available');
       return;
     }
     if (this.severityChartInstance) this.severityChartInstance.destroy();
@@ -420,6 +406,7 @@ private restoreStateAndSelect(): void {
   }
 
   const totalItems = this.filteredAppData.length;
+  console.log('Filtered apps count:', totalItems);  // <--- check this
 
   // Dynamically set page sizes
   this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
@@ -438,6 +425,7 @@ private restoreStateAndSelect(): void {
   this.start = initialIndex * this.pageSize;
   this.end = this.start + this.pageSize;
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
+  console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
   this.cdRef.detectChanges();
 }
   
@@ -561,7 +549,11 @@ onPageSizeChange(event: number): void {
     this.viewSelectedVulnerableApplication(app);
   }
 
-
+// viewSelectedVulnerableApplication(app: ApplicationDetails): void {
+//   this.selectedApp = app;
+//   this.cdRef.detectChanges(); 
+//   setTimeout(() => this.drawSelectedAppSeverityChart(), 0);
+// }
 viewSelectedVulnerableApplication(app: ApplicationDetails): void {
     this.selectedApp = app;
     this.filteredVulnerabilities = app.vulnerabilities || [];

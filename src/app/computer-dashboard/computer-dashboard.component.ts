@@ -132,14 +132,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       )
       .subscribe({
         next: (response: HttpResponse<any>) => {
-    if (!response || (Array.isArray(response) && response.length === 0)) {
+      if (response === null) {
+        console.log('No content');
         this.handleNoContent();
-      } 
-      else {
+      } else {
         this.handleSuccessResponse(response);
       }
     },
     error: (error: HttpErrorResponse) => {
+      console.error('HTTP Error:', error.status, error.message);
       this.handleErrorResponse(error);
     }
       });
@@ -147,47 +148,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   private handleNoContent(): void {
       this.toastService.showSuccessToast('No data available');
-      // Reset all dashboard data
-  this.securityData = {
-    totalComputers: 0,
-    totalCriticalVulnerableApplications: 0,
-    totalHighVulnerableApplications: 0,
-    totalMediumVulnerableApplications: 0,
-    totalLowVulnerableApplications: 0,
-    vulnerableComputers: 0,
-    computerDetails: []
-  };
-
-  this.totalComputers = 0;
-  this.vulnerableComputers = 0;
-  this.computerDetails = [];
-  this.finalComputerDetails = [];
-  this.vulnerableComputersDetails = [];
-  this.pagedComputerData = [];
-
-  // Clear charts
-  if (this.computerChartInstance) {
-    this.computerChartInstance.destroy();
-  }
-  if (this.severityChartInstance) {
-    this.severityChartInstance.destroy();
-  }
-  if (this.applicationDashboardComponent) {
-  this.applicationDashboardComponent.resetApplicationData();
-}
-
-  // Redraw empty charts
-  this.drawVulnBasedComputerChart();
-  this.drawSeverityBasedComputerChart();
-
-  // Reset pagination
-  this.totalRecords = [];
-  this.totalPages = 0;
-  this.pageIndex = 0;
-  this.recordIndex = 1;
-
-  // Trigger UI update
-  this.cdRef.detectChanges();
   }
 
   private handleSuccessResponse(data: any): void {
@@ -214,6 +174,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleErrorResponse(error: any): void {
+    console.error('Error fetching security data:', error);
     if (error.status === 0) {
       this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
@@ -612,6 +573,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
       });
      }
+     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
 
@@ -625,7 +587,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showSuccessToast(response.message);
-        }, error: ()=>{
+        }, error: (error)=>{
              this.toastService.showErrorToast('Send Notification Failed');
         }
       })

@@ -87,7 +87,8 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
           }));
           this.updatePagedData(this.initialIndex);
         },
-        error: (_error) => {
+        error: (error) => {
+          console.error('Error fetching unresolved applications:', error);
           this.toastService.showErrorToast('No Likely CPEs to fetch for these unresolved applications')
         }
       });
@@ -113,15 +114,14 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
       if (result && result.cpeName) {
         this.unresolvedApps = this.unresolvedApps.filter(a => a.uuid !== app.uuid);
         this.updatePagedData(this.pageIndex);
+        this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
       this.http.get(ApiEndPoints.unique_url).subscribe({
         next: () => {
-       this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
-
+          console.log('Dashboard data refreshed');
         },
-        error: (_error) => {
-          this.toastService.showErrorToast('Unable to update application state. Please try again.');
+        error: (error) => {
+          console.error('Error refreshing dashboard:', error);
         }
-      
         });
       }
     });
@@ -139,7 +139,7 @@ searchApplications(event: Event): void {
   }
   this.updatePagedData(this.initialIndex);
 }
-updatePagedData(_initialIndex: number): void {
+updatePagedData(initialIndex: number): void {
   let filteredApps = this.unresolvedApps;
   if (this.searchValue) {
     filteredApps = filteredApps.filter(app =>

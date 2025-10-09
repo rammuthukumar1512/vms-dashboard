@@ -20,6 +20,7 @@ import * as bootstrap from 'bootstrap';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
 import { VulnerabilityService } from '../../core/services/vulnerabilityService';
 import { Router ,ActivatedRoute} from '@angular/router';
+// Register Chart.js components
 
 @Component({
   selector: 'app-application-dashboard',
@@ -94,52 +95,13 @@ constructor(
   private applicationResolveService: ApplicationResolveService, 
   private vulnerabilityService: VulnerabilityService, private router: Router
 ) {}
-public resetApplicationData(): void {
-  // Clear all dashboard state
-  this.appData = [];
-  this.filteredAppData = [];
-  this.pagedAppData = [];
-  this.allApplications = [];
-  this.selectedApp = null;
-  this.vulnerableSoftwareCount = 0;
-  this.machineName = 'Unknown';
-  this.loggedInUserName = 'Unknown';
-  this.loggedInUserEmail = 'Unknown';
-  this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-  this.activeFilter = null;
-  this.severityFilter = null;
-  this.totalPages = 0;
-  this.totalRecords = [];
-  this.pageIndex = 0;
-  this.recordIndex = 1;
-  this.pageSizes = [0];
-  this.start = 0;
-  this.end = 0;
-  this.searchValue = '';
-  this.lastRefresh = 'N/A'
-
-  // Destroy charts safely
-  if (this.appChartInstance) {
-    this.appChartInstance.destroy();
-    this.appChartInstance = undefined;
-  }
-  if (this.severityChartInstance) {
-    this.severityChartInstance.destroy();
-    this.severityChartInstance = undefined;
-  }
-
-  // Redraw empty charts to show "No Data"
-  setTimeout(() => {
-    this.drawAppChart();
-    this.drawSeverityChart();
-    this.cdRef.detectChanges();
-  }, 0);
-}
 
 ngOnInit(): void {
   this.sharedDataService.currentData$
     .pipe(takeUntil(this.destroy$))
     .subscribe(data => {
+      console.log('Received appData in ApplicationDashboard:', data);
+
       if (data) {
         this.loggedInUserName = data.loggedInUserName || 'Unknown';
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
@@ -164,6 +126,7 @@ if (savedFilter) {
           this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
           this.calculateSeverityCounts();
         } else {
+          console.warn('No valid appData received:', data);
           this.appData = [];
           this.vulnerableSoftwareCount = 0;
           this.loggedInUserName = 'Unknown';
@@ -245,13 +208,11 @@ if (savedFilter) {
     });
   }
 
-  public sendAppData(data: ComputerDetails | null , _computerId: number): void {
+  public sendAppData(data: ComputerDetails | null , computerId: number): void {
       // this.selectedComputerId = computerId;
-        if (!data) {
-    this.resetApplicationData();
-    return;
-  }
   this.computer = data;
+
+  // // Reset filters in Application Dashboard
 this.pageSize = 5;
 this.pageIndex = 0;
 this.recordIndex = 1;
@@ -266,6 +227,7 @@ this.updatePagedData(this.pageIndex);
       lastRefresh: data?.updatedAt ? data?.updatedAt : data?.createdAt,
       appData: data?.applicationDetails || []
     };
+    console.log('Sending appData:', appData);
     this.sharedDataService.sendAppData(appData);
 
   this.resetFilters();
@@ -274,10 +236,12 @@ this.updatePagedData(this.pageIndex);
 
   drawAppChart(): void {
   if (!this.appChart?.nativeElement) {
+    console.error('appChart element not found');
     return;
   }
   const ctx = this.appChart.nativeElement.getContext('2d');
   if (!ctx) {
+    console.error('Canvas context not available');
     return;
   }
   if (this.appChartInstance) this.appChartInstance.destroy();
@@ -443,10 +407,12 @@ const leaderLinePlugin = {
 
 drawSeverityChart(): void {
   if (!this.severityChart?.nativeElement) {
+    console.error('severityChart element not found');
     return;
   }
   const ctx = this.severityChart.nativeElement.getContext('2d');
   if (!ctx) {
+    console.error('Canvas context not available');
     return;
   }
   if (this.severityChartInstance) this.severityChartInstance.destroy();
@@ -537,6 +503,8 @@ resetFilters(): void {
   }
 
   const totalItems = this.filteredAppData.length;
+  console.log('Filtered apps count:', totalItems);  // <--- check this
+
   // Dynamically set page sizes
   this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
                    totalItems >= 50  ? [5, 10, 25, 50] :
@@ -593,8 +561,38 @@ resetFilters(): void {
     this.updatePagedData(this.initialIndex);
   }
 
+//   showVulnerabilities(app: ApplicationDetails): void {
+//   console.log('Selected vulnerabilities for', app.softwareName, ':', app.vulnerabilities);
+//   if(!this.lastShowedApp) {
+//   this.applicationResolveService.setLastShowedApp(app);
+//   }
+//   this.dialogRef = this.dialog.open(VulnerabilityDialogComponent, {
+//     panelClass: 'vuln-dialog-panel',
+//     data: {
+//       softwareName: app.softwareName,
+//       vulnerabilities: app.vulnerabilities || [],
+//       severityCounts: {
+//         critical: app.criticalVulnerabilityCount,
+//         high: app.highVulnerabilityCount,
+//         medium: app.mediumVulnerabilityCount,
+//         low: app.lowVulnerabilityCount
+//       },
+//       cpeName: app.cpeName,
+//       resolved: app.resolved,
+//       uuid: app.uuid,
+//       softwareVersion: app.softwareVersion,
+//       vendor: app.vendor
+//     }
+//   });
+//   this.dialogRef.afterClosed().subscribe(() => {
+//     if(this.router.url?.match('computer-overview')) {
+//     this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
+//     }
+//   });
+// }
 
 showVulnerabilities(app: ApplicationDetails, index: number): void {
+  console.log(app)
   this.selectedApp = app;
   this.applicationResolveService.setApplicationDashPageIndex(this.pageIndex);
   this.applicationResolveService.setApplicationDashPageSize(this.pageSize);
@@ -668,7 +666,16 @@ public setProcessIdTooltip(processIds: any, maxLength: number) {
    }
    return processIds.length >= 20 ? `ProcessIds:\n ${tooltipText}  ... [ +${remainIds} more ]` : processIds.length > 0 && processIds.length < 20 ? 'Running Process IDs:\n' + tooltipText : 'Application is currently not running'
 }
-
+// restoreState(): void {
+//   const savedState = this.applicationResolveService.getDashboardState();
+//   if (savedState) {
+//     this.pageIndex = savedState.pageIndex || 0;
+//     this.recordIndex = savedState.recordIndex || 1;
+//     if (savedState.selectedAppUuid) {
+//       this.selectedApp = this.appData.find(app => app.uuid === savedState.selectedAppUuid) || null;
+//     }
+//   }
+// }
 restoreState(): void {
   const savedState = this.applicationResolveService.getDashboardState();
   const selectedAppUuid = this.route.snapshot.queryParams['selectedApp'];
