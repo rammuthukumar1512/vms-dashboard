@@ -131,15 +131,18 @@
  tr.vulnerable-row:hover {
   background-color: #fdd3e7;
   box-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+  transition: background-color 1s ease, box-shadow 0.5s ease;
 }
 
  tr.unresolved-row:hover {
   background-color: #fff3cd;
+   transition: background-color 1s ease, box-shadow 0.5s ease;
 }
 
- /* tr.normal-row:hover {
-  background-color: #dad7d7;
-} */
+ tr.normal-row:hover {
+  background-color: #faf4f4;
+   transition: background-color 1s ease, box-shadow 0.5s ease;
+}
 
 .chart {
   height: 200px;
@@ -330,6 +333,7 @@ mat-slide-toggle {
 
 .selected-row {
   background-color: lightgrey !important;
+  transition: none;
 }
 
 .blink {
