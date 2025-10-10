@@ -473,7 +473,7 @@ drawAppChart(): void {
 
       meta.data.forEach((arc: any, index: number) => {
         const value = data[index];
-        if (value === 0) return; // Skip zero values
+      if (value === 0 || !chart.getDataVisibility(index)) return; // Skip hidden arcs properly
 
         let angle = (arc.startAngle + arc.endAngle) / 2;
         const radius = arc.outerRadius;
@@ -551,7 +551,7 @@ drawAppChart(): void {
       labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable', 'Unresolved'] : [''],
       datasets: [{
         data: isDataFetched ? [vulnerableCount, nonVulnerableCount, unresolvedCount] : [1, 1, 1],
-        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7', '#ffc107'] : ['#d3d3d3'],
+        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7', '#ffc71eff'] : ['#d3d3d3'],
         borderColor: ['#ffffff', '#ffffff', '#ffffff'],
         borderWidth: 0
       }]
@@ -616,7 +616,7 @@ drawAppChart(): void {
             else return '';
           },
           color: '#ffffff',
-          font: { weight: 'bold', size: 12 }
+          font: { weight: 'bold', size: 10 }
         }
       }
     },

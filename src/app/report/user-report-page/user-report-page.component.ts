@@ -370,7 +370,7 @@ private restoreStateAndSelect(): void {
 
       meta.data.forEach((arc: any, index: number) => {
         const value = data[index];
-        if (value === 0) return; // Skip zero values
+      if (value === 0 || !chart.getDataVisibility(index)) return; // Skip hidden arcs properly
 
         let angle = (arc.startAngle + arc.endAngle) / 2;
         const radius = arc.outerRadius;
