@@ -57,7 +57,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   machineName = 'Unknown';
   loggedInUserName = 'Unknown';
   loggedInUserEmail = 'Unknown';
-  lastRefresh: string | null = null;
+  lastRefresh: string | null = 'N/A';
   activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
@@ -117,7 +117,6 @@ public resetApplicationData(): void {
   this.end = 0;
   this.searchValue = '';
   this.lastRefresh = 'N/A'
-
   // Destroy charts safely
   if (this.appChartInstance) {
     this.appChartInstance.destroy();
@@ -141,6 +140,7 @@ ngOnInit(): void {
     .pipe(takeUntil(this.destroy$))
     .subscribe(data => {
       if (data) {
+        this.computer = data;
         this.loggedInUserName = data.loggedInUserName || 'Unknown';
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
@@ -170,7 +170,7 @@ if (savedFilter) {
           this.machineName = 'Unknown';
           this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         }
-      this.restoreState();
+        this.restoreState();
         this.updatePagedData(this.initialIndex);
         this.cdRef.detectChanges();
 

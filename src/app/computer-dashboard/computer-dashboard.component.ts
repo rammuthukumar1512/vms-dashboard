@@ -132,12 +132,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       )
       .subscribe({
         next: (response: HttpResponse<any>) => {
-    if (!response || (Array.isArray(response) && response.length === 0)) {
-        this.handleNoContent();
-      } 
-      else {
-        this.handleSuccessResponse(response);
-      }
+    this.handleSuccessResponse(response);
+
     },
     error: (error: HttpErrorResponse) => {
       this.handleErrorResponse(error);
@@ -146,8 +142,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleNoContent(): void {
-      this.toastService.showSuccessToast('No data available');
-      // Reset all dashboard data
+ if (!this.syncComputerData) {
+    this.toastService.showSuccessToast('No data available');
+  }     
+   // Reset all dashboard data
   this.securityData = {
     totalComputers: 0,
     totalCriticalVulnerableApplications: 0,
@@ -191,11 +189,16 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleSuccessResponse(data: any): void {
+      this.syncComputerData = false;
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
     this.applicationResolveService.setSecurityReport(this.securityData);
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
     this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
+      if (!this.computerDetails.length) {
+    this.handleNoContent(); 
+    return;
+          }
     this.finalComputerDetails = this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     if(this.syncComputerData) {
@@ -215,6 +218,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   private handleErrorResponse(error: any): void {
     if (error.status === 0) {
+      this.handleNoContent();  // <- clear old data from UI
       this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
       );
@@ -223,6 +227,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         'Error : Failed to fetch security data'
       );
     }
+      this.syncComputerData = false;
+
   }
 
   public toggleVulnerableComputers() {
