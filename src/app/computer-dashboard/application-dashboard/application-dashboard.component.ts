@@ -57,7 +57,7 @@ export class ApplicationDashboardComponent implements AfterViewInit {
   machineName = 'Unknown';
   loggedInUserName = 'Unknown';
   loggedInUserEmail = 'Unknown';
-  lastRefresh: string | null = null;
+  lastRefresh: string | null = 'N/A';
   activeFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null; // Track active filter
   displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 
@@ -117,7 +117,6 @@ public resetApplicationData(): void {
   this.end = 0;
   this.searchValue = '';
   this.lastRefresh = 'N/A'
-
   // Destroy charts safely
   if (this.appChartInstance) {
     this.appChartInstance.destroy();
@@ -141,6 +140,7 @@ ngOnInit(): void {
     .pipe(takeUntil(this.destroy$))
     .subscribe(data => {
       if (data) {
+        this.computer = data;
         this.loggedInUserName = data.loggedInUserName || 'Unknown';
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
@@ -170,7 +170,7 @@ if (savedFilter) {
           this.machineName = 'Unknown';
           this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
         }
-      this.restoreState();
+        this.restoreState();
         this.updatePagedData(this.initialIndex);
         this.cdRef.detectChanges();
 
@@ -272,7 +272,175 @@ this.updatePagedData(this.pageIndex);
 
   }
 
-  drawAppChart(): void {
+//   drawAppChart(): void {
+//   if (!this.appChart?.nativeElement) {
+//     return;
+//   }
+//   const ctx = this.appChart.nativeElement.getContext('2d');
+//   if (!ctx) {
+//     return;
+//   }
+//   if (this.appChartInstance) this.appChartInstance.destroy();
+  
+//   const isDataFetched = this.appData.length > 0;
+//   const vulnerableCount = this.vulnerableSoftwareCount;
+//   const nonVulnerableCount = this.appData.length - vulnerableCount;
+
+// const leaderLinePlugin = {
+//   id: 'leaderLinePlugin',
+
+//   afterDatasetDraw(chart: any) {
+//     const {
+//       ctx,
+//       chartArea: { top, bottom, left, right },
+//     } = chart;
+
+//     const meta = chart.getDatasetMeta(0);
+//     const centerX = (left + right) / 2;
+//     const centerY = (top + bottom) / 2;
+
+//     const data = chart.data.datasets[0].data;
+//     const total = data[0] + data[1];
+//     const vulnerablePercentage = (data[0] / total) * 100;
+//     const nonVulnerablePercentage = (data[1] / total) * 100;
+
+//     meta.data.forEach((arc: any, index: number) => {
+//       const value = data[index];
+//       if (value === 0) return; // Skip zero values
+
+//       let angle = (arc.startAngle + arc.endAngle) / 2;
+//       const radius = arc.outerRadius;
+
+//       // Angle adjustments
+//       if (index === 0) {
+//         if (vulnerablePercentage > 10 && vulnerablePercentage <= 20) angle += 0.3;
+//         else if (vulnerablePercentage >= 20 && vulnerablePercentage < 30) angle += 0.2;
+//         else if (vulnerablePercentage >= 30 && vulnerablePercentage < 40) angle -= 0.5;
+//         else if (vulnerablePercentage >= 40 && vulnerablePercentage < 50) angle -= 0.7;
+//         else if (vulnerablePercentage >= 50 && vulnerablePercentage < 100) angle = 0.7;
+//         else if (vulnerablePercentage === 100) angle -= 0.7;
+//         else if (vulnerablePercentage === 0) angle += 0.3;
+//       } else if (index === 1) {
+//         if (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20) angle -= 0.3;
+//         else if (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40) angle -= 0.1;
+//         else if (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50) angle += 0.3;
+//         else if (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70) angle -= 0.3;
+//         else if (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90) angle += 0.3;
+//         else if (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100) angle += 0.6;
+//         else if (nonVulnerablePercentage === 100) angle += 0.3;
+//         else if (nonVulnerablePercentage === 0) angle -= 0.3;
+//       }
+
+//       // Leader line start at arc edge
+//       const startX = centerX + Math.cos(angle) * radius;
+//       const startY = centerY + Math.sin(angle) * radius;
+
+//       const lineLength = 25;
+//       const horizOffset = 10;
+
+//       const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
+//       const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
+
+//       let labelX: number;
+//       let labelY: number;
+//       const isRightSide = Math.cos(angle) >= 0;
+
+//       labelX = lineEndX + (isRightSide ? horizOffset : -horizOffset);
+//       labelY = lineEndY;
+
+//       // Draw dashed leader line
+//       ctx.beginPath();
+//       ctx.moveTo(startX, startY);
+//       ctx.lineTo(lineEndX, lineEndY);
+//       ctx.lineTo(labelX, labelY);
+//       ctx.strokeStyle = 'gray';
+//       ctx.lineWidth = 1;
+//       ctx.setLineDash([7, 3]);
+//       ctx.stroke();
+//       ctx.setLineDash([]); // Reset dash for other elements
+
+//       // Draw value label
+//       const chartWidth = right - left;
+//       ctx.font = `${Math.max(10, chartWidth * 0.03)}px sans-serif`;
+//       ctx.fillStyle = '#333';
+//       ctx.textAlign = isRightSide ? 'left' : 'right';
+//       ctx.textBaseline = 'middle';
+//       ctx.fillText(value, labelX, labelY);
+//     });
+//   }
+// };
+
+//   this.appChartInstance = new Chart(ctx, {
+//     type: 'doughnut',
+//     data: {
+//       labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : [""],
+//       datasets: [{
+//         data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1,1],
+//         backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
+//         borderColor: ['#ffffff', '#ffffff'],
+//         borderWidth: 0
+//       }]
+//     },
+//     options: {
+//        indexAxis: 'y',
+//         responsive: true,
+//         maintainAspectRatio: false,
+//         cutout: '50%',
+//         scales: {
+//           x: {
+//             position: 'top', 
+//             beginAtZero: false,
+//             title: {
+//               display: true,
+//               // text: 'Score'
+//             },
+//             grid: {
+//               display: false
+//             },
+//             ticks: {
+//               display: false
+//             },
+//             border: {
+//               display: false
+//             }
+//           },
+//           y: {
+//             title: {
+//               display: true,
+//               // text: 'Applications'
+//             },
+//             grid: {
+//               display: false
+//             },
+//             ticks: {
+//               display: false
+//             },
+//             border: {
+//               display: false
+//             }
+//           }
+//         },
+//       plugins: {
+//         legend: { display: isDataFetched ? true : false, position: 'bottom' },
+//         tooltip: { callbacks: { title: () => "Risk Status", label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
+//         datalabels: {
+//           formatter: (value, context) => {
+//             const data = context.chart.data.datasets[0].data as number[];
+//             const total = data.reduce((sum, val) => sum + val, 0);
+//             const percentage = total ? ((value / total) * 100).toFixed(0) : '';
+//             if(isDataFetched) {return +percentage > 0 ? percentage + '%' : '';}
+//             else return '';
+            
+//           },
+//           color: '#ffffff',
+//           font: { weight: 'bold', size: 12 }
+//         }
+//       }
+//     },
+//     plugins: isDataFetched ? [leaderLinePlugin] : []
+//   });
+// }
+drawAppChart(): void {
   if (!this.appChart?.nativeElement) {
     return;
   }
@@ -281,159 +449,174 @@ this.updatePagedData(this.pageIndex);
     return;
   }
   if (this.appChartInstance) this.appChartInstance.destroy();
-  
+
   const isDataFetched = this.appData.length > 0;
   const vulnerableCount = this.vulnerableSoftwareCount;
-  const nonVulnerableCount = this.appData.length - vulnerableCount;
+  const unresolvedCount = this.appData.filter(app => !app.resolved && !(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0)).length;
+  const nonVulnerableCount = this.appData.length - vulnerableCount - unresolvedCount;
 
-const leaderLinePlugin = {
-  id: 'leaderLinePlugin',
+  const leaderLinePlugin = {
+    id: 'leaderLinePlugin',
+    afterDatasetDraw(chart: any) {
+      const {
+        ctx,
+        chartArea: { top, bottom, left, right },
+      } = chart;
 
-  afterDatasetDraw(chart: any) {
-    const {
-      ctx,
-      chartArea: { top, bottom, left, right },
-    } = chart;
+      const meta = chart.getDatasetMeta(0);
+      const centerX = (left + right) / 2;
+      const centerY = (top + bottom) / 2;
 
-    const meta = chart.getDatasetMeta(0);
-    const centerX = (left + right) / 2;
-    const centerY = (top + bottom) / 2;
+      const data = chart.data.datasets[0].data;
+      const total = data.reduce((sum: number, val: number) => sum + val, 0);
+      const percentages = data.map((value: number) => (value / total) * 100);
 
-    const data = chart.data.datasets[0].data;
-    const total = data[0] + data[1];
-    const vulnerablePercentage = (data[0] / total) * 100;
-    const nonVulnerablePercentage = (data[1] / total) * 100;
+      meta.data.forEach((arc: any, index: number) => {
+        const value = data[index];
+      if (value === 0 || !chart.getDataVisibility(index)) return; // Skip hidden arcs properly
 
-    meta.data.forEach((arc: any, index: number) => {
-      const value = data[index];
-      if (value === 0) return; // Skip zero values
+        let angle = (arc.startAngle + arc.endAngle) / 2;
+        const radius = arc.outerRadius;
+        const percentage = percentages[index];
 
-      let angle = (arc.startAngle + arc.endAngle) / 2;
-      const radius = arc.outerRadius;
+        // Angle adjustments for three segments
+        if (index === 0) { // Vulnerable
+          if (percentage > 10 && percentage <= 20) angle += 0.3;
+          else if (percentage >= 20 && percentage < 30) angle += 0.2;
+          else if (percentage >= 30 && percentage < 40) angle -= 0.5;
+          else if (percentage >= 40 && percentage < 50) angle -= 0.7;
+          else if (percentage >= 50 && percentage < 100) angle = 0.7;
+          else if (percentage === 100) angle -= 0.7;
+          else if (percentage === 0) angle += 0.3;
+        } else if (index === 1) { // Non-Vulnerable
+          if (percentage > 10 && percentage < 20) angle -= 0.3;
+          else if (percentage >= 20 && percentage < 40) angle -= 0.1;
+          else if (percentage >= 40 && percentage < 50) angle += 0.3;
+          else if (percentage >= 50 && percentage < 70) angle -= 0.3;
+          else if (percentage >= 70 && percentage <= 90) angle += 0.3;
+          else if (percentage >= 90 && percentage <= 100) angle += 0.6;
+          else if (percentage === 0) angle -= 0.3;
+        } else if (index === 2) { // Unresolved
+          if (percentage > 10 && percentage <= 20) angle += 0.4;
+          else if (percentage >= 20 && percentage < 30) angle += 0.3;
+          else if (percentage >= 30 && percentage < 40) angle -= 0.4;
+          else if (percentage >= 40 && percentage < 50) angle -= 0.6;
+          else if (percentage >= 50 && percentage < 100) angle = 0.8;
+          else if (percentage === 100) angle -= 0.6;
+          else if (percentage === 0) angle += 0.4;
+        }
 
-      // Angle adjustments
-      if (index === 0) {
-        if (vulnerablePercentage > 10 && vulnerablePercentage <= 20) angle += 0.3;
-        else if (vulnerablePercentage >= 20 && vulnerablePercentage < 30) angle += 0.2;
-        else if (vulnerablePercentage >= 30 && vulnerablePercentage < 40) angle -= 0.5;
-        else if (vulnerablePercentage >= 40 && vulnerablePercentage < 50) angle -= 0.7;
-        else if (vulnerablePercentage >= 50 && vulnerablePercentage < 100) angle = 0.7;
-        else if (vulnerablePercentage === 100) angle -= 0.7;
-        else if (vulnerablePercentage === 0) angle += 0.3;
-      } else if (index === 1) {
-        if (nonVulnerablePercentage > 10 && nonVulnerablePercentage < 20) angle -= 0.3;
-        else if (nonVulnerablePercentage >= 20 && nonVulnerablePercentage < 40) angle -= 0.1;
-        else if (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50) angle += 0.3;
-        else if (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70) angle -= 0.3;
-        else if (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90) angle += 0.3;
-        else if (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100) angle += 0.6;
-        else if (nonVulnerablePercentage === 100) angle += 0.3;
-        else if (nonVulnerablePercentage === 0) angle -= 0.3;
-      }
+        // Leader line start at arc edge
+        const startX = centerX + Math.cos(angle) * radius;
+        const startY = centerY + Math.sin(angle) * radius;
 
-      // Leader line start at arc edge
-      const startX = centerX + Math.cos(angle) * radius;
-      const startY = centerY + Math.sin(angle) * radius;
+        const lineLength = 25;
+        const horizOffset = 10;
 
-      const lineLength = 25;
-      const horizOffset = 10;
+        const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
+        const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
 
-      const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
-      const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
+        let labelX: number;
+        let labelY: number;
+        const isRightSide = Math.cos(angle) >= 0;
 
-      let labelX: number;
-      let labelY: number;
-      const isRightSide = Math.cos(angle) >= 0;
+        labelX = lineEndX + (isRightSide ? horizOffset : -horizOffset);
+        labelY = lineEndY;
 
-      labelX = lineEndX + (isRightSide ? horizOffset : -horizOffset);
-      labelY = lineEndY;
+        // Draw dashed leader line
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(lineEndX, lineEndY);
+        ctx.lineTo(labelX, labelY);
+        ctx.strokeStyle = 'gray';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([7, 3]);
+        ctx.stroke();
+        ctx.setLineDash([]); // Reset dash for other elements
 
-      // Draw dashed leader line
-      ctx.beginPath();
-      ctx.moveTo(startX, startY);
-      ctx.lineTo(lineEndX, lineEndY);
-      ctx.lineTo(labelX, labelY);
-      ctx.strokeStyle = 'gray';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([7, 3]);
-      ctx.stroke();
-      ctx.setLineDash([]); // Reset dash for other elements
-
-      // Draw value label
-      const chartWidth = right - left;
-      ctx.font = `${Math.max(10, chartWidth * 0.03)}px sans-serif`;
-      ctx.fillStyle = '#333';
-      ctx.textAlign = isRightSide ? 'left' : 'right';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(value, labelX, labelY);
-    });
-  }
-};
+        // Draw value label
+        const chartWidth = right - left;
+        ctx.font = `${Math.max(10, chartWidth * 0.03)}px sans-serif`;
+        ctx.fillStyle = '#333';
+        ctx.textAlign = isRightSide ? 'left' : 'right';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(value, labelX, labelY);
+      });
+    }
+  };
 
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
     data: {
-      labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable'] : [""],
+      labels: isDataFetched ? ['Vulnerable', 'Non-Vulnerable', 'Unresolved'] : [''],
       datasets: [{
-        data: isDataFetched ? [vulnerableCount, nonVulnerableCount] : [1,1],
-        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7'] : ['#d3d3d3'],
-        borderColor: ['#ffffff', '#ffffff'],
+        data: isDataFetched ? [vulnerableCount, nonVulnerableCount, unresolvedCount] : [1, 1, 1],
+        backgroundColor: isDataFetched ? ['#66b3ffea', '#3366ffe7', '#ffc71eff'] : ['#d3d3d3'],
+        borderColor: ['#ffffff', '#ffffff', '#ffffff'],
         borderWidth: 0
       }]
     },
     options: {
-       indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '50%',
-        scales: {
-          x: {
-            position: 'top', 
-            beginAtZero: false,
-            title: {
-              display: true,
-              // text: 'Score'
-            },
-            grid: {
-              display: false
-            },
-            ticks: {
-              display: false
-            },
-            border: {
-              display: false
-            }
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '50%',
+      scales: {
+        x: {
+          position: 'top',
+          beginAtZero: false,
+          title: {
+            display: true,
+            // text: 'Score'
           },
-          y: {
-            title: {
-              display: true,
-              // text: 'Applications'
-            },
-            grid: {
-              display: false
-            },
-            ticks: {
-              display: false
-            },
-            border: {
-              display: false
+          grid: {
+            display: false
+          },
+          ticks: {
+            display: false
+          },
+          border: {
+            display: false
+          }
+        },
+        y: {
+          title: {
+            display: true,
+            // text: 'Applications'
+          },
+          grid: {
+            display: false
+          },
+          ticks: {
+            display: false
+          },
+          border: {
+            display: false
+          }
+        }
+      },
+      plugins: {
+        legend: { display: isDataFetched ? true : false, position: 'bottom' },
+        tooltip: {
+          callbacks: {
+            title: () => 'Risk Status',
+            label: (context) => {
+              return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : 'No Data';
             }
           }
         },
-      plugins: {
-        legend: { display: isDataFetched ? true : false, position: 'bottom' },
-        tooltip: { callbacks: { title: () => "Risk Status", label: (context) => {return isDataFetched ? `${context.label}: ${context.parsed || 0} applications` : "No Data" } }},
         datalabels: {
           formatter: (value, context) => {
             const data = context.chart.data.datasets[0].data as number[];
             const total = data.reduce((sum, val) => sum + val, 0);
             const percentage = total ? ((value / total) * 100).toFixed(0) : '';
-            if(isDataFetched) {return +percentage > 0 ? percentage + '%' : '';}
+            if (isDataFetched) {
+              return +percentage > 0 ? percentage + '%' : '';
+            }
             else return '';
-            
           },
           color: '#ffffff',
-          font: { weight: 'bold', size: 12 }
+          font: { weight: 'bold', size: 10 }
         }
       }
     },
