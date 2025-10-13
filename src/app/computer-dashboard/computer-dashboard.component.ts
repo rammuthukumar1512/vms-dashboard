@@ -86,12 +86,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
       this.pageSize = this.applicationResolveService.getComputerDashPageSize();
       this.securityData = this.applicationResolveService.getSecurityReport();
+      this.showVulnerableComputer = this.applicationResolveService.getShowVulnerableComputer();
       this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
       this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
       this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
       this.finalComputerDetails = this.computerDetails;
       this.totalComputers = this.finalComputerDetails.length;
-      this.updatePagedData(this.initialIndex);
+      if(this.showVulnerableComputer) {
+          this.toggleVulnerableComputers();
+      } else {
+          this.updatePagedData(this.initialIndex);
+      }
       setTimeout(()=>{
          this.drawVulnBasedComputerChart();
          this.drawSeverityBasedComputerChart();
@@ -233,6 +238,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
                   return computer.vulnerableSoftwareCount > 0;
           });
           this.updatePagedData(this.initialIndex);
+          this.applicationResolveService.setShowVulnerableComputer(true);
      } else {
           this.finalComputerDetails = this.computerDetails;
           this.updatePagedData(this.initialIndex);
@@ -362,9 +368,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
     const chartValue = chart.data.datasets[0].data[index];
-
     //Skip if this slice has 0 chartValue
-    if (!chartValue || chartValue === 0) return;
+    if (!chartValue || chartValue === 0 || arc.circumference === 0) return;
 
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
@@ -378,10 +383,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
-    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage < 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.7;
     else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
-
 
     // Start point on arc edge
     const x = centerX + Math.cos(angle) * radius;

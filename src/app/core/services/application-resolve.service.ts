@@ -40,6 +40,7 @@ export class ApplicationResolveService {
   private selectedComputerId: number = 1;
   private selectedAppUuid: string | null = null;
   private selectedApplicationIndex: number = 0;
+  private showVulnerableComputer: boolean = false;
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 // application-resolve.service.ts
@@ -145,5 +146,11 @@ getDashboardState(): DashboardState | null {
   }
   getSelectedApplicationIndex() {
     return this.selectedApplicationIndex;
+  }
+  setShowVulnerableComputer(show: boolean): void {
+    this.showVulnerableComputer = show;
+  }
+  getShowVulnerableComputer() {
+    return this.showVulnerableComputer;
   }
 }
