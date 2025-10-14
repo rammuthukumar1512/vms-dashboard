@@ -497,12 +497,12 @@ drawAppChart(): void {
           else if (percentage >= 90 && percentage < 100) angle += 0.6;
           else if (percentage === 0) angle -= 0.3;
         } else if (index === 2) { // Unresolved
-          if (percentage > 10 && percentage <= 20) angle += 0.4;
+          if (percentage > 10 && percentage <= 20) angle += 0.5;
           else if (percentage >= 20 && percentage < 30) angle += 0.3;
           else if (percentage >= 30 && percentage < 40) angle -= 0.4;
           else if (percentage >= 40 && percentage < 50) angle -= 0.6;
           else if (percentage >= 50 && percentage < 100) angle = 0.8;
-          else if (percentage === 100) angle -= 0.6;
+          else if (percentage === 100) angle -= 0.8;
           else if (percentage === 0) angle += 0.4;
         }
 
