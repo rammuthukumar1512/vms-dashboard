@@ -490,11 +490,11 @@ drawAppChart(): void {
           else if (percentage === 0) angle += 0.3;
         } else if (index === 1) { // Non-Vulnerable
           if (percentage > 10 && percentage < 20) angle -= 0.3;
-          else if (percentage >= 20 && percentage < 40) angle -= 0.1;
+          else if (percentage >= 20 && percentage < 40) angle -= 0.7;
           else if (percentage >= 40 && percentage < 50) angle += 0.3;
           else if (percentage >= 50 && percentage < 70) angle -= 0.3;
           else if (percentage >= 70 && percentage <= 90) angle += 0.3;
-          else if (percentage >= 90 && percentage <= 100) angle += 0.6;
+          else if (percentage >= 90 && percentage < 100) angle += 0.6;
           else if (percentage === 0) angle -= 0.3;
         } else if (index === 2) { // Unresolved
           if (percentage > 10 && percentage <= 20) angle += 0.4;
@@ -689,7 +689,6 @@ getFilteredApps(): ApplicationDetails[] {
 
   // Apply search
   if (this.searchValue) {
-
   const keyword = this.searchValue.toLowerCase();
   data = data.filter(app =>
     app.softwareName?.toLowerCase().includes(keyword) ||
@@ -707,25 +706,19 @@ resetFilters(): void {
   this.updatePagedData(0);
 }
   
-  updatePagedData(initialIndex: number): void {
+  updatePagedData(initialIndex: number = 0): void {
   this.filteredAppData = this.getFilteredApps();
-
-  if (this.searchValue) {
-    const keyword = this.searchValue.toLowerCase();
-    this.filteredAppData = this.filteredAppData.filter(app =>
-      app.softwareName?.toLowerCase().includes(keyword) ||
-      app.softwareVersion?.toLowerCase().includes(keyword) ||
-      app.vendor?.toLowerCase().includes(keyword)
-    );
-  }
-
   const totalItems = this.filteredAppData.length;
+
+
+
   // Dynamically set page sizes
   this.pageSizes = totalItems >= 100 ? [5, 10, 25, 50, 100] :
                    totalItems >= 50  ? [5, 10, 25, 50] :
                    totalItems >= 25  ? [5, 10, 25] :
                    totalItems >= 10  ? [5, 10] :
                    totalItems > 0    ? [5] : [0];
+
                    // Ensure selected pageSize is within the available sizes
   if (!this.pageSizes.includes(this.pageSize)) {
     this.pageSize = this.pageSizes.length > 0 ? this.pageSizes[0] : 5;
@@ -734,10 +727,18 @@ resetFilters(): void {
   this.totalPages = Math.ceil(totalItems / this.pageSize);
   this.totalRecords = Array.from({ length: this.totalPages }, (_, i) => i + 1);
 
+  if (initialIndex >= this.totalPages) {
+    initialIndex = 0;
+  }
+  this.pageIndex = initialIndex;
+    this.recordIndex = this.pageIndex + 1;
   this.start = initialIndex * this.pageSize;
   this.end = this.start + this.pageSize;
-  this.pageIndex = initialIndex;
-  this.recordIndex = this.pageIndex + 1;
+//   if (this.pageIndex >= this.totalPages) {
+//   this.pageIndex = 0;
+//   this.recordIndex = 1;
+// }
+
   this.pagedAppData = this.filteredAppData.slice(this.start, this.end);
 }
 
@@ -772,8 +773,12 @@ resetFilters(): void {
 
   searchApplications(event: Event): void {
     this.searchValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.pageIndex = 0;
-    this.updatePagedData(this.initialIndex);
+//     this.pageIndex = 0;
+//     this.updatePagedData(this.initialIndex);
+//     this.pageIndex = 0;
+// this.recordIndex = 1;
+this.updatePagedData(0);
+
   }
 
 

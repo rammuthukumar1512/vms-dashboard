@@ -86,7 +86,7 @@ button[mat-raised-button]:hover {
 
 .cpe-row:hover {
   background-color: #f9f5f5;
-  cursor: pointer;
+  /* cursor: pointer; */
 }
 
 .cpe-name {
