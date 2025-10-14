@@ -82,7 +82,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   ngOnInit(): void {
     this.previousUrl = this.applicationResolveService.getPreviousUrl();
-    if(!this.previousUrl?.match('vulnerability-metrics') || this.computerDetails.length == 0) this.fetchSecurityData();
+    if(!this.previousUrl?.match('vulnerability-metrics') || ( !this.previousUrl && this.computerDetails.length == 0)) this.fetchSecurityData();
     else {
       this.pageSize = this.applicationResolveService.getComputerDashPageSize();
       this.securityData = this.applicationResolveService.getSecurityReport();
