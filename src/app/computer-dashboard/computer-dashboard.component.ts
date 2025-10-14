@@ -82,7 +82,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   ngOnInit(): void {
     this.previousUrl = this.applicationResolveService.getPreviousUrl();
-    if(!this.previousUrl?.match('vulnerability-metrics')) this.fetchSecurityData();
+    if(!this.previousUrl?.match('vulnerability-metrics') || this.computerDetails.length == 0) this.fetchSecurityData();
     else {
       this.pageSize = this.applicationResolveService.getComputerDashPageSize();
       this.securityData = this.applicationResolveService.getSecurityReport();
@@ -246,7 +246,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   public toggleVulnerableComputers() {
-    console.log(this.showVulnerableComputer, 'previous url');
      this.pageSize = 5;
      if(this.showVulnerableComputer) {
         if(this.previousUrl?.match('vulnerability-metrics')) {
@@ -615,8 +614,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    }
   
   public updatePagedData(initialIndex:number): void {
-    console.log(initialIndex, "init index")
-    console.log(this.finalComputerDetails, "final result")
     let pages = Math.ceil(this.finalComputerDetails.length / this.pageSize);
     this.totalPages = pages;
     this.totalRecords = Array.from({length: pages}, (_, i) => i + 1);
@@ -633,7 +630,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         else computer.selected = false
         return computer
      });
-     console.log(this.pagedComputerData, 'paged data')
    }
 
   public onPageSizeChange(size: number): void {
