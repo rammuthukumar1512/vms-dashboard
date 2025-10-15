@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, OnDestroy, OnInit, QueryList, TemplateRef, ViewChild, ViewChildren } from '@angular/core';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { MatCardModule } from '@angular/material/card';
 import { ApiEndPoints } from '../../environments/api-endpoints';
@@ -32,6 +32,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   @ViewChild('computerChart') computerChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
+  @ViewChildren('computerRow', { read: ElementRef }) computerRows!: QueryList<ElementRef>;
 
   computerChartInstance!: Chart<'doughnut'>;
   severityChartInstance!: Chart<'bar'>;
@@ -81,21 +82,34 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   ngOnInit(): void {
     this.previousUrl = this.applicationResolveService.getPreviousUrl();
-    if(!this.previousUrl?.match('vulnerability-metrics')) this.fetchSecurityData();
+    if(!this.previousUrl?.match('vulnerability-metrics') || ( !this.previousUrl && this.computerDetails.length == 0)) this.fetchSecurityData();
     else {
-      this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
       this.pageSize = this.applicationResolveService.getComputerDashPageSize();
       this.securityData = this.applicationResolveService.getSecurityReport();
+      this.showVulnerableComputer = this.applicationResolveService.getShowVulnerableComputer();
+      if(!this.showVulnerableComputer) {
+        this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+      }
       this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
       this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
       this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
       this.finalComputerDetails = this.computerDetails;
       this.totalComputers = this.finalComputerDetails.length;
-      this.updatePagedData(this.initialIndex);
+      if(this.showVulnerableComputer) {
+          this.toggleVulnerableComputers();
+      } else {
+          this.updatePagedData(this.initialIndex);
+      }
       setTimeout(()=>{
          this.drawVulnBasedComputerChart();
          this.drawSeverityBasedComputerChart();
+         if (this.computerRows && this.computerRows.length > 0) {
+          const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();
+          const selectedRow = this.computerRows.toArray()[selectedComputerIndex]?.nativeElement;
+          selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
+        }
       },0);
+      this.previousUrl = null;
     }
     let now = new Date();
     let initialDelay = (60 - now.getSeconds()) * 1000;
@@ -132,12 +146,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       )
       .subscribe({
         next: (response: HttpResponse<any>) => {
-      if (response === null) {
-        console.log('No content');
-        this.handleNoContent();
-      } else {
-        this.handleSuccessResponse(response);
-      }
+    this.handleSuccessResponse(response);
+
     },
     error: (error: HttpErrorResponse) => {
       console.error('HTTP Error:', error.status, error.message);
@@ -147,24 +157,72 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleNoContent(): void {
-      this.toastService.showSuccessToast('No data available');
+ if (!this.syncComputerData) {
+    this.toastService.showSuccessToast('No data available');
+  }     
+   // Reset all dashboard data
+  this.securityData = {
+    totalComputers: 0,
+    totalCriticalVulnerableApplications: 0,
+    totalHighVulnerableApplications: 0,
+    totalMediumVulnerableApplications: 0,
+    totalLowVulnerableApplications: 0,
+    vulnerableComputers: 0,
+    computerDetails: []
+  };
+
+  this.totalComputers = 0;
+  this.vulnerableComputers = 0;
+  this.computerDetails = [];
+  this.finalComputerDetails = [];
+  this.vulnerableComputersDetails = [];
+  this.pagedComputerData = [];
+
+  // Clear charts
+  if (this.computerChartInstance) {
+    this.computerChartInstance.destroy();
+  }
+  if (this.severityChartInstance) {
+    this.severityChartInstance.destroy();
+  }
+  if (this.applicationDashboardComponent) {
+  this.applicationDashboardComponent.resetApplicationData();
+}
+
+  // Redraw empty charts
+  this.drawVulnBasedComputerChart();
+  this.drawSeverityBasedComputerChart();
+
+  // Reset pagination
+  this.totalRecords = [];
+  this.totalPages = 0;
+  this.pageIndex = 0;
+  this.recordIndex = 1;
+
+  // Trigger UI update
+  this.cdRef.detectChanges();
   }
 
   private handleSuccessResponse(data: any): void {
+      this.syncComputerData = false;
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
     this.applicationResolveService.setSecurityReport(this.securityData);
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
     this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
+      if (!this.computerDetails.length) {
+    this.handleNoContent(); 
+    return;
+          }
     this.finalComputerDetails = this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     if(this.syncComputerData) {
        const selectedComputer = this.computerDetails.find((value, index) =>{
           return this.selectedComputerId == value.id
        });
-       this.sendAppData(selectedComputer ?? null, this.selectedComputerId);
+       this.sendAppData(selectedComputer ?? null, this.selectedComputerId, 0);
     } else {
-       this.sendAppData(this.computerDetails[0] ?? null, 1);
+       this.sendAppData(this.computerDetails[0] ?? null, 1, 0);
        this.syncComputerData = false;
     }
     this.drawVulnBasedComputerChart();
@@ -176,6 +234,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   private handleErrorResponse(error: any): void {
     console.error('Error fetching security data:', error);
     if (error.status === 0) {
+      this.handleNoContent();  // <- clear old data from UI
       this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
       );
@@ -184,19 +243,47 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         'Error : Failed to fetch security data'
       );
     }
+      this.syncComputerData = false;
+
   }
 
   public toggleVulnerableComputers() {
      this.pageSize = 5;
-     this.pageIndex = 0;
      if(this.showVulnerableComputer) {
+        if(this.previousUrl?.match('vulnerability-metrics')) {
+          this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+          this.pageSize = this.applicationResolveService.getComputerDashPageSize();
+        }
+        else {
+          this.selectedComputerId = 1;
+          this.initialIndex = 0; 
+          this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
+          };
+          this.applicationResolveService.setComputerDashPageSize(this.pageSize);
           this.finalComputerDetails = this.computerDetails.filter(computer => {
                   return computer.vulnerableSoftwareCount > 0;
           });
           this.updatePagedData(this.initialIndex);
+          if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
+          this.applicationResolveService.setShowVulnerableComputer(true);
+          this.previousUrl = null;
      } else {
           this.finalComputerDetails = this.computerDetails;
+          if(this.previousUrl?.match('vulnerability-metrics')) { 
+            this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+          } else {
+            this.initialIndex = 0;
+          }
           this.updatePagedData(this.initialIndex);
+          this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
+          setTimeout(()=>{
+          if (this.computerRows && this.computerRows.length > 0 && this.previousUrl?.match('vulnerability-metrics')) {
+          const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();
+          const selectedRow = this.computerRows.toArray()[selectedComputerIndex]?.nativeElement;
+          selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
+          }
+          },0);
+          this.applicationResolveService.setShowVulnerableComputer(false);
      }
   }
 
@@ -323,9 +410,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     let angle = (arc.startAngle + arc.endAngle) / 2;
     const radius = arc.outerRadius;
     const chartValue = chart.data.datasets[0].data[index];
-
     //Skip if this slice has 0 chartValue
-    if (!chartValue || chartValue === 0) return;
+    if (!chartValue || chartValue === 0 || arc.circumference === 0) return;
 
     if (index === 0 && (vulnerablePercentage > 10 && vulnerablePercentage <= 20)) angle += 0.3;
     else if (index === 0 && (vulnerablePercentage >= 20 && vulnerablePercentage < 30)) angle += 0.2;
@@ -339,10 +425,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     else if (index === 1 && (nonVulnerablePercentage >= 40 && nonVulnerablePercentage < 50)) angle += 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 50 && nonVulnerablePercentage < 70)) angle -= 0.3;
     else if (index === 1 && (nonVulnerablePercentage >= 70 && nonVulnerablePercentage <= 90)) angle += 0.3;
-    else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage <= 100)) angle += 0.6;
-    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.3;
+    else if (index === 1 && (nonVulnerablePercentage >= 90 && nonVulnerablePercentage < 100)) angle += 0.6;
+    else if (index === 1 && (nonVulnerablePercentage == 100)) angle += 0.7;
     else if (index === 1 && (nonVulnerablePercentage == 0)) angle -= 0.3;
-
 
     // Start point on arc edge
     const x = centerX + Math.cos(angle) * radius;
@@ -473,9 +558,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     });
   }
 
-  public sendAppData(data: ComputerDetails | null, computerId: number): void {
+  public sendAppData(data: ComputerDetails | null, computerId: number, index: number): void {
      this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
      this.applicationResolveService.setComputerDashPageSize(this.pageSize);
+     this.applicationResolveService.setSelectedComputerIndex(index);
      this.selectedComputerId = computerId;
      this.applicationResolveService.setSelectedComputerId(this.selectedComputerId);
      this.applicationDashboardComponent['resetFilters']();
@@ -540,6 +626,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     const len = this.finalComputerDetails.length;
     this.pageIndex = initialIndex;
     this.recordIndex = this.pageIndex + 1;  
+    console.log(this.pageIndex, this.recordIndex,this.start, this.end)
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {

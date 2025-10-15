@@ -27,7 +27,7 @@ export class ApplicationResolveService {
   private computerUuid: string | null = null;
   private dashboardState: DashboardState | null = null;
   private computerDashPageIndex: number = 0;
-  private computerDashPageSize: number = 0;
+  private computerDashPageSize: number = 5;
   private applicationDashPageIndex: number = 0;
   private applicationDashPageSize: number = 0;
   private securityReport: SecurityReport = {totalComputers: 0,
@@ -39,7 +39,9 @@ export class ApplicationResolveService {
     computerDetails: []};
   private selectedComputerId: number = 1;
   private selectedAppUuid: string | null = null;
+  private selectedComputerIndex: number = 0;
   private selectedApplicationIndex: number = 0;
+  private showVulnerableComputer: boolean = false;
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 // application-resolve.service.ts
@@ -140,10 +142,22 @@ getDashboardState(): DashboardState | null {
   getSelectedAppUuid() {
     return this.selectedAppUuid;
   }
+  setSelectedComputerIndex(number: number): void {
+    this.selectedComputerIndex = number;
+  }
+  getSelectedComputerIndex() {
+    return this.selectedComputerIndex;
+  }
   setSelectedApplicationIndex(number: number): void {
     this.selectedApplicationIndex = number;
   }
   getSelectedApplicationIndex() {
     return this.selectedApplicationIndex;
+  }
+  setShowVulnerableComputer(show: boolean): void {
+    this.showVulnerableComputer = show;
+  }
+  getShowVulnerableComputer() {
+    return this.showVulnerableComputer;
   }
 }
