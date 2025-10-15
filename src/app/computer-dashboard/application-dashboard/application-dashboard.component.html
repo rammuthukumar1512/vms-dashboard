@@ -1,241 +1,164 @@
-
 <!-- Application Dashboard section start -->
-   <!-- First column container start -->
-<div> 
-  <div class="container-fluid border border-1 bg-light rounded-3">
-    <!--Header Section -->
-<div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
-  <div class="col-7 rounded-left">
-    <div class="info-row d-flex flex-wrap gap-2 p-2">
-      <div class="label">Machine Name:</div>
-      <div class="machine"><span class="value" matTooltipPosition="above" matTooltip="{{machineName}}">{{ machineName }}</span></div>
+<div class="container-fluid border border-1 bg-light rounded-3">
+  <!-- Header Section -->
+  <div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
+    <div class="col-7 rounded-left">
+      <div class="info-row d-flex flex-wrap gap-2 p-2">
+        <div class="label">Machine Name:</div>
+        <div class="machine"><span class="value" matTooltipPosition="above" matTooltip="{{machineName}}">{{ machineName }}</span></div>
+      </div>
+      <div class="info-row d-flex flex-wrap gap-2 p-2">
+        <div class="label">LoggedIn User:</div>
+        <div><span class="value" matTooltip="{{loggedInUserName}}">{{ loggedInUserName }}</span></div>
+      </div>
     </div>
-    <div class="info-row d-flex flex-wrap gap-2 p-2">
-      <div class="label">LoggedIn User:</div>
-      <div><span class="value" matTooltip="{{loggedInUserName}}">{{ loggedInUserName }}</span></div>
+    <div class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right">
+      <div class="label d-flex">Last Sync:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
+      <button *ngIf="computer && computer.vulnerableSoftwareCount > 0" (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn p-1">
+        Notify User
+      </button>
     </div>
   </div>
 
-  <div
-    class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right"
-    >
-    <div class="label d-flex">Last Sync:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
-    <button *ngIf="computer && computer.vulnerableSoftwareCount > 0" (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn p-1">
-      Notify User
-    </button>
+  <!-- Charts and Metrics Section -->
+  <div class="row">
+    <div class="col-md-6 p-4">
+      <!-- Top Metrics -->
+      <div class="container-fluid">
+        <div class="row align-items-center pt-3">
+          <div class="col-6 d-flex justify-content-center">
+            <div class="w-75 rounded border border-1 py-2">
+              <p class="text-center text-secondary">Installed Applications</p>
+              <p class="text-center h1">{{ appData.length }}</p>
+            </div>
+          </div>
+          <div class="col-6 d-flex justify-content-center">
+            <div class="w-75 rounded border border-1 py-2">
+              <p class="text-center text-secondary">Vulnerable Applications</p>
+              <p class="text-center h1">{{ vulnerableSoftwareCount }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Charts Section -->
+      <div class="container-fluid p-0 mt-3">
+        <div class="row">
+          <div class="col-md-6 p-0">
+            <p class="fw-bold text-center text-secondary">Applications Overview</p>
+            <div class="chart">
+              <canvas #appChart class="p-0"></canvas>
+            </div>
+          </div>
+          <div class="col-md-6 p-0">
+            <p class="fw-bold text-center text-secondary">Severity</p>
+            <div class="chart px-2">
+              <canvas class="p-2" #severityChart></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Application Table Section -->
+    <div class="col-md-6 p-4 application-table-section">
+      <div class="d-flex justify-content-between mt-3 gap-5">
+        <span class="text-secondary fs-5 fw-bold">Applications</span>
+      </div>
+      <div class="container-fluid mt-3 p-2 rounded-3 border border-1 bg-light">
+        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+          <!-- Severity Filter Buttons -->
+          <div class="d-flex gap-2 flex-wrap">
+            <button class="btn btn-sm severity-btn custom-critical" [class.active-critical]="severityFilter === 'Critical'" (click)="filterBySeverity('Critical')">
+              Critical
+            </button>
+            <button class="btn btn-sm severity-btn custom-high" [class.active-high]="severityFilter === 'High'" (click)="filterBySeverity('High')">
+              High
+            </button>
+            <button class="btn btn-sm severity-btn custom-medium" [class.active-medium]="severityFilter === 'Medium'" (click)="filterBySeverity('Medium')">
+              Medium
+            </button>
+            <button class="btn btn-sm severity-btn custom-low" [class.active-low]="severityFilter === 'Low'" (click)="filterBySeverity('Low')">
+              Low
+            </button>
+            <button class="btn btn-sm severity-btn custom-all" [class.active-all]="!severityFilter" (click)="filterBySeverity(null)">
+              All
+            </button>
+          </div>
+          <!-- Search Bar -->
+          <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" [(ngModel)]="searchValue" (keyup)="searchApplications($event)">
+        </div>
+        <!-- Table -->
+        <div class="overflow-auto mt-3" style="max-height: 47.5vh;">
+          <table mat-table [dataSource]="pagedAppData" class="comp-table w-100">
+            <!-- Software Name -->
+            <ng-container matColumnDef="softwareName">
+              <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
+              <td mat-cell *matCellDef="let app" class="gap-1 col-4">
+                <div class="d-flex align-items-center mt-2" style="word-break: break-word;">
+                  <i class="bi bi-circle-fill mb-2 processIdsTooltip" style="color: #3DDC84; font-size: 5px; border: #30af69; text-shadow: 0 0 1px #3DDC84, 0 0 1px #0cf872;" *ngIf="app.runningProcessIds?.length > 0" [matTooltip]="setProcessIdTooltip(app.runningProcessIds, 20)" matTooltipPosition="above"></i>
+                  <span class="p-1 mb-2">{{ app.softwareName }}
+                    <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning" matTooltip="Unresolved application">shield_question</span>
+                    <span *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0" class="text-danger" matTooltip="Contains vulnerabilities">
+                      ({{ app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount }})
+                      <i *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0" class="fa-solid fa-triangle-exclamation text-danger"></i>
+                    </span>
+                  </span>
+                </div>
+              </td>
+            </ng-container>
+            <!-- Software Version -->
+            <ng-container matColumnDef="softwareVersion">
+              <th class="text-secondary fw-bolder text-center col-4" mat-header-cell *matHeaderCellDef>Version</th>
+              <td class="text-center" mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td>
+            </ng-container>
+            <!-- Vendor -->
+            <ng-container matColumnDef="vendor">
+              <th class="text-secondary fw-bolder text-center col-4" mat-header-cell *matHeaderCellDef>Vendor</th>
+              <td class="text-center" mat-cell *matCellDef="let app">{{ app.vendor }}</td>
+            </ng-container>
+            <!-- Table Rows -->
+            <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+            <tr #applicationTableRow mat-row *matRowDef="let row; let i = index; columns: displayedColumns" (click)="showVulnerabilities(row, i)" class="cursor-pointer" [ngClass]="{
+                'vulnerable-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount + row.mediumVulnerabilityCount + row.lowVulnerabilityCount > 0,
+                'unresolved-row': !row.resolved,
+                'normal-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount + row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved,
+                'selected-row': row.uuid === selectedAppUuid
+              }"></tr>
+          </table>
+          <!-- No Data -->
+          <div *ngIf="!pagedAppData.length" class="text-center p-2">No data found</div>
+        </div>
+        <!-- Pagination -->
+        <div *ngIf="pagedAppData.length > 0" class="d-flex justify-content-end mt-2">
+          <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
+            <mat-select class="border rounded page-size-width p-2" [(ngModel)]="recordIndex" (ngModelChange)="getPage($event)">
+              <mat-option *ngFor="let record of totalRecords" [value]="record">
+                {{ record }}
+              </mat-option>
+            </mat-select>
+            <mat-select class="border rounded page-size-width p-2" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
+              <mat-option *ngFor="let size of pageSizes" [value]="size">{{ size }}</mat-option>
+            </mat-select>
+            <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
+              <mat-icon class="material-symbols-outlined fs-5">arrow_back_ios</mat-icon>
+            </button>
+            <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
+              <mat-icon class="material-symbols-outlined fs-5">arrow_forward_ios</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-
-    <div class="container-fluid">
-      <!-- Top Metrics start -->
-
-      <div class="row align-items-center pt-3">
-        <div class="col-6 d-flex justify-content-center">
-          <div class="w-75 rounded border border-1 py-2">
-            <p class="text-center text-secondary">Installed Applications</p>
-            <p class="text-center h1">{{ appData.length }}</p>
-          </div>
-        </div>
-        <div class="col-6 d-flex justify-content-center">
-          <div class="w-75 rounded border border-1 py-2">
-            <p class="text-center text-secondary">Vulnerable Applications</p>
-            <p class="text-center h1">{{ vulnerableSoftwareCount }}</p>
-          </div>
-        </div>
-      </div>
-      <!-- top metrics end -->
-    </div>
-   
-
-    <!-- Charts Section start -->
-    <div class="container-fluid p-0 mt-3">
-      <div class="row">
-        <div class="col-md-6 p-0">
-          <p class="fw-bold text-center text-secondary">Applications Overview</p>
-          <div class="chart">
-            <canvas #appChart class="p-0"></canvas>
-          </div>
-        </div>
-        <div class="col-md-6 p-0">
-          <p class="fw-bold text-center text-secondary">Severity</p>
-          <div class="chart">
-            <canvas class="p-2" #severityChart></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- chart section end -->
- </div>
-</div>
- <!-- First column container end -->
-   
- <div class="d-flex justify-content-between mt-3 gap-5">
- <span class="text-secondary fs-5 fw-bold">Applications</span>
-</div>
- <!-- Table Section -->
-    <div class="container-fluid mt-3 p-2 rounded-3 border border-1 bg-light">
-<div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-
-  <!-- Severity Filter Buttons start-->
-<div class="d-flex gap-2 flex-wrap">
-  <button class="btn btn-sm severity-btn custom-critical"
-          [class.active-critical]="severityFilter === 'Critical'"
-          (click)="filterBySeverity('Critical')">
-    Critical
-  </button>
-
-  <button class="btn btn-sm severity-btn custom-high"
-          [class.active-high]="severityFilter === 'High'"
-          (click)="filterBySeverity('High')">
-    High
-  </button>
-
-  <button class="btn btn-sm severity-btn custom-medium"
-          [class.active-medium]="severityFilter === 'Medium'"
-          (click)="filterBySeverity('Medium')">
-    Medium
-  </button>
-
-  <button class="btn btn-sm severity-btn custom-low"
-          [class.active-low]="severityFilter === 'Low'"
-          (click)="filterBySeverity('Low')">
-    Low
-  </button>
-
-  <button class="btn btn-sm severity-btn custom-all"
-          [class.active-all]="!severityFilter"
-          (click)="filterBySeverity(null)">
-    All
-  </button>
-</div>
-<!-- Severity Filter Buttons end-->
-
-  <!-- Severity Filter Buttons end-->
-
-  <!-- Search Bar -->
- <input class="comp-search-field rounded ps-3 py-1 border border-1"
-         type="text"
-         placeholder="Search"
-         [(ngModel)]="searchValue"
-         (keyup)="searchApplications($event)">
-</div>
-
-
-      <div class="overflow-auto mt-3" style="max-height: 47.5vh;">
-        <table mat-table [dataSource]="pagedAppData" class="comp-table w-100">
-
-          <!-- Software Name -->
- <ng-container  matColumnDef="softwareName">
-   <th class="text-secondary fw-bolder" mat-header-cell *matHeaderCellDef>Software Name</th>
-
-<td mat-cell  *matCellDef="let app" class="gap-1 col-4">
-  <div class="d-flex align-items-center mt-2" style="word-break: break-word;">
-      <i class="bi bi-circle-fill mb-2 processIdsTooltip"
-   style="color: #3DDC84; font-size: 5px; border: #30af69;
-          text-shadow: 0 0 1px #3DDC84, 0 0 1px #0cf872;" 
-   *ngIf="app.runningProcessIds?.length > 0"
-   [matTooltip]="setProcessIdTooltip(app.runningProcessIds, 20)"
-   matTooltipPosition="above">
-</i>
-
-  <span class="p-1 mb-2">{{ app.softwareName }}
-  <span *ngIf="!app.resolved" class="material-symbols-outlined text-warning"  matTooltip="Unresolved application">shield_question</span>
-  <span  *ngIf="(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount) > 0"
-        class="text-danger"  matTooltip="Contains vulnerabilities">
-    ({{
-      app.criticalVulnerabilityCount +
-      app.highVulnerabilityCount +
-      app.mediumVulnerabilityCount +
-      app.lowVulnerabilityCount
-    }})
-
-   <i 
-    *ngIf="app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0"
-    class="fa-solid fa-triangle-exclamation text-danger"
-  ></i>
-    </span>
-    </span>
-</div>
-</td>
-          </ng-container>
-
-          <!-- Software Version -->
-          <ng-container matColumnDef="softwareVersion">
-            <th class="text-secondary fw-bolder text-center col-4" mat-header-cell *matHeaderCellDef>Version</th>
-            <td class="text-center" mat-cell *matCellDef="let app">{{ app.softwareVersion }}</td> 
-          </ng-container>
-
-          <!-- Vendor -->
-          <ng-container matColumnDef="vendor">
-            <th class="text-secondary fw-bolder text-center col-4" mat-header-cell *matHeaderCellDef>Vendor</th>
-            <td class="text-center"mat-cell *matCellDef="let app">{{ app.vendor }}</td>
-          </ng-container>
-
-          <!-- Table Rows -->
-           <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
-    <tr #applicationTableRow
-      mat-row
-      *matRowDef="let row;let i = index; columns: displayedColumns"
-      (click)="showVulnerabilities(row,i)"
-      class="cursor-pointer"
-      [ngClass]="{
-        'vulnerable-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
-                          row.mediumVulnerabilityCount + row.lowVulnerabilityCount > 0,
-                          'unresolved-row': !row.resolved,
-        'normal-row': row.criticalVulnerabilityCount + row.highVulnerabilityCount +
-                      row.mediumVulnerabilityCount + row.lowVulnerabilityCount === 0 && row.resolved,
-        'selected-row': row.uuid === selectedAppUuid              
-      }"
-    ></tr>
-        </table>
-
-        <!-- No Data -->
-        <div *ngIf="!pagedAppData.length" class="text-center p-2">No data found</div>
-      </div>
-
-      <!-- Pagination -->
-      <div *ngIf="pagedAppData.length > 0" class="d-flex justify-content-end mt-2">
-        <div class="col-7 d-flex justify-content-evenly align-items-center  height-fit-content pagination-controls">
-           <mat-select
-          class="border rounded page-size-width p-2"
-          [(ngModel)]="recordIndex"
-          (ngModelChange)="getPage($event)"
-        >
-          <mat-option *ngFor="let record of totalRecords" [value]="record">
-            {{ record }}
-          </mat-option>
-        </mat-select>
-          <mat-select class="border rounded page-size-width p-2"
-                      [(ngModel)]="pageSize"
-                      (ngModelChange)="onPageSizeChange($event)">
-            <mat-option *ngFor="let size of pageSizes" [value]="size">{{ size }}</mat-option>
-          </mat-select>
-
-          <button (click)="previousPage()"
-                  [disabled]="pageIndex === 0"
-                  class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
-            <mat-icon class="material-symbols-outlined fs-5">arrow_back_ios</mat-icon>
-          </button>
-
-          <button (click)="nextPage()"
-                  [disabled]="pageIndex >= totalPages - 1"
-                  class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
-            <mat-icon class="material-symbols-outlined fs-5">arrow_forward_ios</mat-icon>
-          </button>
-        </div>
-      </div> <!-- pagination end-->
-    </div> <!-- Application table date end-->
-
-<!-- Application Dashboard section end -->
-
+<!-- Notification Dialog -->
 <ng-template #notificationConfirmDialog>
   <h6 class="bg-blue-theme text-white fs-5 ps-2 py-2">Confirm</h6>
   <mat-dialog-content class="p-3">
     <p class="text-start">
-      You are about to send a notification to 
-      <span matTooltipPosition="below"
- matTooltip="{{loggedInUserEmail}}" class="machine fw-bold">{{ loggedInUserEmail }}</span> 
+      You are about to send a notification to
+      <span matTooltipPosition="below" matTooltip="{{loggedInUserEmail}}" class="machine fw-bold">{{ loggedInUserEmail }}</span>
       Do you wish to continue?
     </p>
   </mat-dialog-content>
