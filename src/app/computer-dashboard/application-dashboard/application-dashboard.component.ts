@@ -45,7 +45,6 @@ export class ApplicationDashboardComponent implements AfterViewInit {
  @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
  @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>; // Add template reference
  @ViewChildren('applicationTableRow', { read: ElementRef }) applicationTableRows!: QueryList<ElementRef>;
-
   appChartInstance: Chart<'doughnut'> | undefined;
   severityChartInstance: Chart<'bar'> | undefined;
   lastResolvedApp: ApplicationDetails | null = null;
@@ -672,8 +671,18 @@ drawSeverityChart(): void {
   filterBySeverity(severity: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
     this.severityFilter = severity;
     this.activeFilter = severity; // Set the active filter
-      this.applicationResolveService.setSeverityFilter(severity); // <-- Save it
-    this.updatePagedData(0);
+      this.applicationResolveService.setSeverityFilter(severity);
+          this.updatePagedData(0);
+
+
+  setTimeout(() => {
+    this.applicationTableRows.forEach(row => {
+      row.nativeElement.classList.add('table-blink');
+      setTimeout(() => {
+        row.nativeElement.classList.remove('table-blink');
+      }, 300);
+    });
+  }, 0);
   }
 getFilteredApps(): ApplicationDetails[] {
   let data = this.allApplications;

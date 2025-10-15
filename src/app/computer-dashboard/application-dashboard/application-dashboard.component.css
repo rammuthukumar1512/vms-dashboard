@@ -241,7 +241,16 @@ td {
 .notify-btn{
   width: fit-content;
 }
+/* application-dashboard.component.css */
+tr.table-blink {
+  animation: blink 0.3s ease-in-out !important;
+}
 
+@keyframes blink {
+  0% { background-color: #f1f7f9; } 
+  50% { background-color: #dfe1e1; } 
+  100% { background-color: transparent; } 
+}
 @media (max-width: 767px) {
   .notify-button-container {
     width: 100%;
