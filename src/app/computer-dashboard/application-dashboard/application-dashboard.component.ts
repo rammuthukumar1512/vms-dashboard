@@ -145,6 +145,7 @@ ngOnInit(): void {
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
         this.lastRefresh = data.lastRefresh.split("T").join(" | ") || null;
+        this.selectedAppUuid = null;
         if (data?.appData && Array.isArray(data.appData)) {
      const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
             const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
@@ -497,12 +498,12 @@ drawAppChart(): void {
           else if (percentage >= 90 && percentage < 100) angle += 0.6;
           else if (percentage === 0) angle -= 0.3;
         } else if (index === 2) { // Unresolved
-          if (percentage > 10 && percentage <= 20) angle += 0.4;
+          if (percentage > 10 && percentage <= 20) angle += 0.5;
           else if (percentage >= 20 && percentage < 30) angle += 0.3;
           else if (percentage >= 30 && percentage < 40) angle -= 0.4;
           else if (percentage >= 40 && percentage < 50) angle -= 0.6;
           else if (percentage >= 50 && percentage < 100) angle = 0.8;
-          else if (percentage === 100) angle -= 0.6;
+          else if (percentage === 100) angle -= 0.8;
           else if (percentage === 0) angle += 0.4;
         }
 
