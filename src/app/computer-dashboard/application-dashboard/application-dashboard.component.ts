@@ -12,7 +12,7 @@ import { SharedDataService } from '../../core/services/shared-data.service';
 import { VulnerabilityDialogComponent } from './vulnerability-dialog.component';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Chart } from 'chart.js';
- import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
+import { ApplicationDetails, ComputerDetails } from '../../models/computer.model';
 import { Subject, takeUntil } from 'rxjs';
 import { ToastService } from '../../core/services/toast.service';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
@@ -236,8 +236,8 @@ if (savedFilter) {
 
 
   calculateSeverityCounts(): void {
-    this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
-    this.appData.forEach(app => {
+     this.severityCounts = { critical: 0, high: 0, medium: 0, low: 0 };
+     this.appData.forEach(app => {
       this.severityCounts.critical += app.criticalVulnerabilityCount;
       this.severityCounts.high += app.highVulnerabilityCount;
       this.severityCounts.medium += app.mediumVulnerabilityCount;
@@ -246,16 +246,15 @@ if (savedFilter) {
   }
 
   public sendAppData(data: ComputerDetails | null , _computerId: number): void {
-      // this.selectedComputerId = computerId;
-        if (!data) {
+    if (!data) {
     this.resetApplicationData();
     return;
   }
-  this.computer = data;
+this.computer = data;
 this.pageSize = 5;
 this.pageIndex = 0;
 this.recordIndex = 1;
-  this.selectedApp = null; // Clear selected app on refresh
+this.selectedApp = null; // Clear selected app on refresh
 this.updatePagedData(this.pageIndex);
 
     const appData = {
@@ -264,7 +263,8 @@ this.updatePagedData(this.pageIndex);
       loggedInUserEmail: data?.loggedInUserEmail || 'Unknown',
       vulnerableSoftwareCount: data?.vulnerableSoftwareCount || 0,
       lastRefresh: data?.updatedAt ? data?.updatedAt : data?.createdAt,
-      appData: data?.applicationDetails || []
+      appData: data?.applicationDetails || [],
+      uuid : data?.uuid
     };
     this.sharedDataService.sendAppData(appData);
 
