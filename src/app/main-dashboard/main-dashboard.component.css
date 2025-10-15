@@ -73,7 +73,7 @@
 .dash-heading-text{
   color: #228bc8;
   font-weight: 600;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  /* text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1); */
 }
 .z-index-high {
    z-index: 9999;
