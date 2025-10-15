@@ -9,11 +9,13 @@ import { RouterLink } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
+import { ComputerDashboardComponent } from '../computer-dashboard/computer-dashboard.component';
+import { SharedDataService } from '../core/services/shared-data.service';
 
 @Component({
   selector: 'app-main-dashboard',
   imports: [CommonModule, MatIconModule, MatSidenavModule, MatToolbar, MatNavList,
-          RouterOutlet, RouterLink, MatTooltipModule, RouterModule],
+          RouterOutlet, RouterLink, MatTooltipModule, RouterModule, ComputerDashboardComponent],
   templateUrl: './main-dashboard.component.html',
   styleUrl: './main-dashboard.component.css'
 })
@@ -25,11 +27,12 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
 
     @ViewChild('sidenav') sidenav!: MatSidenav;
     @ViewChild('matSideNavContent') matSideNavContent!: MatSidenavContent;
+    @ViewChild('computerDashboard') computerDashboard!: ComputerDashboardComponent;
     sideMenuItems = [ {title: 'Computer Overview', icon: 'dashboard', link: '/computer-overview'},
     {title: 'Resolve Applications', icon: 'app_registration', link: '/resolve-applications'},
     {title: 'Search Vulnerability', icon: 'search_insights', link: '/cpe-cve-search'}];
     
-    constructor(private breakpointObserver: BreakpointObserver){}
+    constructor(private breakpointObserver: BreakpointObserver, private sharedDataService: SharedDataService){}
 
   ngAfterViewInit(): void {
     this.setupSidenav();
@@ -79,6 +82,10 @@ public onMouseLeave() {
        this.hoverState = "";
      }, 300);
    } 
+}
+
+public syncSecurityData() {
+    this.sharedDataService.syncSecurityData();
 }
 
 }

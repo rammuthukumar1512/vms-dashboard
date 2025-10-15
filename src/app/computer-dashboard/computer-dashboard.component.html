@@ -1,9 +1,10 @@
 <!-- Computer Dashboard -->
- <div>
-<div class="container-fluid border border-1 bg-light rounded-3 dashboard-container">
+ <div class="p-3 rounded-top-3">
+<div class="container-fluid p-0 rounded-top-3 bg-gray-shade rounded-3">
   <!-- Header Section -->
-  <div class="bg-gray-shade row rounded-top-3 border border-top-0 border-start-0 border-end-0 border-bottoms">
-    <div class="col-7 rounded-left">
+  <div class="bg-gray-shade row p-0 rounded-top-3 border border-bottom">
+    <div class="text-center fw-bold h4 text-secondary py-2">System Inventory</div>
+    <!-- <div class="col-7 rounded-left">
       <div class="info-row d-flex flex-wrap gap-2 p-2">
         <div class="label">Date:</div>
         <div><span class="value">{{toDay}}</span></div>
@@ -19,11 +20,11 @@
         <span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span>
         <span>Sync Now</span>
       </button>
-    </div>
+    </div> -->
   </div>
 
   <!-- Charts and Metrics Section -->
-  <div class="row">
+  <div class="row bg-light border border-top-0 border-1 rounded-bottom-3">
     <div class="col-md-6 p-3">
       <!-- Top Metrics -->
       <div class="container-fluid">
@@ -63,13 +64,14 @@
 
     <!-- Computer Table Section -->
     <div class="col-md-6 p-3 computer-table-section">
-      <div class="d-flex justify-content-between mt-3 gap-3">
+      
+      <div class="container-fluid p-2 bg-light">
+        <div class="d-flex justify-content-between gap-3">
         <span class="text-secondary fs-5 fw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Computers'}}</span>
         <div class="me-2">
           <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;</mat-slide-toggle>
         </div>
       </div>
-      <div class="container-fluid mt-3 p-2 rounded-3 border border-1 bg-light">
         <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
           <!-- Search Bar -->
           <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
@@ -79,7 +81,7 @@
           </button>
         </div>
         <!-- Table -->
-        <div class="overflow-auto mt-3" style="max-height: 47.5vh;">
+        <div class="overflow-auto mt-3" style="height: 50vh;">
           <table class="comp-table w-100">
             <thead class="sticky-top bg-light">
               <tr>

@@ -26,7 +26,6 @@ td {
   padding: 8px;
   text-overflow: ellipsis;
   overflow: hidden;
-  white-space: nowrap; /* Prevent text wrapping to avoid overflow */
 }
 
 .comp-table thead tr > th {
@@ -106,7 +105,9 @@ td {
 .notify-button-container {
   overflow: hidden;
 }
-
+.comp-table-col-width {
+  width: 33.33% !important;
+}
 .rounded-left {
   border-top-left-radius: 8px;
 }
