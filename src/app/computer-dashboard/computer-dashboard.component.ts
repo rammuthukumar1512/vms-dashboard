@@ -275,7 +275,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           this.updatePagedData(this.initialIndex);
           this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
           setTimeout(()=>{
-          if (this.computerRows && this.computerRows.length > 0) {
+          if (this.computerRows && this.computerRows.length > 0 && this.previousUrl?.match('vulnerability-metrics')) {
           const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();
           const selectedRow = this.computerRows.toArray()[selectedComputerIndex]?.nativeElement;
           selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
