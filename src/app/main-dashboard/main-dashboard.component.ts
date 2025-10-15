@@ -15,7 +15,7 @@ import { SharedDataService } from '../core/services/shared-data.service';
 @Component({
   selector: 'app-main-dashboard',
   imports: [CommonModule, MatIconModule, MatSidenavModule, MatToolbar, MatNavList,
-          RouterOutlet, RouterLink, MatTooltipModule, RouterModule, ComputerDashboardComponent],
+          RouterOutlet, RouterLink, MatTooltipModule, RouterModule],
   templateUrl: './main-dashboard.component.html',
   styleUrl: './main-dashboard.component.css'
 })
