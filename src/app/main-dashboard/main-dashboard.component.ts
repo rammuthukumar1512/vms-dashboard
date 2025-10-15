@@ -43,6 +43,7 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
 
   private setupSidenav(): void {
     if (!this.sidenav) {
+      console.error('Sidenav not found');
       return;
     }
 
@@ -52,6 +53,7 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
     this.breakpointObserver
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .subscribe(result => {
+        console.log(result);
         this.isMobile = result.matches;
         this.sidenav.mode = this.isMobile ? 'over' : 'side';
         this.sidenav.opened = !this.isMobile;
@@ -60,6 +62,7 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
   }
 
    toggleSidenavMode(): void {
+    console.log(this.isMobile)
     if (this.isMobile) {
       this.sidenav.toggle();
     }

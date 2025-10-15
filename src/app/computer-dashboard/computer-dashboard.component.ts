@@ -150,6 +150,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
     },
     error: (error: HttpErrorResponse) => {
+      console.error('HTTP Error:', error.status, error.message);
       this.handleErrorResponse(error);
     }
       });
@@ -231,6 +232,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleErrorResponse(error: any): void {
+    console.error('Error fetching security data:', error);
     if (error.status === 0) {
       this.handleNoContent();  // <- clear old data from UI
       this.toastService.showErrorToast(
@@ -658,6 +660,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
       });
      }
+     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
 
@@ -671,7 +674,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showSuccessToast(response.message);
-        }, error: ()=>{
+        }, error: (error)=>{
              this.toastService.showErrorToast('Send Notification Failed');
         }
       })

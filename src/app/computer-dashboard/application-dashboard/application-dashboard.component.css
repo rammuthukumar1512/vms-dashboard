@@ -1,9 +1,11 @@
+/* Existing styles (no change here) */
 .chart {
   height: 230px;
   margin: auto;
   padding: 8px 0;
   border-radius: 12px;
   color: #47a2fc;
+  /* min-width: 200px; */
 }
 
 .selected-row {
@@ -140,6 +142,7 @@ td {
   height: 44px !important;
 }
 
+/* Base styles for all severity buttons (no change) */
 .severity-btn {
   border: 1px solid #ccc;
   color: black;
@@ -147,6 +150,7 @@ td {
   transition: background-color 0.2s, color 0.2s;
 }
 
+/* ACTIVE Styles (no change) */
 .active-critical {
   background-color: #F26419 !important;
   color: white !important;
@@ -207,12 +211,14 @@ td {
 
 .headerDetails {
   width: 400px;
+  /* background-color: #007bff; */
 }
 
 .col-7 {
   gap: 5px;
 }
 
+/* No change needed for bg-blue-theme; it's not used in the provided code */
 .bg-blue-theme {
   background-color: #3366ffe7;
 }

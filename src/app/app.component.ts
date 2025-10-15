@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ComputerDashboardComponent } from './computer-dashboard/computer-dashboard.component';
 import { RouterOutlet } from '@angular/router';
 import { LoaderComponent } from './shared/components/loader/loader.component';
 
