@@ -253,14 +253,16 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           this.pageSize = this.applicationResolveService.getComputerDashPageSize();
         }
         else {
+          this.selectedComputerId = 1;
           this.initialIndex = 0; 
           this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
-          }
+          };
           this.applicationResolveService.setComputerDashPageSize(this.pageSize);
           this.finalComputerDetails = this.computerDetails.filter(computer => {
                   return computer.vulnerableSoftwareCount > 0;
           });
           this.updatePagedData(this.initialIndex);
+          if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
           this.applicationResolveService.setShowVulnerableComputer(true);
           this.previousUrl = null;
      } else {
@@ -270,8 +272,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           } else {
             this.initialIndex = 0;
           }
-          
           this.updatePagedData(this.initialIndex);
+          this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
           setTimeout(()=>{
           if (this.computerRows && this.computerRows.length > 0) {
           const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();

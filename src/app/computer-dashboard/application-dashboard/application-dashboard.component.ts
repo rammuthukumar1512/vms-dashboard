@@ -145,6 +145,7 @@ ngOnInit(): void {
         this.loggedInUserEmail = data.loggedInUserEmail || 'Unknown';
         this.machineName = data.machineName || 'Unknown';
         this.lastRefresh = data.lastRefresh.split("T").join(" | ") || null;
+        this.selectedAppUuid = null;
         if (data?.appData && Array.isArray(data.appData)) {
      const sortedData = data.appData.sort((a: ApplicationDetails, b: ApplicationDetails) => {
             const aVulns = a.criticalVulnerabilityCount + a.highVulnerabilityCount + a.mediumVulnerabilityCount + a.lowVulnerabilityCount;
