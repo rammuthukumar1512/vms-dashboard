@@ -489,8 +489,8 @@ drawAppChart(): void {
           else if (percentage === 100) angle -= 0.7;
           else if (percentage === 0) angle += 0.3;
         } else if (index === 1) { // Non-Vulnerable
-          if (percentage > 10 && percentage < 20) angle -= 0.5;
-          else if (percentage >= 20 && percentage < 40) angle -= 0.9;
+          if (percentage > 10 && percentage < 20) angle -= 0.2;
+          else if (percentage >= 20 && percentage < 40) angle -= 0.8;
           else if (percentage >= 40 && percentage < 50) angle += 0.3;
           else if (percentage >= 50 && percentage < 70) angle -= 0.3;
           else if (percentage >= 70 && percentage <= 90) angle += 0.3;
