@@ -14,7 +14,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { ApplicationDetails, ComputerDetails,Vulnerability } from '../../models/computer.model';
 import { HttpClient } from '@angular/common/http';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
-import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';  // add if not imported
+import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';  
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
@@ -105,7 +105,7 @@ ngOnInit(): void {
         this.toastService.showErrorToast('No computer UUID provided in the URL.');
         return; 
       }
-      this.applicationResolveService.setComputerUuid(this.computerUuid); // Store computerUuid
+      this.applicationResolveService.setComputerUuid(this.computerUuid); 
       this.fetchComputerDetails();
     });
   }
