@@ -42,7 +42,7 @@
       <mat-icon *ngIf="isMobile" class="material-symbols-outlined me-2" (click)="toggleSidenavMode()">menu</mat-icon>
       <div class="w-100 d-flex justify-content-between">
       <strong class="h4 text-center dash-heading-text">Vulnerability Monitoring System</strong>
-      <button class="d-flex align-items-center btn btn-border-none btn-primary p-1 me-2" (click)="syncSecurityData()" matTooltip="Sync Security Data">
+      <button *ngIf="urlMatch" class="d-flex align-items-center btn btn-border-none btn-primary p-1 me-2" (click)="syncSecurityData()" matTooltip="Sync Security Data">
         <span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span>
         <span>Sync Now</span>
       </button>
