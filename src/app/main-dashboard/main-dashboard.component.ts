@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, DoCheck, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MatNavList } from '@angular/material/list';
 import { MatSidenav, MatSidenavContent, MatSidenavModule} from '@angular/material/sidenav';
 import { MatToolbar } from '@angular/material/toolbar';
@@ -11,6 +11,8 @@ import { RouterModule } from '@angular/router';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 import { ComputerDashboardComponent } from '../computer-dashboard/computer-dashboard.component';
 import { SharedDataService } from '../core/services/shared-data.service';
+import { AppRoutes } from '../../environments/approutes';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-main-dashboard',
@@ -19,11 +21,12 @@ import { SharedDataService } from '../core/services/shared-data.service';
   templateUrl: './main-dashboard.component.html',
   styleUrl: './main-dashboard.component.css'
 })
-export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
+export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewChecked{
     isMiniSidenav = false;
     isMobile = false;
     sidenavPosition!: 'start';
     hoverState: String = "";
+    urlMatch: boolean = false;
 
     @ViewChild('sidenav') sidenav!: MatSidenav;
     @ViewChild('matSideNavContent') matSideNavContent!: MatSidenavContent;
@@ -32,8 +35,15 @@ export class MainDashboardComponent implements AfterViewInit, AfterViewChecked{
     {title: 'Resolve Applications', icon: 'app_registration', link: '/resolve-applications'},
     {title: 'Search Vulnerability', icon: 'search_insights', link: '/cpe-cve-search'}];
     
-    constructor(private breakpointObserver: BreakpointObserver, private sharedDataService: SharedDataService){}
-
+  constructor(private breakpointObserver: BreakpointObserver, private sharedDataService: SharedDataService, private router: Router){}
+   ngOnInit(): void {
+        let currentUrl = this.router.url;
+        this.urlMatch = currentUrl ? !currentUrl.match(AppRoutes.cpe_cve_search) : false;
+     this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
+        currentUrl = event.urlAfterRedirects;
+        this.urlMatch = currentUrl ? !currentUrl.match(AppRoutes.cpe_cve_search) : false;
+     });
+   }
   ngAfterViewInit(): void {
     this.setupSidenav();
   }

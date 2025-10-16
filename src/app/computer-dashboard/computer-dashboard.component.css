@@ -122,6 +122,9 @@ td {
   outline: none;
   padding: 4px 8px; /* Adjusted for consistency */
 }
+.computer-card-header.h4 {
+  margin-bottom: 0 !important;
+}
 
 .computer-table-section {
   border-left: 2px solid rgb(248, 243, 243);
