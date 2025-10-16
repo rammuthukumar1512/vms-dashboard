@@ -753,7 +753,7 @@ showVulnerabilityMetrics(cveId: string): void {
 });
     // this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
   const queryParams = this.selectedApp ? { selectedApp: this.selectedApp.softwareName } : {};
-  sessionStorage.setItem('previousUrl', '');
+  sessionStorage.setItem('previousUrl', this.router.url);
   // sessionStorage.setItem('selectedComputerUuid', this.computerUuid);
   this.router.navigate([`/vulnerability/metrics/user/report/cve/${cveId}`], { queryParams, state: { computerUuid: this.computerUuid } });
   }
