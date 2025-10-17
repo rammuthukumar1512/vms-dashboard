@@ -37,7 +37,7 @@ export class ApplicationResolveService {
     totalLowVulnerableApplications: 0,
     vulnerableComputers: 0,
     computerDetails: []};
-  private selectedComputerId: number = 1;
+  private selectedComputerId: number = 0;
   private selectedAppUuid: string | null = null;
   private selectedComputerIndex: number = 0;
   private selectedApplicationIndex: number = 0;

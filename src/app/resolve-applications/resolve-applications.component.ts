@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../core/services/toast.service';
 import { ApplicationResolveService } from '../core/services/application-resolve.service';
 import { Router } from '@angular/router';
+import { SharedDataService } from '../core/services/shared-data.service';
+import { AppRoutes } from '../../environments/approutes';
 
 
 interface UnresolvedApplication {
@@ -57,11 +59,14 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private dialog: MatDialog,
     private toastService: ToastService,
-    private applicationResolveService: ApplicationResolveService, private router: Router // Added service
+    private applicationResolveService: ApplicationResolveService, private router: Router, private sharedDataService: SharedDataService // Added service
 
   ) {}
 
   ngOnInit(): void {
+    this.sharedDataService.syncSecurityData$.subscribe(()=>{
+        if(this.router.url.includes(AppRoutes.resolve_applications)) this.fetchUnresolvedApplications();
+    });
     this.fetchUnresolvedApplications();
       this.applicationResolveService.resolveData$
       .pipe(takeUntil(this.destroy$))
