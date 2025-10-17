@@ -35,6 +35,8 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   @ViewChild('severityChart') severityChart: ElementRef<HTMLCanvasElement> | undefined;
   @ViewChild('searchInput') searchInputRef!: ElementRef<HTMLInputElement>;
   @ViewChildren('computerRow', { read: ElementRef }) computerRows!: QueryList<ElementRef>;
+  @ViewChild('applicationDashboardSection') applicationDashboardSection!: ElementRef<HTMLElement>;
+
 
   computerChartInstance!: Chart<'doughnut'>;
   severityChartInstance!: Chart<'bar'>;
@@ -579,8 +581,21 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         if(this.selectedComputerId === computer.id) computer.selected = true
         else computer.selected = false
         return computer
-     });
-  }
+     }); 
+    }
+
+  public sendAppDataFromClick(data: ComputerDetails | null, computerId: number, index: number): void {
+  this.sendAppData(data, computerId, index);
+
+  setTimeout(() => {
+    if (this.applicationDashboardSection) {
+      this.applicationDashboardSection.nativeElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+    }
+  }, 200);
+}
 
   public getPage(page: number): void {
     this.recordIndex = page - 1;

@@ -91,7 +91,7 @@
               </tr>
             </thead>
             <tbody>
-              <tr class="cursor-pointer" #computerRow [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id, i)">
+              <tr class="cursor-pointer" #computerRow [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppDataFromClick(computer, computer.id, i)">
                 <td class="text-secondary word-break">{{computer.macAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
                 <td class="word-break">{{computer.machineName}}</td>
                 <td class="word-break">{{computer.loggedInUserName}}</td>
@@ -144,7 +144,7 @@
 </ng-template>
 
 <!-- Application Dashboard -->
-<div class="row dash-height application-dashboard">
+<div  #applicationDashboardSection class="row dash-height application-dashboard">
   <div class="col-md-12 p-3">
     <app-application-dashboard></app-application-dashboard>
   </div>
