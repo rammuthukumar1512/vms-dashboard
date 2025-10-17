@@ -41,7 +41,7 @@
         </div>
       </div>
       <!-- Charts Section -->
-      <div class="container-fluid p-0 mt-3">
+      <div class="container-fluid p-0">
         <div class="row">
           <div class="col-md-6 p-0">
             <p class="fw-bold text-center text-secondary">Applications Overview</p>
@@ -126,7 +126,7 @@
               }"></tr>
           </table>
           <!-- No Data -->
-          <div *ngIf="!pagedAppData.length" class="text-center p-2">No data found</div>
+          <div *ngIf="!pagedAppData.length" class="text-center p-2">No Computer has been selected</div>
         </div>
         <!-- Pagination -->
         <div *ngIf="pagedAppData.length > 0" class="d-flex justify-content-end mt-2">

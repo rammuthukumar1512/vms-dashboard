@@ -51,6 +51,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   finalComputerDetails: ComputerDetails[] = [];
   vulnerableComputersDetails: ComputerDetails[] = [];
   showVulnerableComputer: boolean = false;
+  computerSearchTearm: string = '';
   pagedComputerData: ComputerDetails[] = [];
   selectedComputerId: number = 1;
   initialIndex: number = 0;
@@ -241,44 +242,45 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   }
 
-  public toggleVulnerableComputers() {
-     this.pageSize = 5;
-     if(this.showVulnerableComputer) {
-        if(this.previousUrl?.match('vulnerability-metrics')) {
-          this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
-          this.pageSize = this.applicationResolveService.getComputerDashPageSize();
-        }
-        else {
-          this.selectedComputerId = 1;
-          this.initialIndex = 0; 
-          this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
-          };
-          this.applicationResolveService.setComputerDashPageSize(this.pageSize);
-          this.finalComputerDetails = this.computerDetails.filter(computer => {
-                  return computer.vulnerableSoftwareCount > 0;
-          });
-          this.updatePagedData(this.initialIndex);
-          if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
-          this.applicationResolveService.setShowVulnerableComputer(true);
-          this.previousUrl = null;
-     } else {
-          this.finalComputerDetails = this.computerDetails;
-          if(this.previousUrl?.match('vulnerability-metrics')) { 
-            this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
-          } else {
-            this.initialIndex = 0;
-          }
-          this.updatePagedData(this.initialIndex);
-          setTimeout(()=>{
-          if (this.computerRows && this.computerRows.length > 0 && this.previousUrl?.match('vulnerability-metrics')) {
-          const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();
-          const selectedRow = this.computerRows.toArray()[selectedComputerIndex]?.nativeElement;
-          selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
-          }
-          },0);
-          this.applicationResolveService.setShowVulnerableComputer(false);
-     }
+public toggleVulnerableComputers() {
+  this.computerSearchTearm = '';
+  this.pageSize = 5;
+  if(this.showVulnerableComputer) {
+    if(this.previousUrl?.match('vulnerability-metrics')) {
+      this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+      this.pageSize = this.applicationResolveService.getComputerDashPageSize();
+    }
+    else {
+      this.selectedComputerId = 1;
+      this.initialIndex = 0;
+      this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
+    };
+    this.applicationResolveService.setComputerDashPageSize(this.pageSize);
+    this.finalComputerDetails = this.computerDetails.filter(computer => {
+      return computer.vulnerableSoftwareCount > 0;
+    });
+    this.updatePagedData(this.initialIndex);
+    if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
+    this.applicationResolveService.setShowVulnerableComputer(true);
+    this.previousUrl = null;
+  } else {
+    this.finalComputerDetails = this.computerDetails;
+    if(this.previousUrl?.match('vulnerability-metrics')) {
+      this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
+    } else {
+      this.initialIndex = 0;
+    }
+    this.updatePagedData(this.initialIndex);
+    setTimeout(()=>{
+      if (this.computerRows && this.computerRows.length > 0 && this.previousUrl?.match('vulnerability-metrics')) {
+        const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();
+        const selectedRow = this.computerRows.toArray()[selectedComputerIndex]?.nativeElement;
+        selectedRow?.scrollIntoView({ behaviour: 'smooth', block: 'center'});
+      }
+    },0);
+    this.applicationResolveService.setShowVulnerableComputer(false);
   }
+}
 
   public syncSecurityData() {
       this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
@@ -636,15 +638,17 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
    this.recordIndex = this.pageIndex + 1;
    this.updatePagedData(this.pageIndex);
    }
-
-  public searchComputer(event: Event) {
-     let searchValue = (event.target as HTMLInputElement).value.toLocaleLowerCase();
+public searchComputer() {
+     const searchValue = this.computerSearchTearm?.toLocaleLowerCase().trim() || '';
+     const baseList = this.showVulnerableComputer
+    ? this.computerDetails.filter(c => c.vulnerableSoftwareCount > 0)
+    : this.computerDetails;
      if(searchValue === "") {
          this.pageIndex = 0;
-         this.finalComputerDetails = this.computerDetails;
+         this.finalComputerDetails = baseList;
          this.updatePagedData(this.initialIndex);
      } else {
-      this.finalComputerDetails = this.computerDetails.filter(computer => {
+         this.finalComputerDetails = baseList.filter(computer => {
         return computer.macAddress?.toLocaleLowerCase().includes(searchValue) || computer.machineName?.toLocaleLowerCase().includes(searchValue)
         || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
       });
@@ -652,7 +656,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
-
+  
   public async sendNotificationToAllComputers() {
     this.dialogRef = this.dialog.open(this.notificationConfirmDialog);
     const confirm = await firstValueFrom(this.dialogRef.afterClosed());
