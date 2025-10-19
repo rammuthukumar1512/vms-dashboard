@@ -250,7 +250,7 @@
             <h3 class="text-ellipsis" matTooltip="{{selectedApp.softwareName}}">Vulnerabilities for <span class="fw-bolder text-secondary">{{selectedApp.softwareName}}</span></h3>
           </div>
           <div class="vuln-table-container">
-            <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table table table-striped">
+            <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table table">
               <ng-container matColumnDef="cveId">
                 <th mat-header-cell *matHeaderCellDef>CVE ID</th>
                 <td style="vertical-align: middle;" mat-cell *matCellDef="let vuln">
@@ -309,7 +309,9 @@
                 <td class="text-center" mat-cell *matCellDef="let vuln">{{vuln.cvssScore}}</td>
               </ng-container> -->
               <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns; sticky: true"></tr>
-              <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr>
+              <!-- <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr> -->
+               <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"
+        [ngClass]="{'selected-row': row.cveId === selectedVuln?.cveId}"></tr>
             </table>
           </div>
         </div>

@@ -462,95 +462,95 @@ drawAppChart(): void {
   const unresolvedCount = this.appData.filter(app => !app.resolved && !(app.criticalVulnerabilityCount + app.highVulnerabilityCount + app.mediumVulnerabilityCount + app.lowVulnerabilityCount > 0)).length;
   const nonVulnerableCount = this.appData.length - vulnerableCount - unresolvedCount;
 
-  const leaderLinePlugin = {
-    id: 'leaderLinePlugin',
-    afterDatasetDraw(chart: any) {
-      const {
-        ctx,
-        chartArea: { top, bottom, left, right },
-      } = chart;
+  // const leaderLinePlugin = {
+  //   id: 'leaderLinePlugin',
+  //   afterDatasetDraw(chart: any) {
+  //     const {
+  //       ctx,
+  //       chartArea: { top, bottom, left, right },
+  //     } = chart;
 
-      const meta = chart.getDatasetMeta(0);
-      const centerX = (left + right) / 2;
-      const centerY = (top + bottom) / 2;
+  //     const meta = chart.getDatasetMeta(0);
+  //     const centerX = (left + right) / 2;
+  //     const centerY = (top + bottom) / 2;
 
-      const data = chart.data.datasets[0].data;
-      const total = data.reduce((sum: number, val: number) => sum + val, 0);
-      const percentages = data.map((value: number) => (value / total) * 100);
+  //     const data = chart.data.datasets[0].data;
+  //     const total = data.reduce((sum: number, val: number) => sum + val, 0);
+  //     const percentages = data.map((value: number) => (value / total) * 100);
 
-      meta.data.forEach((arc: any, index: number) => {
-        const value = data[index];
-      if (value === 0 || !chart.getDataVisibility(index)) return; // Skip hidden arcs properly
+  //     meta.data.forEach((arc: any, index: number) => {
+  //       const value = data[index];
+  //     if (value === 0 || !chart.getDataVisibility(index)) return; // Skip hidden arcs properly
 
-        let angle = (arc.startAngle + arc.endAngle) / 2;
-        const radius = arc.outerRadius;
-        const percentage = percentages[index];
+  //       let angle = (arc.startAngle + arc.endAngle) / 2;
+  //       const radius = arc.outerRadius;
+  //       const percentage = percentages[index];
 
-        // Angle adjustments for three segments
-        if (index === 0) { // Vulnerable
-          if (percentage > 10 && percentage <= 20) angle += 0.3;
-          else if (percentage >= 20 && percentage < 30) angle += 0.2;
-          else if (percentage >= 30 && percentage < 40) angle -= 0.5;
-          else if (percentage >= 40 && percentage < 50) angle -= 0.7;
-          else if (percentage >= 50 && percentage < 100) angle = 0.7;
-          else if (percentage === 100) angle -= 0.7;
-          else if (percentage === 0) angle += 0.3;
-        } else if (index === 1) { // Non-Vulnerable
-          if (percentage > 10 && percentage < 20) angle -= 0.2;
-          else if (percentage >= 20 && percentage < 40) angle -= 0.8;
-          else if (percentage >= 40 && percentage < 50) angle += 0.3;
-          else if (percentage >= 50 && percentage < 70) angle -= 0.3;
-          else if (percentage >= 70 && percentage <= 90) angle += 0.3;
-          else if (percentage >= 90 && percentage < 100) angle += 0.6;
-          else if (percentage === 0) angle -= 0.3;
-        } else if (index === 2) { // Unresolved
-          if (percentage > 10 && percentage <= 20) angle += 0.5;
-          else if (percentage >= 20 && percentage < 30) angle += 0.3;
-          else if (percentage >= 30 && percentage < 40) angle -= 0.4;
-          else if (percentage >= 40 && percentage < 50) angle -= 0.6;
-          else if (percentage >= 50 && percentage < 100) angle = 0.8;
-          else if (percentage === 100) angle -= 0.8;
-          else if (percentage === 0) angle += 0.4;
-        }
+  //       // Angle adjustments for three segments
+  //       if (index === 0) { // Vulnerable
+  //         if (percentage > 10 && percentage <= 20) angle += 0.3;
+  //         else if (percentage >= 20 && percentage < 30) angle += 0.2;
+  //         else if (percentage >= 30 && percentage < 40) angle -= 0.5;
+  //         else if (percentage >= 40 && percentage < 50) angle -= 0.7;
+  //         else if (percentage >= 50 && percentage < 100) angle = 0.7;
+  //         else if (percentage === 100) angle -= 0.7;
+  //         else if (percentage === 0) angle += 0.3;
+  //       } else if (index === 1) { // Non-Vulnerable
+  //         if (percentage > 10 && percentage < 20) angle -= 0.2;
+  //         else if (percentage >= 20 && percentage < 40) angle -= 0.8;
+  //         else if (percentage >= 40 && percentage < 50) angle += 0.3;
+  //         else if (percentage >= 50 && percentage < 70) angle -= 0.3;
+  //         else if (percentage >= 70 && percentage <= 90) angle += 0.3;
+  //         else if (percentage >= 90 && percentage < 100) angle += 0.6;
+  //         else if (percentage === 0) angle -= 0.3;
+  //       } else if (index === 2) { // Unresolved
+  //         if (percentage > 10 && percentage <= 20) angle += 0.5;
+  //         else if (percentage >= 20 && percentage < 30) angle += 0.3;
+  //         else if (percentage >= 30 && percentage < 40) angle -= 0.4;
+  //         else if (percentage >= 40 && percentage < 50) angle -= 0.6;
+  //         else if (percentage >= 50 && percentage < 100) angle = 0.8;
+  //         else if (percentage === 100) angle -= 0.8;
+  //         else if (percentage === 0) angle += 0.4;
+  //       }
 
-        // Leader line start at arc edge
-        const startX = centerX + Math.cos(angle) * radius;
-        const startY = centerY + Math.sin(angle) * radius;
+  //       // Leader line start at arc edge
+  //       const startX = centerX + Math.cos(angle) * radius;
+  //       const startY = centerY + Math.sin(angle) * radius;
 
-        const lineLength = 25;
-        const horizOffset = 10;
+  //       const lineLength = 25;
+  //       const horizOffset = 10;
 
-        const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
-        const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
+  //       const lineEndX = centerX + Math.cos(angle) * (radius + lineLength);
+  //       const lineEndY = centerY + Math.sin(angle) * (radius + lineLength);
 
-        let labelX: number;
-        let labelY: number;
-        const isRightSide = Math.cos(angle) >= 0;
+  //       let labelX: number;
+  //       let labelY: number;
+  //       const isRightSide = Math.cos(angle) >= 0;
 
-        labelX = lineEndX + (isRightSide ? horizOffset : -horizOffset);
-        labelY = lineEndY;
+  //       labelX = lineEndX + (isRightSide ? horizOffset : -horizOffset);
+  //       labelY = lineEndY;
 
-        // Draw dashed leader line
-        ctx.beginPath();
-        ctx.moveTo(startX, startY);
-        ctx.lineTo(lineEndX, lineEndY);
-        ctx.lineTo(labelX, labelY);
-        ctx.strokeStyle = 'gray';
-        ctx.lineWidth = 1;
-        ctx.setLineDash([7, 3]);
-        ctx.stroke();
-        ctx.setLineDash([]); // Reset dash for other elements
+  //       // Draw dashed leader line
+  //       ctx.beginPath();
+  //       ctx.moveTo(startX, startY);
+  //       ctx.lineTo(lineEndX, lineEndY);
+  //       ctx.lineTo(labelX, labelY);
+  //       ctx.strokeStyle = 'gray';
+  //       ctx.lineWidth = 1;
+  //       ctx.setLineDash([7, 3]);
+  //       ctx.stroke();
+  //       ctx.setLineDash([]); // Reset dash for other elements
 
-        // Draw value label
-        const chartWidth = right - left;
-        ctx.font = `${Math.max(10, chartWidth * 0.03)}px sans-serif`;
-        ctx.fillStyle = '#333';
-        ctx.textAlign = isRightSide ? 'left' : 'right';
-        ctx.textBaseline = 'middle';
-        ctx.fillText(value, labelX, labelY);
-      });
-    }
-  };
+  //       // Draw value label
+  //       const chartWidth = right - left;
+  //       ctx.font = `${Math.max(10, chartWidth * 0.03)}px sans-serif`;
+  //       ctx.fillStyle = '#333';
+  //       ctx.textAlign = isRightSide ? 'left' : 'right';
+  //       ctx.textBaseline = 'middle';
+  //       ctx.fillText(value, labelX, labelY);
+  //     });
+  //   }
+  // };
 
   this.appChartInstance = new Chart(ctx, {
     type: 'doughnut',
@@ -627,7 +627,7 @@ drawAppChart(): void {
         }
       }
     },
-    plugins: isDataFetched ? [leaderLinePlugin] : []
+    // plugins: isDataFetched ? [leaderLinePlugin] : []
   });
 }
 

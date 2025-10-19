@@ -61,7 +61,7 @@ export class UserReportPageComponent implements OnInit, AfterViewInit {
   selectedApp: ApplicationDetails | null = null;
   filteredVulnerabilities: Vulnerability[] = [];
   vulnDisplayedColumns: string[] = ['cveId', 'severity'] ;
-
+selectedVuln: Vulnerability | null = null; // Track the selected vulnerability
 
  severitySort: 'default' | 'asc' | 'desc' = 'default';
   // Top box fields
@@ -124,6 +124,7 @@ ngAfterViewInit(): void {
   this.drawAppChart();
   this.drawSeverityChart();
     this.cdRef.detectChanges();
+    setTimeout(() => this.scrollToSelectedVulnerability(), 0); // Ensure DOM is ready
 
 }
 
@@ -192,6 +193,7 @@ fetchComputerDetails(): void {
 private restoreStateAndSelect(): void {
   const storedState = this.vulnerabilityService.getReportState();
   const selectedAppName = this.route.snapshot.queryParams['selectedApp'];
+  const selectedVulnId = storedState?.selectedVuln; // Get the stored CVE ID
   let restored = false;
 
   if (storedState) {
@@ -212,6 +214,10 @@ private restoreStateAndSelect(): void {
         if (appToSelect) {
           this.viewSelectedVulnerableApplication(appToSelect);
           restored = true;
+          // Restore the selected vulnerability if it exists
+          if (selectedVulnId && appToSelect.vulnerabilities) {
+            this.selectedVuln = appToSelect.vulnerabilities.find(vuln => vuln.cveId === selectedVulnId) || null;
+          }
         }
       }
     }
@@ -224,8 +230,19 @@ private restoreStateAndSelect(): void {
       this.viewSelectedVulnerableApplication(this.pagedAppData[0]);
     }
   }
+  setTimeout(() => this.scrollToSelectedVulnerability(), 0);
 }
-
+scrollToSelectedVulnerability(): void {
+  if (this.selectedVuln) {
+    const tableRows = document.querySelectorAll('.vuln-table-container table tr[mat-row]');
+    tableRows.forEach((row, index) => {
+      const cveIdCell = row.querySelector('td:first-child span');
+      if (cveIdCell && cveIdCell.textContent === this.selectedVuln?.cveId) {
+        row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  }
+}
   // drawAppChart(): void {
   //   if (!this.appChart?.nativeElement) {
   //     return;
@@ -735,6 +752,7 @@ onPageSizeChange(event: number): void {
 viewSelectedVulnerableApplication(app: ApplicationDetails): void {
     this.selectedApp = app;
     this.filteredVulnerabilities = app.vulnerabilities || [];
+    this.selectedVuln = null;
      const severitySection = document.querySelector('.severity-section');
     if (severitySection) {
       severitySection.classList.add('blink');
@@ -749,7 +767,8 @@ showVulnerabilityMetrics(cveId: string): void {
   this.vulnerabilityService.setReportState({
   pageSize: this.pageSize,
   searchValue: this.searchValue,
-  showVulnerableOnly: this.showVulnerableOnly
+  showVulnerableOnly: this.showVulnerableOnly,
+  selectedVuln: cveId // Add this to store the selected CVE ID
 });
     // this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
   const queryParams = this.selectedApp ? { selectedApp: this.selectedApp.softwareName } : {};
