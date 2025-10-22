@@ -55,7 +55,6 @@ getSeverityFilter(): 'Critical' | 'High' | 'Medium' | 'Low' | null {
   return this.severityFilter;
 }
 
-
 // Add new methods
 setDashboardState(state: DashboardState): void {
   this.dashboardState = state;
