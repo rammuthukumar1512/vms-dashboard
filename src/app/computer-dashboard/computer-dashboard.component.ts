@@ -104,7 +104,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.finalComputerDetails = this.computerDetails.map((computer) => {
         if(this.selectedComputerId === computer?.id) computer.selected = true
         else computer.selected = false
-        return computer
+        return computer;
      });
       this.totalComputers = this.finalComputerDetails.length;
       if(this.showVulnerableComputer) {
@@ -226,7 +226,9 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.handleNoContent(); 
     return;
           }
-    this.finalComputerDetails = this.computerDetails;
+    this.finalComputerDetails = this.showVulnerableComputer ? this.computerDetails.filter(computer => {
+                  return computer.vulnerableSoftwareCount > 0;
+          }) : this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
     this.drawVulnBasedComputerChart();
