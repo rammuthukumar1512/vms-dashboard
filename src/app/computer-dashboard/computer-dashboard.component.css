@@ -1,200 +1,156 @@
 .dashboard-container {
   padding: 8px;
-  margin: 10px; /* Adjust this value based on the height of your global top menu */
-  max-width: 99%; /* Prevent container from exceeding viewport width */
-  box-sizing: border-box; /* Ensure padding is included in width calculations */
-  overflow-x: hidden;
 }
 
+.dashboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+
+  mat-card{
+    background-color: white;
+  }
+}
+
+.section-card {
+  flex: 30%;
+  padding: 8px;
+}
+
+.section-card-appdata {
+  flex: 1 1 100%;
+}
+
+.section-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.section-item {
+  flex: 1;
+  text-align: center;
+  color: black;
+}
 .chart {
   height: 230px;
   margin: auto;
   padding: 8px 0;
   border-radius: 12px;
-  color: #47a2fc;
-  width: 100%; /* Ensure charts fit within container */
+  color: #47a2fc; 
 }
-
 .comp-table {
-  width: 100%; /* Ensure table fits within container */
-  table-layout: auto; /* Allow columns to adjust based on content */
-  border-collapse: collapse;
+  overflow-x: auto;
+  /* table-layout: fixed; */
 }
-
-.comp-table th,
-td {
+.comp-table th,td {
   padding: 8px;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
-
-.comp-table thead tr > th {
-  text-wrap: nowrap;
-  color: white;
-  font-weight: bold;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+.comp-table thead tr > th{
+   text-wrap: nowrap;
 }
-
 .comp-table tbody tr:nth-child(odd) {
   background-color: #eee;
 }
-
-.comp-table tr {
-  background-color: #f5f5f5;
-}
-
-.comp-table tr.comp-table-active {
+.comp-table-active {
   background-color: #c5c5c5 !important;
+  /* border: 1px solid #aaa9a9 !important; */
 }
-
 .alert-danger {
   background-color: #fdd3e7 !important;
 }
-
+.gen-info-table tbody tr > th{
+   text-align: right;
+}
+.sticky-action-column {
+  position: sticky !important;
+  right: 0;
+  /* background-color: white; */
+  z-index: 1;
+}
+.dash-height{
+  min-height: 100vh;
+  max-height: fit-content;
+}
 .page-size-width {
   width: 100px;
 }
-
 .comp-search-field {
   outline: none;
-  width: 150px; /* Fixed width to prevent stretching */
 }
-
 .page-custom-btn {
   background-color: #007bff;
   color: white;
   border-radius: 4px;
-  padding: 8px; /* Consistent padding for buttons */
 }
 
 .page-custom-btn:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
-
-.text-center {
-  text-align: center;
+/* :host ::ng-deep .mdc-switch__track::after {
+  background-color: #007bff !important;
 }
-
-.fs-5 {
-  font-size: 1.25rem;
+:host ::ng-deep .mdc-switch__icon {
+  background-color: blue;
+} */
+.comp-table-parent {
+  height: 50vh;
 }
-
-.label {
-  font-weight: bold;
-  color: #6c757d;
-  display: inline-block;
-  white-space: nowrap;
+.word-break {
+  word-break: break-word;
 }
-
-.value {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  font-size: 14px;
-  color: #0d6efd;
-  flex: 1;
-}
-
-.bg-blue-theme {
-  background-color: #3366ffe7;
-}
-
-.notify-button-container {
-  overflow: hidden;
-}
-.comp-table-col-width {
-  width: 33.33% !important;
-}
-.rounded-left {
-  border-top-left-radius: 8px;
-}
-
-.rounded-right {
-  border-top-right-radius: 8px;
-}
-
-.notify-btn {
-  width: fit-content;
+.btn-border-none {
   border: none;
   outline: none;
-  padding: 4px 8px; /* Adjusted for consistency */
 }
-.computer-card-header.h4 {
-  margin-bottom: 0 !important;
+.bg-blue-theme{
+  background-color: #3366ffe7;
 }
-
-.computer-table-section {
+.text-blue-theme {
+  color: #3366ffe7;
+}
+.pagination {
+  width: 58.31%;
+}
+.notify-btn {
+  padding: 0 7px;
+}
+.center-border {
   border-left: 2px solid rgb(248, 243, 243);
 }
-
-.application-dashboard {
-  border-top: 2px solid rgb(248, 243, 243);
+@media (max-width: 768px) {
+  .section-card {
+    flex: 1 1 100%;
+  }
+  .pagination {
+    width: 60%;
+  }
 }
-
-@media (max-width: 767px) {
-  .dashboard-container {
-    margin-top: 60px; /* Slightly less margin for smaller screens */
-  }
-
-  .notify-button-container {
-    width: 100%;
-    justify-content: flex-start;
-    margin: 10px 0 0 10px;
-  }
-
-  .notify-button-container button {
-    margin-top: 10px;
-    padding: 8px 12px;
-  }
-
-  .notify-btn {
-    margin-bottom: 7px;
-  }
-
-  .col-7 {
-    gap: 10px;
-    flex-wrap: nowrap;
-    justify-content: center;
-  }
-
-  .page-size-width {
-    min-width: 80px; /* Smaller width for mobile */
-  }
-
-  .pagination-controls {
+@media (max-width: 768px) {
+  .comp-chart {
     display: flex;
     justify-content: center;
-    gap: 8px;
-    width: 100%; /* Full width for pagination on mobile */
   }
+}
+@media (min-width: 960px) and (max-width: 1172px) {
+  .pagination {
+    width: 70%
+  }
+}
+@media (min-width: 468px) and (max-width: 960px) {
+  .pagination {
+  width: 83.33%;
+}
+}
 
-  .page-custom-btn {
-    padding: 8px;
-  }
-
-  .bg-gray-shade {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .computer-table-section {
-    border-left: none;
-    border-top: 2px solid rgb(248, 243, 243);
-  }
-
-  .application-dashboard {
-    border-top: none;
-  }
-
-  .comp-table th,
-  .comp-table td {
-    font-size: 0.9rem; /* Smaller font size for mobile */
-  }
-
-  .comp-search-field {
-    width: 100%; /* Full width search bar on mobile */
-  }
+@media (min-width: 368px) and (max-width: 560px) {
+  .pagination {
+  width: 100%;
+}
+}
+@media (min-width: 568px) and (max-width: 768px) {
+  .pagination {
+  width: 60%;
+}
 }

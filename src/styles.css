@@ -75,7 +75,7 @@ mat-sidenav-content {
 }
 
 .word-break {
-  word-break: break-all !important;
+  word-break: break-all;
 }
 .toast-container {
   position: fixed !important;

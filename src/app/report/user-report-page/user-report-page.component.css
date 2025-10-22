@@ -270,7 +270,6 @@ mat-slide-toggle {
   transition: color 0.2s ease;
 }
 
-/* Optional: Add a subtle background or border */
 .bi.active:hover {
   color: #0056b3;
   background-color: rgba(0, 123, 255, 0.1);
@@ -386,6 +385,16 @@ mat-slide-toggle {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+}
+.no-data-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* adjust to your chart height */
+  color: #888888;
+  font-size: 1rem;
+  font-weight: bold;
+
 }
 
 .metric-icon {
