@@ -168,10 +168,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       });
   }
 
-  private handleNoContent(): void {
- if (!this.syncComputerData) {
+  private handleNoContent(showToast: boolean = true): void {
+  if (showToast && !this.syncComputerData) {
     this.toastService.showSuccessToast('No data available');
-  }     
+  }      
    // Reset all dashboard data
   this.securityData = {
     totalComputers: 0,
@@ -238,13 +238,18 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleErrorResponse(error: any): void {
-    console.error('Error fetching security data:', error);
+    this.syncComputerData = false; // reset flag
     if (error.status === 0) {
-      this.handleNoContent();  // <- clear old data from UI
+      this.handleNoContent(false);  
       this.toastService.showErrorToast(
         'Unable to connect to the server. Please check your network or try again later.'
       );
-    } else {
+      return;
+    }else if (error.status === 204) {  // No content
+        this.handleNoContent(true); 
+    }
+    else {
+          this.handleNoContent(false);  
       this.toastService.showErrorToast(
         'Error : Failed to fetch security data'
       );
