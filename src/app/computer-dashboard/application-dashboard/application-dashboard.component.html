@@ -126,7 +126,9 @@
               }"></tr>
           </table>
           <!-- No Data -->
-          <div *ngIf="!pagedAppData.length" class="text-center p-2">No Computer has been selected</div>
+           <div *ngIf="!computer" class="text-center p-2">Select a Computer to view details</div>
+            <div *ngIf="!pagedAppData.length" class="text-center p-2">No data Found</div>
+
         </div>
         <!-- Pagination -->
         <div *ngIf="pagedAppData.length > 0" class="d-flex justify-content-end mt-2">

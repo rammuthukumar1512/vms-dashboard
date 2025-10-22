@@ -30,7 +30,7 @@
     </p>
   </div>
 
-  <div *ngIf="!cpeLoadingComplete && likelyCpeNames.length === 0" class="text-center bg-info">No likely CPEs found</div>
+  <div *ngIf="!cpeLoadingComplete || likelyCpeNames.length === 0" class="text-center">No likely CPEs found</div>
 
   <!-- <div *ngFor="let cpe of likelyCpeNames" class="d-flex align-items-center mb-2 cpe23Uri">
     <span class="flex-grow-1 px-3 ">{{ cpe.cpe23Uri }}</span>

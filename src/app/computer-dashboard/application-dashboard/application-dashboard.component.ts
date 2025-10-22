@@ -157,12 +157,12 @@ ngOnInit(): void {
 
           this.appData = sortedData;
           
-const savedFilter = this.applicationResolveService.getSeverityFilter();
-if (savedFilter) {
-  this.severityFilter = savedFilter;
-  this.activeFilter = savedFilter;
-  this.updatePagedData(0);
-}
+// const savedFilter = this.applicationResolveService.getSeverityFilter();
+// if (savedFilter) {
+//   this.severityFilter = savedFilter;
+//   this.activeFilter = savedFilter;
+//   this.updatePagedData(0);
+// }
           this.allApplications = sortedData;
           this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
           this.calculateSeverityCounts();
@@ -200,9 +200,19 @@ if (savedFilter) {
      this.pageSize = this.applicationResolveService.getApplicationDashPageSize();
      this.selectedApplicationIndex = this.applicationResolveService.getSelectedApplicationIndex();
      if(this.lastResolvedApp && this.previousUrl && this.previousUrl.match('vulnerability-metrics')) {
+       const savedFilter = this.applicationResolveService.getSeverityFilter();
+  if (savedFilter) {
+    this.severityFilter = savedFilter;
+    this.activeFilter = savedFilter;
+  }
          this.showVulnerabilities(this.lastResolvedApp, this.selectedApplicationIndex);
          this.updatePagedData(this.initialIndex);
-     }
+     } else {
+  this.severityFilter = null;
+  this.activeFilter = null;
+  this.applicationResolveService.setSeverityFilter(null);
+  this.updatePagedData(0);
+}
 }
 
   ngAfterViewInit(): void {
