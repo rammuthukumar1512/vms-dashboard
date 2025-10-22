@@ -242,9 +242,24 @@
       <div class="p-3">
             <h2 class="text-center text-secondary vuln-severity-heading p-0">Selected Application Vulnerabilities</h2>
 
-        <div *ngIf="!selectedApp || !selectedApp.vulnerabilities || selectedApp.vulnerabilities.length === 0" class="no-vulnerabilities text-center">
-          <h4>No vulnerabilities found</h4>
+        <!-- <div *ngIf="!selectedApp || !selectedApp.vulnerabilities || selectedApp.vulnerabilities.length === 0" class="no-vulnerabilities text-center">
+          <h4>No vulnerabilities data found</h4>
+        </div> -->
+          <!-- No selection -->
+        <div *ngIf="!selectedApp" class="no-vulnerabilities text-center">
+          <h4>No Applications data found</h4>
         </div>
+
+        <!-- Selected but unresolved application -->
+        <div *ngIf="selectedApp?.resolved === false" class="no-vulnerabilities text-center">
+          <h4>No data found</h4>
+        </div>
+
+        <!-- Selected, resolved but no vulnerabilities -->
+        <div *ngIf="selectedApp?.resolved === true && (!selectedApp?.vulnerabilities || selectedApp?.vulnerabilities?.length === 0)" class="no-vulnerabilities text-center">
+          <h4>No vulnerabilities data found</h4>
+        </div>
+        
         <div *ngIf="selectedApp && selectedApp.vulnerabilities && selectedApp.vulnerabilities.length > 0" class="chart-card-app">
           <div class="vuln-header">
             <h3 class="text-ellipsis" matTooltip="{{selectedApp.softwareName}}">Vulnerabilities for <span class="fw-bolder text-secondary">{{selectedApp.softwareName}}</span></h3>
@@ -254,7 +269,7 @@
               <ng-container matColumnDef="cveId">
                 <th mat-header-cell *matHeaderCellDef>CVE ID</th>
                 <td style="vertical-align: middle;" mat-cell *matCellDef="let vuln">
-                  <span class="cursor-pointer" (click)="showVulnerabilityMetrics(vuln.cveId)">{{vuln.cveId}}</span>
+                  <span class="cursor-pointer cveid-value p-2 border-0" (click)="showVulnerabilityMetrics(vuln.cveId)">{{vuln.cveId}}</span>
                 </td>
               </ng-container>
               <!-- <ng-container matColumnDef="description">

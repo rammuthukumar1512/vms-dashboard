@@ -671,7 +671,7 @@ drawSeverityChart(): void {
       plugins: {
         legend: { display: false },
         tooltip: { callbacks: { title: () => "Severity", label: (context) => `${context.label}: ${context.parsed.y} vulnerabilities` } },
-        datalabels: { color: 'gray', anchor: 'end', align: 'end', font: { weight: 'bold', size: 10 }, formatter: (value) => value }
+        datalabels: { color: 'gray', anchor: 'end', align: 'end', font: { weight: 'bold', size: 12 }, formatter: (value) => value }
       }
     }
   });
