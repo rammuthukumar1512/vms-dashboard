@@ -13,11 +13,13 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { SharedDataService } from '../core/services/shared-data.service';
 import { ApplicationDashboardComponent } from './application-dashboard/application-dashboard.component';
 import { MatOption, MatSelectModule } from '@angular/material/select';
-import { firstValueFrom, Subject, Subscription, takeUntil, timeout, timer } from 'rxjs';
+import { firstValueFrom, Subject, Subscription, takeUntil, timer } from 'rxjs';
 import { ToastService } from '../core/services/toast.service';
 import { MatDialog, MatDialogActions, MatDialogRef } from '@angular/material/dialog';
 import { MatDialogContent } from '@angular/material/dialog';
 import { ApplicationResolveService } from '../core/services/application-resolve.service';
+import { Router } from '@angular/router';
+import { AppRoutes } from '../../environments/approutes';
 
 @Component({
   selector: 'app-computer-dashboard',
@@ -77,10 +79,13 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   @ViewChild('notificationConfirmDialog') notificationConfirmDialog!: TemplateRef<any>;
 
   constructor(private http: HttpClient, private sharedDataService: SharedDataService, private toastService: ToastService,
-    private dialog: MatDialog, private applicationResolveService: ApplicationResolveService,private cdRef: ChangeDetectorRef
+    private dialog: MatDialog, private applicationResolveService: ApplicationResolveService,private cdRef: ChangeDetectorRef, private router: Router
   ) {};
 
   ngOnInit(): void {
+    this.sharedDataService.syncSecurityData$.pipe(takeUntil(this.destroy$)).subscribe(()=>{
+        if(this.router.url.match(AppRoutes.computer_dashboard)) this.syncSecurityData();
+    });
     this.previousUrl = this.applicationResolveService.getPreviousUrl();
     if(!this.previousUrl?.match('vulnerability-metrics') || ( !this.previousUrl && this.computerDetails.length == 0)) this.fetchSecurityData();
     else {
@@ -93,7 +98,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
       this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
       this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
-      this.finalComputerDetails = this.computerDetails;
+      this.finalComputerDetails = this.computerDetails.map((computer) => {
+        if(this.selectedComputerId === computer?.id) computer.selected = true
+        else computer.selected = false
+        return computer;
+     });
       this.totalComputers = this.finalComputerDetails.length;
       if(this.showVulnerableComputer) {
           this.toggleVulnerableComputers();
@@ -150,6 +159,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
     },
     error: (error: HttpErrorResponse) => {
+      console.error('HTTP Error:', error.status, error.message);
       this.handleErrorResponse(error);
     }
       });
@@ -203,7 +213,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleSuccessResponse(data: any): void {
-      this.syncComputerData = false;
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
     this.applicationResolveService.setSecurityReport(this.securityData);
@@ -213,8 +222,11 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.handleNoContent(); 
     return;
           }
-    this.finalComputerDetails = this.computerDetails;
+    this.finalComputerDetails = this.showVulnerableComputer ? this.computerDetails.filter(computer => {
+                  return computer.vulnerableSoftwareCount > 0;
+          }) : this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
+    this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
     if(this.syncComputerData) {
        const selectedComputer = this.computerDetails.find((value, index) =>{
           return this.selectedComputerId == value.id
@@ -231,6 +243,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleErrorResponse(error: any): void {
+    console.error('Error fetching security data:', error);
     if (error.status === 0) {
       this.handleNoContent();  // <- clear old data from UI
       this.toastService.showErrorToast(
@@ -253,16 +266,16 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           this.pageSize = this.applicationResolveService.getComputerDashPageSize();
         }
         else {
-          this.selectedComputerId = 1;
           this.initialIndex = 0; 
           this.applicationResolveService.setComputerDashPageIndex(this.pageIndex);
+          this.selectedComputerId = 0;
           };
           this.applicationResolveService.setComputerDashPageSize(this.pageSize);
           this.finalComputerDetails = this.computerDetails.filter(computer => {
                   return computer.vulnerableSoftwareCount > 0;
           });
+          if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(null, this.selectedComputerId, 0);
           this.updatePagedData(this.initialIndex);
-          if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
           this.applicationResolveService.setShowVulnerableComputer(true);
           this.previousUrl = null;
      } else {
@@ -271,9 +284,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
             this.initialIndex = this.applicationResolveService.getComputerDashPageIndex();
           } else {
             this.initialIndex = 0;
+            this.selectedComputerId = 0;
+            if(!this.previousUrl?.match('vulnerability-metrics')) this.sendAppData(null, this.selectedComputerId, 0);
           }
           this.updatePagedData(this.initialIndex);
-          this.sendAppData(this.finalComputerDetails[0] ?? null, 1, 0);
           setTimeout(()=>{
           if (this.computerRows && this.computerRows.length > 0 && this.previousUrl?.match('vulnerability-metrics')) {
           const selectedComputerIndex = this.applicationResolveService.getSelectedComputerIndex();
@@ -628,10 +642,10 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
-        if(this.selectedComputerId === computer.id) computer.selected = true
+        if(this.selectedComputerId === computer?.id) computer.selected = true
         else computer.selected = false
-        return computer
-     });
+        return computer;
+    });
    }
 
   public onPageSizeChange(size: number): void {
@@ -650,14 +664,20 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
      let searchValue = (event.target as HTMLInputElement).value.toLocaleLowerCase();
      if(searchValue === "") {
          this.pageIndex = 0;
-         this.finalComputerDetails = this.computerDetails;
+         this.finalComputerDetails = this.showVulnerableComputer ? this.computerDetails.filter(computer => {
+                  return computer.vulnerableSoftwareCount > 0;
+          }) : this.computerDetails;
          this.updatePagedData(this.initialIndex);
      } else {
-      this.finalComputerDetails = this.computerDetails.filter(computer => {
+      this.finalComputerDetails = this.showVulnerableComputer ? this.computerDetails.filter(computer => {
+        return (computer.macAddress?.toLocaleLowerCase().includes(searchValue) || computer.machineName?.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)) && computer.vulnerableSoftwareCount > 0;
+      }) : this.computerDetails.filter(computer => {
         return computer.macAddress?.toLocaleLowerCase().includes(searchValue) || computer.machineName?.toLocaleLowerCase().includes(searchValue)
-        || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue)
+        || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue);
       });
      }
+     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
 
@@ -671,7 +691,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
       this.http.get<any>(ApiEndPoints.sendNotificationToAllComputers, {headers}).subscribe({
         next:(response)=>{
              this.toastService.showSuccessToast(response.message);
-        }, error: ()=>{
+        }, error: (error)=>{
              this.toastService.showErrorToast('Send Notification Failed');
         }
       })

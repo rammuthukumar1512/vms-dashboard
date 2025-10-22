@@ -1,6 +1,8 @@
+import { DOCUMENT } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { MatSnackBarConfig, MatSnackBar } from '@angular/material/snack-bar';
 import { Toast } from 'bootstrap';
+import { timeout } from 'rxjs';
 // import { SuccessToastComponent } from '../../shared/components/success-toast/success-toast.component';
 // import { ErrorToastComponent } from '../../shared/components/error-toast/error-toast.component';
 

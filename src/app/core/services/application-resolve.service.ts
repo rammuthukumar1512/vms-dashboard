@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, SecurityContext } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApplicationDetails, SecurityReport } from '../../models/computer.model';
+import { ApplicationDetails, ComputerDetails, SecurityReport } from '../../models/computer.model';
 
 export interface ApplicationResolveData {
   uuid: string;
@@ -37,7 +37,7 @@ export class ApplicationResolveService {
     totalLowVulnerableApplications: 0,
     vulnerableComputers: 0,
     computerDetails: []};
-  private selectedComputerId: number = 1;
+  private selectedComputerId: number = 0;
   private selectedAppUuid: string | null = null;
   private selectedComputerIndex: number = 0;
   private selectedApplicationIndex: number = 0;
@@ -54,7 +54,6 @@ setSeverityFilter(filter: 'Critical' | 'High' | 'Medium' | 'Low' | null): void {
 getSeverityFilter(): 'Critical' | 'High' | 'Medium' | 'Low' | null {
   return this.severityFilter;
 }
-
 
 // Add new methods
 setDashboardState(state: DashboardState): void {

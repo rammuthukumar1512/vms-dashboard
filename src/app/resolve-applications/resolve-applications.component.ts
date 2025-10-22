@@ -13,6 +13,8 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../core/services/toast.service';
 import { ApplicationResolveService } from '../core/services/application-resolve.service';
 import { Router } from '@angular/router';
+import { SharedDataService } from '../core/services/shared-data.service';
+import { AppRoutes } from '../../environments/approutes';
 
 
 interface UnresolvedApplication {
@@ -57,11 +59,14 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
     private http: HttpClient,
     private dialog: MatDialog,
     private toastService: ToastService,
-    private applicationResolveService: ApplicationResolveService, private router: Router // Added service
+    private applicationResolveService: ApplicationResolveService, private router: Router, private sharedDataService: SharedDataService // Added service
 
   ) {}
 
   ngOnInit(): void {
+    this.sharedDataService.syncSecurityData$.subscribe(()=>{
+        if(this.router.url.includes(AppRoutes.resolve_applications)) this.fetchUnresolvedApplications();
+    });
     this.fetchUnresolvedApplications();
       this.applicationResolveService.resolveData$
       .pipe(takeUntil(this.destroy$))
@@ -87,7 +92,8 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
           }));
           this.updatePagedData(this.initialIndex);
         },
-        error: (_error) => {
+        error: (error) => {
+          console.error('Error fetching unresolved applications:', error);
           this.toastService.showErrorToast('No Likely CPEs to fetch for these unresolved applications')
         }
       });
@@ -113,15 +119,14 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
       if (result && result.cpeName) {
         this.unresolvedApps = this.unresolvedApps.filter(a => a.uuid !== app.uuid);
         this.updatePagedData(this.pageIndex);
+        this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
       this.http.get(ApiEndPoints.unique_url).subscribe({
         next: () => {
-       this.toastService.showSuccessToast(`CPE resolved for ${app.softwareName}`);
-
+          console.log('Dashboard data refreshed');
         },
-        error: (_error) => {
-          this.toastService.showErrorToast('Unable to update application state. Please try again.');
+        error: (error) => {
+          console.error('Error refreshing dashboard:', error);
         }
-      
         });
       }
     });
@@ -139,7 +144,7 @@ searchApplications(event: Event): void {
   }
   this.updatePagedData(this.initialIndex);
 }
-updatePagedData(_initialIndex: number): void {
+updatePagedData(initialIndex: number): void {
   let filteredApps = this.unresolvedApps;
   if (this.searchValue) {
     filteredApps = filteredApps.filter(app =>
