@@ -1,151 +1,155 @@
-<!-- Computer Dashboard -->
- <div class="p-3 rounded-top-3">
-<div class="container-fluid p-0 rounded-top-3 bg-gray-shade rounded-3">
-  <!-- Header Section -->
-  <div class="bg-gray-shade row rounded-top-3 border border-bottom">
-    <div class="computer-card-header text-center fw-bold h4 py-3 text-secondary">System Inventory</div>
-    <!-- <div class="col-7 rounded-left">
-      <div class="info-row d-flex flex-wrap gap-2 p-2">
-        <div class="label">Date:</div>
-        <div><span class="value">{{toDay}}</span></div>
-      </div>
-      <div class="info-row d-flex flex-wrap gap-2 p-2">
-        <div class="label">Time:</div>
-        <div><span class="value">{{currentTime | date: 'hh:mm a'}}</span></div>
-      </div>
-    </div>
-    <div class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right">
-      <div class="label d-flex">System Inventory</div>
-      <button class="btn btn-border-none btn-primary notify-btn p-1" (click)="syncSecurityData()" matTooltip="Sync Security Data">
-        <span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span>
-        <span>Sync Now</span>
-      </button>
-    </div> -->
-  </div>
+<!-- parent container -->
+<div class="container-fluid bg-white ">
 
-  <!-- Charts and Metrics Section -->
-  <div class="row bg-light border border-top-0 border-1 rounded-bottom-3">
-    <div class="col-md-6 p-3">
-      <!-- Top Metrics -->
+  <!-- first row -->
+  <div class="row dash-height">
+
+    <!-- computer section -->
+    <div class="col-md-6 p-4">
       <div class="container-fluid">
-        <div class="row align-items-center pt-3">
-          <div class="col-6 d-flex justify-content-center">
-            <div class="w-75 rounded border border-1 py-2">
-              <p class="text-center text-secondary">Total Computers</p>
-              <p class="text-center h1">{{totalComputers}}</p>
-            </div>
+      <div #computerInfo class="row border border-1 bg-light rounded-3"><!----first-row---->
+        <div class="fw-bold fs-10 bg-gray-shade border border-top-0 border-start-0 border-end-0 border-bottom text-secondary p-1 rounded-top-3">
+          <div class="ps-3 d-flex">
+          <div class="col-4"><p>Date: <span class="text-primary">{{toDay}}</span></p>
+            <p>Time: <span class="text-primary">{{currentTime | date: 'hh:mm a'}}</span></p>
           </div>
-          <div class="col-6 d-flex justify-content-center">
-            <div class="w-75 rounded border border-1 py-2">
-              <p class="text-center text-secondary">Vulnerable Computers</p>
-              <p class="text-center h1">{{vulnerableComputers}}</p>
-            </div>
+          <div class="col-4 d-flex flex-column justify-content-center align-items-center"><span class="text-center">System Inventory</span></div>
+          <div class="col-4 d-flex justify-content-end align-items-center pe-3">
+            <button class="btn btn-primary d-flex align-items-center p-1" (click)="syncSecurityData()"><span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span> <span>Sync Now</span> </button>
           </div>
+          </div>
+          
         </div>
-      </div>
-      <!-- Charts Section -->
-      <div class="container-fluid p-0 mt-5">
-        <div class="row">
-          <div class="col-md-6 p-0">
-            <p class="fw-bold text-center text-secondary">Computer Overview</p>
+        <div class="container-fluid">
+         <div class="row align-items-center pt-3">
+              <div class="col-6 d-flex justify-content-center">
+                <div class="col-8 rounded border border-1 py-2">
+                <p class="text-center text-secondary">Total Computers</p>
+                <p class="text-center h1 text-black-shade">{{totalComputers}}</p>
+                </div>
+              </div>
+              <div class="col-6 d-flex justify-content-center">
+                <div class="col-8 rounded border border-1 py-2">
+                <p class="text-center text-secondary">Vulnerable Computers</p>
+                <p class="text-center h1 text-black-shade">{{vulnerableComputers}}</p>
+                </div>
+              </div>
+        </div>
+        </div>
+
+        <div class="container-fluid mt-3">  <!----chart-section------->
+          <div class="row">
+            <div class="col-md-6 p-0">
+              <p class="fw-bold text-center text-secondary">Computer Overview</p>
             <div class="chart">
               <canvas #computerChart></canvas>
             </div>
-          </div>
-          <div class="col-md-6 p-0">
-            <p class="fw-bold text-center text-secondary">Severity</p>
-            <div class="chart px-2">
-              <canvas #severityChart></canvas>
             </div>
+            <div class="col-md-6 p-0">
+              <p class="fw-bold text-center text-secondary">Severity</p>
+              <div class="chart px-2">
+                <canvas #severityChart></canvas>
+              </div>
+            </div>
+      
           </div>
-        </div>
+        </div> <!----chart-section-end------>
+      </div><!----first-row-end--->
       </div>
+      <div> <!------------computer-data-table------------>
+              <div>
+                  <div class="d-flex justify-content-between mt-3">
+                    <span class="text-secondary fs-5 fnw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Computers'}}</span> 
+                  <div class="me-2">
+                    <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;&nbsp;</mat-slide-toggle>
+                  </div>
+                  </div>
+                  <div class="mt-3 p-2 rounded-3 border border-1 bg-light">
+                  <div class="sticky-top d-flex justify-content-between align-items-center">   
+                      <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">&nbsp;
+                      <button *ngIf="computerDetails.length && showVulnerableComputer" (click)="sendNotificationToAllComputers()" class="btn notify-btn py-1 btn-border-none btn-primary text-nowrap" matTooltip="Send alert emails to users with vulnerable Applications">
+                        Notify All Users
+                      </button>
+                    </div>
+                  <div #compTableParent [ngClass]="{'comp-table-parent': totalComputers}" class="overflow-auto comp-table-parent mt-3">
+                    <div>
+                    <table class="comp-table w-100">
+                    <thead class="sticky-top bg-light">
+                      <tr>
+                        <th class="col-4 text-secondary">Mac Address</th>
+                        <th class="col-4 text-secondary">Machine Name</th>
+                        <th class="col-4 text-secondary">LoggedIn User</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr class="cursor-pointer" #computerRow [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id, i)">
+                      <td class="text-secondary word-break">{{computer.macAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
+                      <td class="word-break">{{computer.machineName}}</td>
+                      <td class="word-break">{{computer.loggedInUserName}}</td>
+                      </tr>
+                    </tbody>
+                    <tbody *ngIf="!pagedComputerData.length;">
+                      <tr>
+                        <td colspan="6" class="text-center">No Data Found.</td>
+                      </tr>
+                    </tbody>
+                    <tfoot class="sticky-bottom bg-light">
+                      <!-- <tr>
+                        <td colspan="6">
+                          
+                        </td>
+                      </tr> -->
+                    </tfoot>
+                  </table>
+                  </div>
+                   
+                  </div>
+                  <div *ngIf="pagedComputerData.length > 0;" class="d-flex justify-content-end mt-2">
+                            <div class="pagination col-7 d-flex justify-content-evenly align-items-center height-fit-content">
+                            <mat-select class="border rounded page-size-width p-2" (ngModelChange)="getPage($event)" [(ngModel)]="recordIndex">
+                             <mat-option *ngFor="let record of totalRecords" [value]="record">
+                                {{ record }}
+                             </mat-option>
+                            </mat-select>
+                            <mat-select class="border rounded page-size-width p-2" (ngModelChange)="onPageSizeChange($event)" [(ngModel)]="pageSize">
+                              <mat-option *ngFor="let size of pageSizes" [value]="size">
+                                {{ size }}
+                              </mat-option>
+                            </mat-select>
+
+                            <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2"> 
+                            <mat-icon class="material-symbols-outlined fs-5 text-white">
+                            arrow_back_ios
+                            </mat-icon>  
+                            </button>
+                            <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
+                            <mat-icon class="material-symbols-outlined fs-5 text-white">
+                            arrow_forward_ios
+                            </mat-icon>
+                            </button>
+                            </div>
+                      </div>
+                  </div>
+             </div>
+        </div> <!------------computer-data-table-end----------->
     </div>
 
-    <!-- Computer Table Section -->
-    <div class="col-md-6 p-3 computer-table-section">
-      
-      <div class="container-fluid p-2 bg-light">
-        <div class="d-flex justify-content-between gap-3">
-        <span class="text-secondary fs-5 fw-bold">{{showVulnerableComputer ? 'Vulnerable Computers' : 'Computers'}}</span>
-        <div class="me-2">
-          <mat-slide-toggle [(ngModel)]="showVulnerableComputer" labelPosition="before" (click)="toggleVulnerableComputers()">Vulnerable&nbsp;</mat-slide-toggle>
-        </div>
-      </div>
-        <div class="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-          <!-- Search Bar -->
-          <input *ngIf="computerDetails.length" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer($event)">
-          <!-- Notify All Button -->
-          <button *ngIf="computerDetails.length && showVulnerableComputer" (click)="sendNotificationToAllComputers()" class="btn notify-btn py-1 btn-border-none btn-primary text-nowrap" matTooltip="Send alert emails to users with vulnerable Applications">
-            Notify All Users
-          </button>
-        </div>
-        <!-- Table -->
-        <div class="overflow-auto mt-3" style="height: 50vh;">
-          <table class="comp-table w-100">
-            <thead class="sticky-top bg-light">
-              <tr>
-                <th class="col-4 text-secondary fw-bolder">Mac Address</th>
-                <th class="col-4 text-secondary fw-bolder">Machine Name</th>
-                <th class="col-4 text-secondary fw-bolder">LoggedIn User</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="cursor-pointer" #computerRow [ngClass]="{'comp-table-active': computer.selected}" *ngFor="let computer of pagedComputerData; let i = index" (click)="computer.id !== undefined && sendAppData(computer, computer.id, i)">
-                <td class="text-secondary word-break">{{computer.macAddress}} <span *ngIf="computer.vulnerableSoftwareCount" matTooltip="Contain Vulnerabilities"><i class="fa-solid fa-triangle-exclamation text-danger"></i></span></td>
-                <td class="word-break">{{computer.machineName}}</td>
-                <td class="word-break">{{computer.loggedInUserName}}</td>
-              </tr>
-            </tbody>
-            <tbody *ngIf="!pagedComputerData.length">
-              <tr>
-                <td colspan="3" class="text-center">No Data Found.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <!-- Pagination -->
-        <div *ngIf="pagedComputerData.length > 0" class="d-flex justify-content-end mt-2">
-          <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
-            <mat-select class="border rounded page-size-width p-2" (ngModelChange)="getPage($event)" [(ngModel)]="recordIndex">
-              <mat-option *ngFor="let record of totalRecords" [value]="record">
-                {{ record }}
-              </mat-option>
-            </mat-select>
-            <mat-select class="border rounded page-size-width p-2" (ngModelChange)="onPageSizeChange($event)" [(ngModel)]="pageSize">
-              <mat-option *ngFor="let size of pageSizes" [value]="size">
-                {{ size }}
-              </mat-option>
-            </mat-select>
-            <button (click)="previousPage()" [disabled]="pageIndex === 0" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
-              <mat-icon class="material-symbols-outlined fs-5 text-white">arrow_back_ios</mat-icon>
-            </button>
-            <button (click)="nextPage()" [disabled]="pageIndex >= totalPages - 1" class="page-custom-btn btn d-flex justify-content-center align-items-center outline-0 border-0 p-2">
-              <mat-icon class="material-symbols-outlined fs-5 text-white">arrow_forward_ios</mat-icon>
-            </button>
-          </div>
-        </div>
-      </div>
+
+    <!-- Application Section -->
+    <div class="col-md-6 center-border p-4">
+      <app-application-dashboard></app-application-dashboard>
+      <!-- Application Content Here -->
     </div>
   </div>
-</div>
+
 </div>
 
-<!-- Notification Dialog -->
 <ng-template #notificationConfirmDialog>
   <h6 class="bg-blue-theme text-white fs-5 ps-2 py-2">Confirm</h6>
-  <mat-dialog-content class="p-3">
-    <p class="text-start">You are about to notify multiple users by email. Do you want to continue?</p>
-  </mat-dialog-content>
-  <mat-dialog-actions align="end" class="p-2">
-    <button class="btn btn-outline-primary me-2" (click)="dialogRef.close(false)">Cancel</button>
+  <mat-dialog-content>You are about to notify multiple users by email. Do you want to continue?</mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button class="btn btn-outline-primary" (click)="dialogRef.close(false)">Cancel</button> 
+    &nbsp;
     <button class="btn btn-outline-primary" (click)="dialogRef.close(true)">Confirm</button>
   </mat-dialog-actions>
 </ng-template>
-
-<!-- Application Dashboard -->
-<div class="row dash-height application-dashboard">
-  <div class="col-md-12 p-3">
-    <app-application-dashboard></app-application-dashboard>
-  </div>
-</div>
