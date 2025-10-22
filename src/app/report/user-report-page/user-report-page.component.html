@@ -96,7 +96,7 @@
         <mat-icon class="material-symbols-outlined metric-icon text-success">check_circle</mat-icon>
         <div class="metric-text">
           <span class="metric-label">Non-Vulnerable</span>
-          <span class="metric-value">{{ appData.length - vulnerableCount}}</span>
+          <span class="metric-value">{{ appData.length - (unresolvedCount + vulnerableCount)}}</span>
         </div>
       </div>
       <div class="metric-item">
@@ -104,6 +104,13 @@
         <div class="metric-text">
           <span class="metric-label">Vulnerable</span>
           <span class="metric-value">{{ vulnerableCount }}</span>
+        </div>
+      </div>
+      <div class="metric-item">
+        <span class="material-symbols-outlined metric-icon text-warning">shield_question</span>
+        <div class="metric-text">
+          <span class="metric-label"> Un-Resolved</span>
+          <span class="metric-value">{{unresolvedCount}}</span>
         </div>
       </div>
     </mat-card-content>

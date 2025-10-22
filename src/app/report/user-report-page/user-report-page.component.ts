@@ -43,7 +43,10 @@ import { ReportState } from '../../core/services/vulnerabilityService'; // Adjus
 })
 export class UserReportPageComponent implements OnInit, AfterViewInit {
    private destroy$ = new Subject<void>();
-
+  get unresolvedCount(): number {
+    // safe-guard if appData is null/undefined
+    return (this.appData || []).filter(app => app && app.resolved === false).length;
+  }
   @ViewChild('appChart') appChart!: ElementRef<HTMLCanvasElement>;
   @ViewChild('severityChart') severityChart!: ElementRef<HTMLCanvasElement>;
   // @ViewChild('appSeverityChart') appSeverityChart!: ElementRef<HTMLCanvasElement>;
