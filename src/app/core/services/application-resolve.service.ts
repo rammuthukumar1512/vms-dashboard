@@ -42,6 +42,9 @@ export class ApplicationResolveService {
   private selectedComputerIndex: number = 0;
   private selectedApplicationIndex: number = 0;
   private showVulnerableComputer: boolean = false;
+  private sortState: number = 0;
+  private cveIdSortState: number = 0;
+  private cvssSortState: number = 0; 
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 // application-resolve.service.ts
@@ -158,5 +161,23 @@ getDashboardState(): DashboardState | null {
   }
   getShowVulnerableComputer() {
     return this.showVulnerableComputer;
+  }
+  setSortState(state: number): void {
+    this.sortState = state;
+  }
+  getSortState() {
+    return this.sortState;
+  }
+  setCveIdSortState(state: number): void {
+    this.cveIdSortState = state;
+  }
+  getCveIdSortState() {
+    return this.cveIdSortState;
+  }
+  setCvssSortState(state: number): void {
+    this.cvssSortState = state;
+  }
+  getCvssSortState() {
+    return this.cvssSortState;
   }
 }

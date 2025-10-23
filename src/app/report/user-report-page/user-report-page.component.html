@@ -1,18 +1,18 @@
-<mat-toolbar role="banner" class="sticky-top z-index-high p-0" aria-label="Application header">
-  <div class="w-100 d-flex justify-content-between align-items-center px-2">
+<mat-toolbar role="banner" class="sticky-top z-index-high toolbar-top container-fluid" aria-label="Application header">
+  <div class="w-100 row align-items-center py-2">
     
     <!-- Left side: logo + heading -->
-    <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3 col-lg-8">
       <img src="images/isteer.png" height="50px" alt="iSteer logo">
       <strong class="h4 dash-heading-text m-0">Vulnerability Monitoring System</strong>
     </div>
-  <div class="d-flex align-items-center gap-3">
+  <div class="d-flex align-items-center gap-3 top-menu-data col-lg-4">
       <div class="text-muted small">
         <span>Last Sync: </span>
         <span>{{ getLastSyncDate() }}</span>
       </div>
     <!-- Right side: Sync button -->
-    <button class="btn btn-primary d-flex align-items-center p-1 me-4" (click)="fetchSecurityData()">
+    <button class="btn btn-primary d-flex align-items-center p-1 me-4" (click)="fetchComputerDetails()">
       <span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span>
       <span class="ms-1">Sync Now</span>
     </button>
@@ -78,7 +78,10 @@
   <!-- Application Chart Card -->
   <div class="chart-card flex-column">
     <h5 class="chart-title text-secondary">Applications Distribution</h5>
-    <canvas #appChart></canvas>
+    <canvas *ngIf="appData.length>0" #appChart></canvas>
+    <p *ngIf = "appData.length === 0" class="no-data-placeholder">
+      No Data Found
+    </p>
   </div>
 
   <!-- New Metrics Card -->
@@ -119,7 +122,8 @@
   <!-- Severity Chart Card -->
   <div class="chart-card flex-column">
     <h5 class="chart-title text-secondary">Severities Distribution</h5>
-    <canvas #severityChart></canvas>
+    <canvas *ngIf = "appData.length>0" #severityChart></canvas>
+    <p *ngIf = "appData.length === 0" class="no-data-placeholder"> No data Found</p>
   </div>
 </div>
 
@@ -272,7 +276,7 @@
             <h3 class="text-ellipsis" matTooltip="{{selectedApp.softwareName}}">Vulnerabilities for <span class="fw-bolder text-secondary">{{selectedApp.softwareName}}</span></h3>
           </div>
           <div class="vuln-table-container">
-            <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table table">
+            <table mat-table [dataSource]="filteredVulnerabilities" class="comp-table">
               <ng-container matColumnDef="cveId">
                 <th mat-header-cell *matHeaderCellDef>CVE ID</th>
                 <td style="vertical-align: middle;" mat-cell *matCellDef="let vuln">
@@ -333,7 +337,7 @@
               <tr mat-header-row *matHeaderRowDef="vulnDisplayedColumns; sticky: true"></tr>
               <!-- <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"></tr> -->
                <tr mat-row *matRowDef="let row; columns: vulnDisplayedColumns;"
-        [ngClass]="{'selected-row': row.cveId === selectedVuln?.cveId}"></tr>
+        [ngClass]="{'selected-row': row.cveId === selectedVulnId}"></tr>
             </table>
           </div>
         </div>

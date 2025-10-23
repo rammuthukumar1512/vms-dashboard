@@ -13,6 +13,16 @@
   padding-left: 0.5rem;
   padding-right: 0.5rem;
 }
+.no-data-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* adjust to your chart height */
+  color: #888888;
+  font-size: 1rem;
+  font-weight: bold;
+
+}
 
 .w-100 {
   width: 100%;
@@ -307,8 +317,6 @@ mat-slide-toggle {
 }
 
 
-
-
 @media (max-width: 768px) {
   .top-box .row {
     flex-direction: column;
@@ -335,11 +343,22 @@ mat-slide-toggle {
   .table-chart-section {
     flex-direction: column;
   }
-
+.toolbar-top {
+  min-height: 64px;
+  max-height: max-content;
+}
   .table-section {
     width: 100%;
   }
+  /* .top-menu-data {
+    flex-direction: column;
+    align-items: flex-start;
 
+  } */
+  .top-menu-data button{
+    flex-direction: column;
+    align-items: flex-start;
+  }
   .severity-section {
     width: 100%;
   }
