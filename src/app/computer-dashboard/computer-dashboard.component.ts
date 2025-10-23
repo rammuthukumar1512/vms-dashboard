@@ -132,6 +132,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   ngAfterViewInit(): void {
     if(!this.computerChartInstance) this.drawVulnBasedComputerChart();
     if(!this.severityChartInstance) this.drawSeverityBasedComputerChart();
+      this.cdRef.detectChanges();
   }
 
   ngOnDestroy(): void {
@@ -169,7 +170,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleNoContent(showToast: boolean = true): void {
-  if (showToast && !this.syncComputerData) {
+  if (showToast) {
     this.toastService.showSuccessToast('No data available');
   }      
    // Reset all dashboard data
@@ -217,21 +218,31 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
 
   private handleSuccessResponse(data: any): void {
     this.securityData = data ?? {};
-    this.totalComputers = this.securityData.totalComputers ?? 0;
+   
+    // this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
+    //   if (!this.computerDetails.length) {
+    // this.handleNoContent(); 
+    // return;
+    //       }
+    // Safely extract computerDetails from API response
+const details = this.securityData?.computerDetails;
+if (!details || !Array.isArray(details) || details.length === 0) {
+  this.handleNoContent(); // Show "No data available" toast
+  return;
+}
+ this.totalComputers = this.securityData.totalComputers ?? 0;
     this.applicationResolveService.setSecurityReport(this.securityData);
     this.vulnerableComputers = this.securityData.vulnerableComputers ?? 0;
-    this.computerDetails = this.securityData.computerDetails.length ? this.securityData.computerDetails.map((computer ,index)=> ({ ...computer, id: ++index})) : [];
-      if (!this.computerDetails.length) {
-    this.handleNoContent(); 
-    return;
-          }
+// Only process if valid data present
+this.computerDetails = details.map((computer, index) => ({ ...computer, id: ++index }));
+
     this.finalComputerDetails = this.showVulnerableComputer ? this.computerDetails.filter(computer => {
                   return computer.vulnerableSoftwareCount > 0;
           }) : this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
     if(this.syncComputerData) {
-       const selectedComputer = this.computerDetails.find((value, index) =>{
+       const selectedComputer = this.computerDetails.find((value) =>{
           return this.selectedComputerId == value.id
        });
        this.sendAppData(selectedComputer ?? null, this.selectedComputerId, 0);
@@ -253,7 +264,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
         'Unable to connect to the server. Please check your network or try again later.'
       );
       return;
-    }else if (error.status === 204) {  // No content
+    }else if (error.status === 204) {  
         this.handleNoContent(true); 
     }
     else {
