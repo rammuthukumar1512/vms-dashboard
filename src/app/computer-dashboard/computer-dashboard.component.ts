@@ -236,7 +236,7 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
        });
        this.sendAppData(selectedComputer ?? null, this.selectedComputerId, 0);
     } else {
-       this.sendAppData(this.computerDetails[0] ?? null, 1, 0);
+       this.sendAppData(null, 0, 0);
        this.syncComputerData = false;
     }
     this.drawVulnBasedComputerChart();
