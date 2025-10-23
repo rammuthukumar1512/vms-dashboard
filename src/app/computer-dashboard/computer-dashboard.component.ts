@@ -216,7 +216,6 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
   }
 
   private handleSuccessResponse(data: any): void {
-    this.syncComputerData = false;
     this.securityData = data ?? {};
     this.totalComputers = this.securityData.totalComputers ?? 0;
     this.applicationResolveService.setSecurityReport(this.securityData);
@@ -231,6 +230,15 @@ export class ComputerDashboardComponent implements OnInit, AfterViewInit ,OnDest
           }) : this.computerDetails;
     this.vulnerableComputersDetails = this.computerDetails.filter(computer => computer.vulnerableSoftwareCount > 0);
     this.selectedComputerId = this.applicationResolveService.getSelectedComputerId();
+    if(this.syncComputerData) {
+       const selectedComputer = this.computerDetails.find((value, index) =>{
+          return this.selectedComputerId == value.id
+       });
+       this.sendAppData(selectedComputer ?? null, this.selectedComputerId, 0);
+    } else {
+       this.sendAppData(this.computerDetails[0] ?? null, 1, 0);
+       this.syncComputerData = false;
+    }
     this.drawVulnBasedComputerChart();
     this.drawSeverityBasedComputerChart();
     this.updatePagedData(this.initialIndex);
