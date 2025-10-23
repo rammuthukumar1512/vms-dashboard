@@ -247,7 +247,7 @@ this.computerDetails = details.map((computer, index) => ({ ...computer, id: ++in
        });
        this.sendAppData(selectedComputer ?? null, this.selectedComputerId, 0);
     } else {
-       this.sendAppData(this.computerDetails[0] ?? null, 1, 0);
+       this.sendAppData(null, 0, 0);
        this.syncComputerData = false;
     }
     this.drawVulnBasedComputerChart();
