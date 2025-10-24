@@ -136,7 +136,12 @@
 <h2 class="text-secondary m-2">
   <span *ngIf="!showVulnerableOnly">Applications ({{allApplications.length}})</span>
   <span *ngIf="showVulnerableOnly">Vulnerable Applications ({{filteredAppData.length}})</span>
-</h2>        
+</h2>      
+  <div *ngIf="filteredAppData.length" class="d-flex justify-content-end py-1 m-2">
+          <span class="text-primary">
+             Showing {{start + 1}} to {{end < filteredAppData.length ? end : filteredAppData.length}} out of {{filteredAppData.length}} Applications
+          </span>
+          </div>
 <div class="d-flex align-items-center gap-2">
           <mat-slide-toggle [checked]="showVulnerableOnly" (change)="toggleVulnerableOnly()" color="warn" matTooltip="Toggle to show only vulnerable applications"></mat-slide-toggle>
           <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" [(ngModel)]="searchValue" (keyup)="searchApplications($event)">
