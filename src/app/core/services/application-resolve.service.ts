@@ -44,7 +44,10 @@ export class ApplicationResolveService {
   private showVulnerableComputer: boolean = false;
   private sortState: number = 0;
   private cveIdSortState: number = 0;
-  private cvssSortState: number = 0; 
+  private cvssSortState: number = 0;
+  private cpeCvesortState: number = 0;
+  private cpeCvecveIdSortState: number = 0;
+  private cpeCvecvssSortState: number = 0; 
 
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 // application-resolve.service.ts
@@ -179,5 +182,25 @@ getDashboardState(): DashboardState | null {
   }
   getCvssSortState() {
     return this.cvssSortState;
+  }
+
+  setCpeCveSortState(state: number): void {
+    console.log(state,'stinser')
+    this.cpeCvesortState = state;
+  }
+  getCpeCveSortState() {
+    return this.cpeCvesortState;
+  }
+  setCpeCveCveIdSortState(state: number): void {
+    this.cpeCvecveIdSortState = state;
+  }
+  getCpeCveCveIdSortState() {
+    return this.cpeCvecveIdSortState;
+  }
+  setCpeCveCvssSortState(state: number): void {
+    this.cpeCvecvssSortState = state;
+  }
+  getCpeCveCvssSortState() {
+    return this.cpeCvecvssSortState;
   }
 }
