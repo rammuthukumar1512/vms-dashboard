@@ -333,12 +333,17 @@ mat-slide-toggle {
   }
 
   .comp-search-field {
-    width: 150px;
+    width: 80px;
   }
 
   .chart-section .p-3 {
     flex-direction: column;
   }
+  .sticky-top {
+  position: fixed;
+  top: 0;
+  z-index: 9999;
+}
 
   .chart-card {
     width: 100%;

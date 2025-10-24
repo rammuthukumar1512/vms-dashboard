@@ -139,7 +139,7 @@
 </h2>      
   <div *ngIf="filteredAppData.length" class="d-flex justify-content-end py-1 m-2">
           <span class="text-primary">
-             Showing {{start + 1}} to {{end < filteredAppData.length ? end : filteredAppData.length}} out of {{filteredAppData.length}} Applications
+             Showing {{start + 1}} - {{end < filteredAppData.length ? end : filteredAppData.length}} of {{filteredAppData.length}} items
           </span>
           </div>
 <div class="d-flex align-items-center gap-2">
@@ -220,9 +220,11 @@
       
       <div *ngIf="pagedAppData.length > 0" class="p-2 d-flex justify-content-end pagination">
         <div class="d-flex gap-2 align-items-center">
+          <span class="text-secondary">Page No: </span>
           <mat-select class="border rounded page-size-width p-2" [(ngModel)]="recordIndex" (ngModelChange)="getPage($event)">
             <mat-option *ngFor="let record of totalRecords" [value]="record">{{record}}</mat-option>
           </mat-select>
+          <span class="text-secondary">Items Per Page:</span>
           <mat-select class="border rounded page-size-width p-2" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
             <mat-option *ngFor="let size of pageSizes" [value]="size">{{size}}</mat-option>
           </mat-select>
