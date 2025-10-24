@@ -78,7 +78,7 @@
   <!-- Application Chart Card -->
   <div class="chart-card flex-column">
     <h5 class="chart-title text-secondary">Applications Distribution</h5>
-    <canvas *ngIf="appData.length>0" #appChart></canvas>
+    <canvas #appChart></canvas>
     <p *ngIf = "appData.length === 0" class="no-data-placeholder">
       No Data Found
     </p>
@@ -122,7 +122,7 @@
   <!-- Severity Chart Card -->
   <div class="chart-card flex-column">
     <h5 class="chart-title text-secondary">Severities Distribution</h5>
-    <canvas *ngIf = "appData.length>0" #severityChart></canvas>
+    <canvas #severityChart></canvas>
     <p *ngIf = "appData.length === 0" class="no-data-placeholder"> No data Found</p>
   </div>
 </div>
