@@ -109,6 +109,11 @@
   flex-direction: column;
   overflow: auto;
 }
+.mat-toolbar-row, .mat-toolbar-single-row{
+  height: fit-content;
+  min-height: 64px !important;
+  max-height: fit-content !important;
+}
 
 @media (max-width: 959px) {
     .menu-title {
@@ -162,4 +167,9 @@
         width: 50%;
     }
 }
-
+@media (max-width: 992px) {
+    /* .header-section {
+        display: flex;
+        flex-direction: column;
+    }  */
+}

@@ -204,7 +204,7 @@ ngOnInit(): void {
   if (savedFilter) {
     this.severityFilter = savedFilter;
     this.activeFilter = savedFilter;
-  }
+  } 
          this.showVulnerabilities(this.lastResolvedApp, this.selectedApplicationIndex);
          this.updatePagedData(this.initialIndex);
      } else {
@@ -841,7 +841,6 @@ this.updatePagedData(0);
 // }
 
 showVulnerabilities(app: ApplicationDetails, index: number): void {
-  console.log(app)
   this.selectedApp = app;
   this.applicationResolveService.setApplicationDashPageIndex(this.pageIndex);
   this.applicationResolveService.setApplicationDashPageSize(this.pageSize);
@@ -869,6 +868,7 @@ showVulnerabilities(app: ApplicationDetails, index: number): void {
   });
   this.dialogRef.afterClosed().subscribe(() => {
     if (this.router.url?.match('computer-overview')) {
+      this.applicationResolveService.setSortState(0);
       this.vulnerabilityService.setSelectedVulnerabilitySeverity(null);
       this.vulnerabilityService.setSelectedVulnerabilityIndex(-1);
     }
