@@ -38,10 +38,11 @@ export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewC
   constructor(private breakpointObserver: BreakpointObserver, private sharedDataService: SharedDataService, private router: Router){}
    ngOnInit(): void {
         let currentUrl = this.router.url;
-        this.urlMatch = currentUrl ? !currentUrl.match(AppRoutes.cpe_cve_search) : false;
+        
+        this.urlMatch = currentUrl.includes(AppRoutes.computer_dashboard) || currentUrl.includes(AppRoutes.resolve_applications);
      this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
         currentUrl = event.urlAfterRedirects;
-        this.urlMatch = currentUrl ? !currentUrl.match(AppRoutes.cpe_cve_search) : false;
+        this.urlMatch = currentUrl.includes(AppRoutes.computer_dashboard) || currentUrl.includes(AppRoutes.resolve_applications);
      });
    }
   ngAfterViewInit(): void {

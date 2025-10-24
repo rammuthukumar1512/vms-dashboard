@@ -247,7 +247,7 @@ this.computerDetails = details.map((computer, index) => ({ ...computer, id: ++in
        });
        this.sendAppData(selectedComputer ?? null, this.selectedComputerId, 0);
     } else {
-       this.sendAppData(this.computerDetails[0] ?? null, 1, 0);
+       this.sendAppData(null, 0, 0);
        this.syncComputerData = false;
     }
     this.drawVulnBasedComputerChart();
@@ -640,6 +640,7 @@ this.computerDetails = details.map((computer, index) => ({ ...computer, id: ++in
     this.recordIndex = this.pageIndex + 1;
     this.start = this.pageIndex * this.pageSize;
     this.end = this.start + this.pageSize;
+    console.log(this.start,this.end,'strt,end')
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
         if(this.selectedComputerId === computer?.id) computer.selected = true
         else computer.selected = false

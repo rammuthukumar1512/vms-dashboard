@@ -64,7 +64,8 @@ export class UserReportPageComponent implements OnInit, AfterViewInit {
   selectedApp: ApplicationDetails | null = null;
   filteredVulnerabilities: Vulnerability[] = [];
   vulnDisplayedColumns: string[] = ['cveId', 'severity'] ;
-selectedVuln: Vulnerability | null = null; // Track the selected vulnerability
+  selectedVuln: Vulnerability | null = null; // Track the selected vulnerability
+  selectedVulnId: string | undefined = '';
 
  severitySort: 'default' | 'asc' | 'desc' = 'default';
   // Top box fields
@@ -143,7 +144,11 @@ ngAfterViewInit(): void {
 //         console.log('Sync response:', response.body);
 //         if (!response.body) {
 //           console.log('No content');
+//           // Optional: handle no content, e.g., show a toast or UI update
 //         } else {
+//           // this.toastService.showSuccessToast('Sync successful!');
+//           // If you want to update your UI with new data, add that here
+//           // For example, refresh computer details or other data:
 //           this.fetchComputerDetails();
 //         }
 //       },
@@ -174,6 +179,7 @@ fetchComputerDetails(): void {
         this.toastService.showSuccessToast('Computer details fetched successfully!');
       },
     error: (err) => {
+      this.clearComputerData();
       if (err.status === 0) {
         this.toastService.showErrorToast(
           'Unable to connect to the server. Please check your network or try again later.'
@@ -187,12 +193,44 @@ fetchComputerDetails(): void {
     }
   });
   }
+private clearComputerData(): void {
+  this.computer = null;
+   // Reset top box fields
+  this.machineName = 'Unknown';
+  this.macAddress = '00:00:00:00:00:00';
+  this.ipAddress = '0.0.0.0';
+  this.serialNumber = 'Unknown';
+  this.loggedInUserEmail = 'Unknown@example.com';
+  this.loggedInUserName = 'Unknown';
+  this.createdAt = '';
+  this.updatedAt = '';
+  this.appData = [];
+  this.allApplications = [];
+  this.filteredAppData = [];
+  this.pagedAppData = [];
+  this.filteredVulnerabilities = [];
+  this.selectedApp = null;
+  this.vulnerableCount = 0;
 
+  // Clear charts if rendered
+  if (this.appChartInstance) {
+    this.appChartInstance.destroy();
+    this.appChartInstance = undefined;
+  }
+  if (this.severityChartInstance) {
+    this.severityChartInstance.destroy();
+    this.severityChartInstance = undefined;
+  }
+
+  this.cdRef.detectChanges();
+}
   // Add this new method to the class (this handles restoring state and selecting the app)
 private restoreStateAndSelect(): void {
   const storedState = this.vulnerabilityService.getReportState();
   const selectedAppName = this.route.snapshot.queryParams['selectedApp'];
   const selectedVulnId = storedState?.selectedVuln; // Get the stored CVE ID
+  this.selectedVulnId = selectedVulnId;
+  console.log(this.selectedVulnId,'selvulid')
   let restored = false;
 
   if (storedState) {
@@ -627,7 +665,14 @@ scrollToSelectedVulnerability(): void {
     this.recordIndex = this.pageIndex + 1;
   Promise.resolve().then(() => this.cdRef.detectChanges());
 }
-  
+
+get hasSeverityVariation(): boolean {
+if(!this.selectedApp?.vulnerabilities?.length) return false;
+const severities = this.selectedApp.vulnerabilities.map(v=> v.severity?.toLowerCase());
+const uniqueSeverities = new Set(severities);
+return uniqueSeverities.size>1;
+}
+
 toggleSeveritySort(): void {
   // Cycle through sort states: default -> asc -> desc -> default
   if (this.severitySort === 'default') {
@@ -758,6 +803,9 @@ onPageSizeChange(event: number): void {
 viewSelectedVulnerableApplication(app: ApplicationDetails): void {
     this.selectedApp = app;
     this.filteredVulnerabilities = app.vulnerabilities || [];
+    if(!this.hasSeverityVariation){
+      this.severitySort = 'default';
+    }
     this.selectedVuln = null;
      const severitySection = document.querySelector('.severity-section');
     if (severitySection) {
