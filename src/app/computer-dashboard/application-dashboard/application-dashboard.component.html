@@ -137,12 +137,14 @@
         </div>
         <!-- Pagination -->
         <div *ngIf="pagedAppData.length > 0" class="d-flex justify-content-end mt-2">
-          <div class="col-7 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
+          <div class="col-12 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
+             <span class="text-secondary">Page No: </span>
             <mat-select class="border rounded page-size-width p-2" [(ngModel)]="recordIndex" (ngModelChange)="getPage($event)">
               <mat-option *ngFor="let record of totalRecords" [value]="record">
                 {{ record }}
               </mat-option>
             </mat-select>
+            <span class="text-secondary">Items Per Page:</span>
             <mat-select class="border rounded page-size-width p-2" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange($event)">
               <mat-option *ngFor="let size of pageSizes" [value]="size">{{ size }}</mat-option>
             </mat-select>

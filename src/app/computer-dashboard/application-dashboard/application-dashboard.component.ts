@@ -139,7 +139,6 @@ ngOnInit(): void {
   this.sharedDataService.currentData$
     .pipe(takeUntil(this.destroy$))
     .subscribe(data => {
-      console.log('Received appData in ApplicationDashboard:', data);
 
       if (data) {
         this.computer = data;
@@ -167,7 +166,6 @@ ngOnInit(): void {
           this.vulnerableSoftwareCount = data.vulnerableSoftwareCount || 0;
           this.calculateSeverityCounts();
         } else {
-          console.warn('No valid appData received:', data);
           this.appData = [];
           this.vulnerableSoftwareCount = 0;
           this.loggedInUserName = 'Unknown';
@@ -280,7 +278,6 @@ this.updatePagedData(this.pageIndex);
       appData: data?.applicationDetails || [],
       uuid : data?.uuid
     };
-    console.log('Sending appData:', appData);
     this.sharedDataService.sendAppData(appData);
 
   this.resetFilters();

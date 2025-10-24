@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewChecked, AfterViewInit, Component, DoCheck, OnInit, ViewChild } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { MatNavList } from '@angular/material/list';
@@ -67,7 +67,6 @@ export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewC
     this.breakpointObserver
       .observe([Breakpoints.Handset, Breakpoints.TabletPortrait])
       .subscribe(result => {
-        console.log(result);
         this.isMobile = result.matches;
         this.sidenav.mode = this.isMobile ? 'over' : 'side';
         this.sidenav.opened = !this.isMobile;
@@ -76,7 +75,6 @@ export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewC
   }
 
    toggleSidenavMode(): void {
-    console.log(this.isMobile)
     if (this.isMobile) {
       this.sidenav.toggle();
     }

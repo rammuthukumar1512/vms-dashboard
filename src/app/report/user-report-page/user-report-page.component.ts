@@ -230,7 +230,6 @@ private restoreStateAndSelect(): void {
   const selectedAppName = this.route.snapshot.queryParams['selectedApp'];
   const selectedVulnId = storedState?.selectedVuln; // Get the stored CVE ID
   this.selectedVulnId = selectedVulnId;
-  console.log(this.selectedVulnId,'selvulid')
   let restored = false;
 
   if (storedState) {

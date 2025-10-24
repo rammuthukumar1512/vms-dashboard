@@ -46,7 +46,8 @@
 
     <!-- Pagination -->
     <div *ngIf="pagedApps.length > 0" class="d-flex justify-content-center mt-2">
-      <div class="col-4 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
+      <div class="col-8 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
+         <span class="text-secondary">Page No: </span>
         <mat-select class="border rounded page-size-width p-2"
                     [(ngModel)]="recordIndex"
                     (ngModelChange)="getPage($event)">
@@ -54,6 +55,7 @@
             {{ record }}
           </mat-option>
         </mat-select>
+        <span class="text-secondary">Items Per Page:</span>
         <mat-select class="border rounded page-size-width p-2"
           *ngIf="pageSizes.length > 0"
                     [(ngModel)]="pageSize"

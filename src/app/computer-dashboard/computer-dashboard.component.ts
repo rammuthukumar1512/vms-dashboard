@@ -640,7 +640,6 @@ this.computerDetails = details.map((computer, index) => ({ ...computer, id: ++in
     this.recordIndex = this.pageIndex + 1;
     this.start = this.pageIndex * this.pageSize;
     this.end = this.start + this.pageSize;
-    console.log(this.start,this.end,'strt,end')
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
         if(this.selectedComputerId === computer?.id) computer.selected = true
         else computer.selected = false
@@ -673,7 +672,6 @@ this.computerDetails = details.map((computer, index) => ({ ...computer, id: ++in
     const len = this.finalComputerDetails.length;
     this.pageIndex = initialIndex;
     this.recordIndex = this.pageIndex + 1;  
-    console.log(this.pageIndex, this.recordIndex,this.start, this.end)
     this.pageSizes = len >= 100 ? [ 5,10, 25, 50, 100] : len <= 100 && len >= 50 ? [ 5,10, 25, 50] : 
     len <= 50 && len >= 25 ? [5, 10, 25] : len <= 25 && len >= 10 ? [5,10] : len <=10 && len >= 0 ? [5] : [0];
     this.pagedComputerData = this.finalComputerDetails.slice(this.start, this.end).map((computer) => {
@@ -709,7 +707,6 @@ public searchComputer() {
         || computer.loggedInUserName?.toLocaleLowerCase().includes(searchValue);
       });
      }
-     console.log(this.initialIndex)
      this.updatePagedData(this.initialIndex);
   } 
   
