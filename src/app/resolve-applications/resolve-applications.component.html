@@ -9,7 +9,7 @@
          <div class="col-4">
          <div *ngIf="filteredApps.length" class="d-flex justify-content-end py-1 m-2">
           <span class="text-primary">
-              Showing {{start + 1}} to {{end < filteredApps.length ? end : filteredApps.length}} out of {{filteredApps.length}} Applications
+              Showing {{start + 1}} - {{end < filteredApps.length ? end : filteredApps.length}} of {{filteredApps.length}} items
           </span>
           </div>
           </div>
@@ -53,7 +53,7 @@
 
     <!-- Pagination -->
     <div *ngIf="pagedApps.length > 0" class="d-flex justify-content-center mt-2">
-      <div class="col-8 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
+      <div class="col-6 d-flex justify-content-evenly align-items-center height-fit-content pagination-controls">
          <span class="text-secondary">Page No: </span>
         <mat-select class="border rounded page-size-width p-2"
                     [(ngModel)]="recordIndex"
