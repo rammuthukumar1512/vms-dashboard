@@ -9,6 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastService } from '../core/services/toast.service';
 import { Subject, debounceTime } from 'rxjs';
+import { MatTooltip } from "@angular/material/tooltip";
 
 // Confirm Dialog Component
 @Component({
@@ -78,7 +79,8 @@ export class ConfirmDialogComponent {
     MatButtonModule,
     FormsModule,
     MatIconModule,
-  ],
+    MatTooltip
+],
   templateUrl: './likely-cpe-dialog.component.html',
   styleUrls: ['./likely-cpe-dialog.component.css']
 })

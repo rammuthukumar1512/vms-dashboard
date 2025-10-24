@@ -1,11 +1,18 @@
 <div class="container-fluid bg-white p-4">
   <div class="border border-1 bg-light rounded-3 p-3">
     <div class="d-flex justify-content-between mb-0">
-         <h2 class="text-black-shade fs-5 fnw-bold mb-2">Unresolved Applications ({{ unresolvedApps.length }})</h2>
-    <input class="comp-search-field rounded ps-3 py-1 border border-1 height-fit-content"
+         <h2 class="text-black-shade fs-5 fnw-bold mb-2 col-4">Unresolved Applications ({{ unresolvedApps.length }})</h2>
+    <input class="comp-search-field rounded ps-3 py-1 border border-1 height-fit-content col-4"
          type="text"
          placeholder="Search"
          (keyup)="searchApplications($event)">
+         <div class="col-4">
+         <div *ngIf="filteredApps.length" class="d-flex justify-content-end py-1 m-2">
+          <span class="text-primary">
+              Showing {{start + 1}} to {{end < filteredApps.length ? end : filteredApps.length}} out of {{filteredApps.length}} Applications
+          </span>
+          </div>
+          </div>
         </div>
         <div class="table-container table-scroll-wrapper">
    <table mat-table [dataSource]="pagedApps" class="comp-table w-100">

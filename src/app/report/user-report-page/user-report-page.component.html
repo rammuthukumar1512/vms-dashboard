@@ -109,13 +109,13 @@
           <span class="metric-value">{{ vulnerableCount }}</span>
         </div>
       </div>
-      <div class="metric-item">
+      <!-- <div class="metric-item">
         <span class="material-symbols-outlined metric-icon text-warning">shield_question</span>
         <div class="metric-text">
-          <span class="metric-label"> Un-Resolved</span>
+          <span class="metric-label"> Unresolved</span>
           <span class="metric-value">{{unresolvedCount}}</span>
         </div>
-      </div>
+      </div> -->
     </mat-card-content>
   </mat-card>
 
@@ -258,7 +258,7 @@
         </div> -->
           <!-- No selection -->
         <div *ngIf="!selectedApp" class="no-vulnerabilities text-center">
-          <h4>No Applications data found</h4>
+          <h4>No application selected or available.</h4>
         </div>
 
         <!-- Selected but unresolved application -->
@@ -268,7 +268,7 @@
 
         <!-- Selected, resolved but no vulnerabilities -->
         <div *ngIf="selectedApp?.resolved === true && (!selectedApp?.vulnerabilities || selectedApp?.vulnerabilities?.length === 0)" class="no-vulnerabilities text-center">
-          <h4>No vulnerabilities data found</h4>
+          <h4>No vulnerability found</h4>
         </div>
         
         <div *ngIf="selectedApp && selectedApp.vulnerabilities && selectedApp.vulnerabilities.length > 0" class="chart-card-app">
@@ -319,7 +319,7 @@
 
   <td class="text-center" style="vertical-align: middle;" mat-cell *matCellDef="let vuln">
     <span class="cursor-pointer" 
-          (click)="showVulnerabilityMetrics(vuln.cveId)"
+          (click)="showVulnerabilityMetrics(vuln.cveId); selectedVulnId = undefined"
           [ngClass]="{
             'severity-critical': vuln.severity.toLowerCase() === 'critical',
             'severity-high': vuln.severity.toLowerCase() === 'high',
