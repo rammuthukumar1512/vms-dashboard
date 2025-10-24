@@ -76,8 +76,8 @@
           <!-- Search Bar -->
           <input *ngIf="computerDetails.length" [(ngModel)]="computerSearchTearm" class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" (keyup)="searchComputer()">
           <!-- Notify All Button -->
-           <div class="text-primary">
-              {{start + 1}} to {{end < finalComputerDetails.length ? end : finalComputerDetails.length}} out of {{finalComputerDetails.length}} Computers
+           <div *ngIf="finalComputerDetails.length" class="text-primary">
+             Showing {{start + 1}} to {{end < finalComputerDetails.length ? end : finalComputerDetails.length}} out of {{finalComputerDetails.length}} Computers
             </div>
           <button *ngIf="computerDetails.length && showVulnerableComputer" (click)="sendNotificationToAllComputers()" class="btn notify-btn py-1 btn-border-none btn-primary text-nowrap" matTooltip="Send alert emails to users with vulnerable Applications">
             Notify All Users

@@ -88,9 +88,9 @@
           <input class="comp-search-field rounded ps-3 py-1 border border-1" type="text" placeholder="Search" [(ngModel)]="searchValue" (keyup)="searchApplications($event)">
         </div>
         <!-- Table -->
-         <div *ngIf="appData.length" class="d-flex justify-content-center py-1">
+         <div *ngIf="filteredAppData.length" class="d-flex justify-content-end py-1 m-2">
           <span class="text-primary">
-              {{start + 1}} to {{end < appData.length ? end : appData.length}} out of {{appData.length}} Applications
+             Showing {{start + 1}} to {{end < filteredAppData.length ? end : filteredAppData.length}} out of {{filteredAppData.length}} Applications
           </span>
           </div>
         <div class="overflow-auto mt-1" style="max-height: 47.5vh;">  

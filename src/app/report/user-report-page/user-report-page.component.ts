@@ -726,6 +726,7 @@ toggleSeveritySort(): void {
   }
 
   toggleVulnerableOnly(): void {
+    this.selectedApp = null;
     this.showVulnerableOnly = !this.showVulnerableOnly;
     this.pageIndex = 0;
     this.recordIndex = 1;

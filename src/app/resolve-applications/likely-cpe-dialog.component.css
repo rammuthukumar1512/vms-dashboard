@@ -9,9 +9,16 @@
   padding: 0 !important;
 }
 
-.heading{
-    color: rgb(243, 141, 16);
+.heading {
+  display: inline-block;      /* or block if full width is desired */
+  max-width: 200px;           /* set your preferred width */
+  color: rgb(243, 141, 16);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: middle;
 }
+
 
 .head{
   background-color: #f9f5f5;

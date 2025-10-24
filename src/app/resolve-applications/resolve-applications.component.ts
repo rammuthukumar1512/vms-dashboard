@@ -50,6 +50,7 @@ export class ResolveApplicationsComponent implements OnInit, OnDestroy {
   recordIndex = 1;
   totalPages = 0;
   totalRecords: number[] = [];
+  filteredApps: UnresolvedApplication[] =[];
   start = 0;
   end = 0;
   initialIndex = 0;
@@ -145,16 +146,16 @@ searchApplications(event: Event): void {
   this.updatePagedData(this.initialIndex);
 }
 updatePagedData(initialIndex: number): void {
-  let filteredApps = this.unresolvedApps;
+   this.filteredApps = this.unresolvedApps;
   if (this.searchValue) {
-    filteredApps = filteredApps.filter(app =>
+    this.filteredApps = this.filteredApps.filter(app =>
       app.softwareName?.toLowerCase().includes(this.searchValue) ||
       app.softwareVersion?.toLowerCase().includes(this.searchValue) ||
       app.vendorName?.toLowerCase().includes(this.searchValue)
     );
   }
 
-  const totalItems = filteredApps.length;
+  const totalItems = this.filteredApps.length;
 
   // Dynamically set pageSizes based on total items
   if (totalItems >= 100) {
@@ -187,7 +188,7 @@ updatePagedData(initialIndex: number): void {
 
   this.start = this.pageIndex * this.pageSize;
   this.end = this.start + this.pageSize;
-  this.pagedApps = filteredApps.slice(this.start, this.end);
+  this.pagedApps = this.filteredApps.slice(this.start, this.end);
 } 
 
   nextPage(): void {
