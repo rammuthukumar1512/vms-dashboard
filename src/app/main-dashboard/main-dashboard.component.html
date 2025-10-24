@@ -9,7 +9,7 @@
     role="navigation"
     aria-label="Main navigation menu"
   >
-    <mat-toolbar role="banner"  class="p-0" aria-label="Application header">
+    <mat-toolbar role="banner" aria-label="Application header">
       <div class="w-100 px-2">
       <img src="images/isteer.png" height="50px" alt="iSteer logo">
       </div>
@@ -38,14 +38,18 @@
   <mat-sidenav-content #matSideNavContent class="sidenav-content" role="main" aria-label="Main content">
     <div class="d-flex flex-column">
 
-    <mat-toolbar role="toolbar" class="sticky-top z-index-high" aria-label="Content toolbar">
+    <mat-toolbar role="toolbar" class="sticky-top z-index-high py-2" aria-label="Content toolbar">
       <mat-icon *ngIf="isMobile" class="material-symbols-outlined me-2" (click)="toggleSidenavMode()">menu</mat-icon>
-      <div class="w-100 d-flex justify-content-between">
+      <div class="w-100 row header-section d-flex justify-content-between">
+      <div class="col-md-10">  
       <strong class="h4 text-center dash-heading-text">Vulnerability Monitoring System</strong>
+      </div>
+      <div class="col-md-2">
       <button *ngIf="urlMatch" class="d-flex align-items-center btn btn-border-none btn-primary p-1 me-2" (click)="syncSecurityData()" matTooltip="Sync Security Data">
         <span class="material-symbols-outlined text-white" style="font-size: 20px;">sync</span>
         <span>Sync Now</span>
       </button>
+      </div>
       </div>
     </mat-toolbar>
 

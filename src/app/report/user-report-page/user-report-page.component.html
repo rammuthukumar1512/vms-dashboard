@@ -1,4 +1,4 @@
-<mat-toolbar role="banner" class="sticky-top z-index-high toolbar-top container-fluid" aria-label="Application header">
+<mat-toolbar role="banner" class="sticky-top z-index-high container-fluid" aria-label="Application header">
   <div class="w-100 row align-items-center py-2">
     
     <!-- Left side: logo + heading -->
@@ -303,6 +303,7 @@
     <div class="d-flex justify-content-center align-items-center gap-1">
       <span>Severity</span>
       <i class="bi cursor-pointer"
+      [class.disabled] = "!hasSeverityVariation"
          [ngClass]="{
            'bi-sort-down': severitySort === 'desc',
            'bi-sort-up': severitySort === 'asc',

@@ -660,7 +660,14 @@ scrollToSelectedVulnerability(): void {
   console.log('Paged apps:', this.pagedAppData);  // <--- check if this has data
   this.cdRef.detectChanges();
 }
-  
+
+get hasSeverityVariation(): boolean {
+if(!this.selectedApp?.vulnerabilities?.length) return false;
+const severities = this.selectedApp.vulnerabilities.map(v=> v.severity?.toLowerCase());
+const uniqueSeverities = new Set(severities);
+return uniqueSeverities.size>1;
+}
+
 toggleSeveritySort(): void {
   // Cycle through sort states: default -> asc -> desc -> default
   if (this.severitySort === 'default') {
@@ -789,6 +796,9 @@ onPageSizeChange(event: number): void {
 viewSelectedVulnerableApplication(app: ApplicationDetails): void {
     this.selectedApp = app;
     this.filteredVulnerabilities = app.vulnerabilities || [];
+    if(!this.hasSeverityVariation){
+      this.severitySort = 'default';
+    }
     this.selectedVuln = null;
      const severitySection = document.querySelector('.severity-section');
     if (severitySection) {

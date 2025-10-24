@@ -304,7 +304,11 @@ mat-slide-toggle {
 .bi {
   cursor: pointer;
 }
-
+.mat-toolbar-row, .mat-toolbar-single-row{
+  height: fit-content;
+  min-height: 64px !important;
+  max-height: fit-content !important;
+}
 /* Tooltip support */
 /* [matTooltip] {
   cursor: help;
@@ -315,14 +319,15 @@ mat-slide-toggle {
   color: #ffffff; /* Bootstrap danger */
   /* font-weight: bold; */
 }
-
+ .top-menu-data {
+     justify-content: flex-end;
+  }
 
 @media (max-width: 768px) {
   .top-box .row {
     flex-direction: column;
     gap: 10px;
   }
-
   .top-box .col-4 {
     width: 100%;
   }
@@ -343,21 +348,8 @@ mat-slide-toggle {
   .table-chart-section {
     flex-direction: column;
   }
-.toolbar-top {
-  min-height: 64px;
-  max-height: max-content;
-}
   .table-section {
     width: 100%;
-  }
-  /* .top-menu-data {
-    flex-direction: column;
-    align-items: flex-start;
-
-  } */
-  .top-menu-data button{
-    flex-direction: column;
-    align-items: flex-start;
   }
   .severity-section {
     width: 100%;
@@ -368,7 +360,10 @@ mat-slide-toggle {
   background-color: lightgrey !important;
   transition: none;
 }
-
+.disabled{
+  pointer-events: none;
+  opacity: 0.6;
+}
 .blink {
   animation: blink 0.5s;
 }
@@ -463,5 +458,11 @@ mat-slide-toggle {
 
   .metric-item {
     justify-content: center;
+  }
+}
+
+@media (max-width:992px) {
+  .top-menu-data {
+    justify-content: flex-start !important;
   }
 }
