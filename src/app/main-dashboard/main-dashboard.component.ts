@@ -39,7 +39,7 @@ export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewC
    ngOnInit(): void {
         let currentUrl = this.router.url;
         
-        this.urlMatch = currentUrl.includes(AppRoutes.computer_dashboard) || currentUrl.includes(AppRoutes.resolve_applications);
+     this.urlMatch = currentUrl.includes(AppRoutes.computer_dashboard) || currentUrl.includes(AppRoutes.resolve_applications);
      this.router.events.pipe(filter(event => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
         currentUrl = event.urlAfterRedirects;
         this.urlMatch = currentUrl.includes(AppRoutes.computer_dashboard) || currentUrl.includes(AppRoutes.resolve_applications);
