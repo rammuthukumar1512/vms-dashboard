@@ -229,7 +229,6 @@ private restoreStateAndSelect(): void {
   const storedState = this.vulnerabilityService.getReportState();
   const selectedAppName = this.route.snapshot.queryParams['selectedApp'];
   const selectedVulnId = storedState?.selectedVuln; // Get the stored CVE ID
-  this.selectedVulnId = selectedVulnId;
   let restored = false;
 
   if (storedState) {
@@ -249,6 +248,7 @@ private restoreStateAndSelect(): void {
         const appToSelect = this.pagedAppData.find(app => app.softwareName === selectedAppName);
         if (appToSelect) {
           this.viewSelectedVulnerableApplication(appToSelect);
+          this.selectedVulnId = selectedVulnId; // Moved here
           restored = true;
           // Restore the selected vulnerability if it exists
           if (selectedVulnId && appToSelect.vulnerabilities) {
@@ -269,11 +269,11 @@ private restoreStateAndSelect(): void {
   setTimeout(() => this.scrollToSelectedVulnerability(), 0);
 }
 scrollToSelectedVulnerability(): void {
-  if (this.selectedVuln) {
+  if (this.selectedVulnId) {
     const tableRows = document.querySelectorAll('.vuln-table-container table tr[mat-row]');
-    tableRows.forEach((row, index) => {
+    tableRows.forEach((row) => {
       const cveIdCell = row.querySelector('td:first-child span');
-      if (cveIdCell && cveIdCell.textContent === this.selectedVuln?.cveId) {
+      if (cveIdCell && cveIdCell.textContent === this.selectedVulnId) {
         row.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
@@ -645,8 +645,12 @@ scrollToSelectedVulnerability(): void {
                    totalItems >= 10  ? [5, 10] :
                    totalItems > 0    ? [5] : [0];
                    // Ensure selected pageSize is within the available sizes
-  if (!this.pageSizes.includes(this.pageSize)) {
-    this.pageSize =  this.pageSizes[0];
+  // if (!this.pageSizes.includes(this.pageSize)) {
+  //   this.pageSize =  this.pageSizes[0];
+  // }
+  // Preserve current pageSize if valid, otherwise use the largest valid pageSize
+ if (!this.pageSizes.includes(this.pageSize)) {
+    this.pageSize = totalItems > 0 ? 5 : 0;
   }
 
   this.totalPages = Math.max(1, Math.ceil(totalItems / this.pageSize)); // ✅ never 0 pages
@@ -730,6 +734,7 @@ toggleSeveritySort(): void {
     this.showVulnerableOnly = !this.showVulnerableOnly;
     this.pageIndex = 0;
     this.recordIndex = 1;
+    this.pageSize = 5;
     this.updatePagedData(0);
   }
 
@@ -807,6 +812,7 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
       this.severitySort = 'default';
     }
     this.selectedVuln = null;
+    this.selectedVulnId = ''; 
      const severitySection = document.querySelector('.severity-section');
     if (severitySection) {
       severitySection.classList.add('blink');
@@ -814,6 +820,11 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
         severitySection.classList.remove('blink');
       }, 1000);
     }
+    const vulnTableContainer = document.querySelector('.vuln-table-container');
+    if (vulnTableContainer) {
+      vulnTableContainer.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    setTimeout(() => this.scrollToSelectedVulnerability(), 0);
     this.cdRef.detectChanges();
   }
 

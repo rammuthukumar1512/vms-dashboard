@@ -326,7 +326,7 @@
 
   <td class="text-center" style="vertical-align: middle;" mat-cell *matCellDef="let vuln">
     <span class="cursor-pointer" 
-          (click)="showVulnerabilityMetrics(vuln.cveId); selectedVulnId = undefined"
+          (click)="showVulnerabilityMetrics(vuln.cveId); "
           [ngClass]="{
             'severity-critical': vuln.severity.toLowerCase() === 'critical',
             'severity-high': vuln.severity.toLowerCase() === 'high',
