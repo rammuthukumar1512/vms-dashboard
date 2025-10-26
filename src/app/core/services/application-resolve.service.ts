@@ -48,7 +48,17 @@ export class ApplicationResolveService {
   private cpeCvesortState: number = 0;
   private cpeCvecveIdSortState: number = 0;
   private cpeCvecvssSortState: number = 0; 
+// Add this property
+private cveIdSortStateInDialog: number = 0;
 
+// Add these methods
+setCveIdSortStateInDialog(state: number): void {
+  this.cveIdSortStateInDialog = state;
+}
+
+getCveIdSortStateInDialog(): number {
+  return this.cveIdSortStateInDialog;
+}
   // Update application-resolve.service.ts with the following additions (add these properties and methods)
 // application-resolve.service.ts
 private severityFilter: 'Critical' | 'High' | 'Medium' | 'Low' | null = null;

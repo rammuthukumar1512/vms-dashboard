@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="notify-button-container col-5 d-flex flex-column justify-content-evenly rounded-right">
-      <div class="label d-flex">Last Sync:&nbsp;<div [matTooltip]="lastRefresh" class="value small-font last-refresh">{{lastRefresh}}</div></div>
+      <div class="label d-flex">Last Sync:&nbsp;<div class="value small-font last-refresh">{{lastRefresh}}</div></div>
       <button *ngIf="computer && computer.vulnerableSoftwareCount > 0" (click)="openNotificationConfirmDialog(computer.uuid)" matTooltip="Send Notification" class="btn btn-border-none btn-primary notify-btn p-1">
         Notify User
       </button>
