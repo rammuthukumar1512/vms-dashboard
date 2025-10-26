@@ -120,7 +120,7 @@ export class LikelyCpeDialogComponent {
 
   setupDebounceValidation() {
     this.validateSubject.pipe(debounceTime(500)).subscribe(value => {
-      const normalizedValue = value.replace(/\s+/g, ''); // Remove all spaces
+      const normalizedValue = value.replace(/\s+/g, '').toLowerCase(); // Remove all spaces
       this.cpeError = !this.cpePattern.test(normalizedValue); // Validate normalized value
       this.isValidCpe = !this.cpeError;
       if (this.isValidCpe) {
@@ -147,10 +147,23 @@ export class LikelyCpeDialogComponent {
     });
   }
 
+  // validateCpeInput(): void {
+  //   this.validateSubject.next(this.customCpeName); // Trigger validation on input change
+  //   this.cpeError = false; // Hide error while typing
+  // }
   validateCpeInput(): void {
-    this.validateSubject.next(this.customCpeName); // Trigger validation on input change
-    this.cpeError = false; // Hide error while typing
-  }
+  const el = this.cpeInput.nativeElement;
+  const start = el.selectionStart;
+  const end = el.selectionEnd;
+
+  this.customCpeName = this.customCpeName.toLowerCase();
+
+  setTimeout(() => {
+    el.setSelectionRange(start, end);
+  });
+  
+  this.validateSubject.next(this.customCpeName);
+}
 
   onEnterKey(event: KeyboardEvent): void {
     if (event.key === 'Enter' && this.isValidCpe) {
@@ -160,7 +173,7 @@ export class LikelyCpeDialogComponent {
 
   addCpeName(cpeName: string = this.customCpeName): void {
     this.cpeError = false; // Reset error before validation
-    const normalizedCpeName = cpeName.replace(/\s+/g, ''); // Normalize by removing spaces
+    const normalizedCpeName = cpeName.replace(/\s+/g, '').toLowerCase();
     if (!normalizedCpeName || !this.cpePattern.test(normalizedCpeName)) {
       this.cpeError = true;
       return;
