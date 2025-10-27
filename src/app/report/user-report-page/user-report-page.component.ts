@@ -14,12 +14,9 @@ import { ToastService } from '../../core/services/toast.service';
 import { ApplicationDetails, ComputerDetails,Vulnerability } from '../../models/computer.model';
 import { HttpClient } from '@angular/common/http';
 import { ApiEndPoints } from '../../../environments/api-endpoints';
-import { HttpHeaders, HttpResponse, HttpErrorResponse } from '@angular/common/http';  
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import { ApplicationResolveService } from '../../core/services/application-resolve.service';
 import { VulnerabilityService } from '../../core/services/vulnerabilityService';
-import { ReportState } from '../../core/services/vulnerabilityService'; // Adjust path if needed
 
 // import { DUMMY_COMPUTER_DATA } from '../../core/data/dummy-data';
 
@@ -79,7 +76,7 @@ export class UserReportPageComponent implements OnInit, AfterViewInit {
   updatedAt = '';
 
   // Table properties
-  displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
+displayedColumns: string[] = ['softwareName', 'softwareVersion', 'vendor'];
 recordIndex: number = 1;
 pageIndex: number = 0;
 pageSize: number = 5;
@@ -89,8 +86,8 @@ currentPageSize: number = this.pageSize;
 totalPages: number = 0;
 totalRecords: number[] = [];
 pageSizes: number[] = [];
-  searchValue = '';
-  showVulnerableOnly = false;
+searchValue = '';
+showVulnerableOnly = false;
 
 
   constructor(
@@ -235,6 +232,7 @@ private restoreStateAndSelect(): void {
     this.pageSize = storedState.pageSize;
     this.searchValue = storedState.searchValue;
     this.showVulnerableOnly = storedState.showVulnerableOnly;
+    this.severitySort = storedState.severitySort || 'default';
     this.vulnerabilityService.clearReportState();
     this.updatePagedData(0); // Compute filteredAppData with restored filters
 
@@ -253,6 +251,10 @@ private restoreStateAndSelect(): void {
           // Restore the selected vulnerability if it exists
           if (selectedVulnId && appToSelect.vulnerabilities) {
             this.selectedVuln = appToSelect.vulnerabilities.find(vuln => vuln.cveId === selectedVulnId) || null;
+          }
+           if (storedState?.severitySort) {
+              this.severitySort = storedState.severitySort;
+              this.applySeveritySort();
           }
         }
       }
@@ -675,8 +677,38 @@ const severities = this.selectedApp.vulnerabilities.map(v=> v.severity?.toLowerC
 const uniqueSeverities = new Set(severities);
 return uniqueSeverities.size>1;
 }
+private applySeveritySort(): void {
+  if (!this.selectedApp?.vulnerabilities) {
+    this.filteredVulnerabilities = [];
+    return;
+  }
+  if (this.severitySort === 'default') {
+    // Original order
+    this.filteredVulnerabilities = [...this.selectedApp.vulnerabilities];
+  } else {
+    // Sort based on severity order
+    const severityOrder: { [key: string]: number } = {
+      critical: 4,
+      high: 3,
+      medium: 2,
+      low: 1
+    };
+
+    this.filteredVulnerabilities = [...this.selectedApp.vulnerabilities].sort((a, b) => {
+      const aSeverity = severityOrder[a.severity?.toLowerCase()] || 0;
+      const bSeverity = severityOrder[b.severity?.toLowerCase()] || 0;
+
+      return this.severitySort === 'asc'
+        ? aSeverity - bSeverity
+        : bSeverity - aSeverity;
+    });
+  }
+
+  this.cdRef.detectChanges();
+}
 
 toggleSeveritySort(): void {
+  this.selectedVulnId = '';
   // Cycle through sort states: default -> asc -> desc -> default
   if (this.severitySort === 'default') {
     this.severitySort = 'asc';
@@ -686,30 +718,7 @@ toggleSeveritySort(): void {
     this.severitySort = 'default';
   }
 
-  // Sort vulnerabilities based on severity
-  if (this.severitySort !== 'default' && this.selectedApp?.vulnerabilities) {
-    this.filteredVulnerabilities = [...this.selectedApp.vulnerabilities].sort((a, b) => {
-      const severityOrder: { [key: string]: number } = {
-        critical: 4,
-        high: 3,
-        medium: 2,
-        low: 1
-      };
-      const aSeverity = severityOrder[a.severity.toLowerCase()] || 0;
-      const bSeverity = severityOrder[b.severity.toLowerCase()] || 0;
-
-      return this.severitySort === 'asc'
-        ? aSeverity - bSeverity
-        : bSeverity - aSeverity;
-    });
-  } else {
-    // Reset to original order when default
-    this.filteredVulnerabilities = this.selectedApp?.vulnerabilities
-      ? [...this.selectedApp.vulnerabilities]
-      : [];
-  }
-
-  this.cdRef.detectChanges(); // Trigger change detection
+ this.applySeveritySort();
 }
   getFilteredApps(): ApplicationDetails[] {
     let data = this.allApplications;
@@ -813,6 +822,7 @@ viewSelectedVulnerableApplication(app: ApplicationDetails): void {
     }
     this.selectedVuln = null;
     this.selectedVulnId = ''; 
+    this.severitySort = 'default';
      const severitySection = document.querySelector('.severity-section');
     if (severitySection) {
       severitySection.classList.add('blink');
@@ -833,7 +843,8 @@ showVulnerabilityMetrics(cveId: string): void {
   pageSize: this.pageSize,
   searchValue: this.searchValue,
   showVulnerableOnly: this.showVulnerableOnly,
-  selectedVuln: cveId // Add this to store the selected CVE ID
+  selectedVuln: cveId, // Add this to store the selected CVE ID
+  severitySort: this.severitySort
 });
     // this.router.navigate([`vulnerability/metrics/user/report/cve/${cveId}`]);
   const queryParams = this.selectedApp ? { selectedApp: this.selectedApp.softwareName } : {};

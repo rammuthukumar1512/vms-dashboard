@@ -366,8 +366,9 @@ mat-slide-toggle {
   transition: none;
 }
 .disabled{
-  pointer-events: none;
-  opacity: 0.6;
+  pointer-events:auto;
+  cursor:not-allowed;
+  opacity: 0.4;
 }
 .blink {
   animation: blink 0.5s;

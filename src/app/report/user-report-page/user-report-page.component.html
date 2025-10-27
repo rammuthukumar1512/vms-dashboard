@@ -318,7 +318,7 @@
            'active': severitySort !== 'default'
 
          }"
-         (click)="toggleSeveritySort()"
+         (click)="hasSeverityVariation ? toggleSeveritySort() : null"
          matTooltip="Toggle Severity Sort">
       </i>
     </div>
