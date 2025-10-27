@@ -80,6 +80,10 @@ export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewC
     }
   }
 
+  closeSideNav(): void {
+    this.sidenav.close()
+  }
+
   expandSidenav(): void {
       this.isMiniSidenav = !this.isMiniSidenav;
 }
