@@ -46,7 +46,9 @@ export class MainDashboardComponent implements OnInit, AfterViewInit, AfterViewC
      });
    }
   ngAfterViewInit(): void {
+    setTimeout(()=>{
     this.setupSidenav();
+    })
   }
 
   ngAfterViewChecked(): void {
